@@ -1,2042 +1,241 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Каталог оборудования</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <style>
-        :root {
-            --bg-gradient: #f2f2f7;
-            --card-bg: #ffffff;
-            --separator: #c6c6c8;
-            --label-primary: #1c1c1e;
-            --label-secondary: #8e8e93;
-            --blue: #007aff;
-            --gray-bg: rgba(120, 120, 128, 0.12);
-            --gray-bg-hover: rgba(120, 120, 128, 0.25);
-            --green: #34c759;
-            --yellow: #ffcc00;
-            --red: #ff3b30;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            color: var(--label-primary);
-            padding: 20px;
-            padding-top: 150px;
-            min-height: 100vh;
-        }
-
-        .header {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 900;
-            background: rgba(242, 242, 247, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 15px 20px 10px 20px;
-            border-bottom: 0.5px solid rgba(0,0,0,0.1);
-            max-width: 100%;
-        }
-
-        .header-inner {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .search-container {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-
-        .input-wrapper {
-            position: relative;
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .input-wrapper input {
-            width: 100%;
-            height: 40px;
-            padding: 0 40px 0 16px;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 0.5px solid rgba(0,0,0,0.12);
-            border-radius: 12px;
-            font-size: 15px;
-            outline: none;
-            color: var(--label-primary);
-            transition: all 0.2s;
-        }
-
-        .input-wrapper input:focus {
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
-        }
-
-        .clear-btn {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            color: var(--label-secondary);
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 500;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 4px 8px;
-        }
-
-        .clear-btn:hover {
-            color: var(--label-primary);
-        }
-
-        .toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 8px 16px;
-            border-radius: 14px;
-            border: 0.5px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.03);
-        }
-
-        .counter {
-            font-size: 14px;
-            color: var(--label-secondary);
-            font-weight: 500;
-        }
-
-        .toolbar-buttons {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .btn-top {
-            height: 36px;
-            padding: 0 14px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--separator);
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--label-primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            white-space: nowrap;
-            transition: all 0.2s;
-        }
-
-        .btn-top:hover {
-            background-color: var(--gray-bg-hover);
-        }
-
-        .btn-top.active {
-            background-color: var(--blue);
-            color: #FFFFFF;
-            border-color: var(--blue);
-        }
-
-        /* Кнопка Дубль: белая, с красным перечеркиванием при нажатии */
-        .btn-double.active {
-            position: relative;
-            background-color: var(--card-bg);
-            color: var(--label-primary);
-            border-color: var(--separator);
-        }
-
-        .btn-double.active::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to top right, transparent calc(50% - 1px), var(--red) calc(50% - 1px), var(--red) calc(50% + 1px), transparent calc(50% + 1px));
-            pointer-events: none;
-            border-radius: 9px;
-        }
-
-        .status-toggle {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            border: 1px solid var(--separator);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s, transform 0.1s;
-            background: var(--card-bg);
-            flex-shrink: 0;
-        }
-        .status-toggle:active { transform: scale(0.95); }
-        .status-toggle.green { background: rgba(52, 199, 89, 0.18); border-color: rgba(52, 199, 89, 0.4); }
-        .status-toggle.red { background: rgba(255, 59, 48, 0.18); border-color: rgba(255, 59, 48, 0.4); }
-        .status-toggle::after {
-            content: '';
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-        .status-toggle.green::after { background: var(--green); }
-        .status-toggle.red::after { background: var(--red); }
-
-        /* Кнопка Сброс: в активном состоянии остается белой с красным текстом */
-        .btn-reset-header {
-            display: none;
-        }
-        .btn-top.btn-reset-header.active {
-            display: flex;
-            background-color: var(--card-bg);
-            color: var(--red);
-            border-color: var(--separator);
-        }
-
-        .btn-reset-panel {
-            width: 100%;
-            margin-bottom: 12px;
-            background: var(--gray-bg);
-            color: var(--blue);
-            border-radius: 10px;
-            padding: 10px;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-reset-panel.active {
-            background: var(--card-bg);
-            color: var(--red);
-            border: 1px solid var(--separator);
-        }
-
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        @media (max-width: 1100px) {
-            .cards-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 680px) {
-            .cards-grid { grid-template-columns: 1fr; }
-            body { padding-top: 180px; }
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-            cursor: pointer;
-            overflow: hidden;
-            transition: transform 0.15s, box-shadow 0.15s;
-            display: flex;
-            flex-direction: row;
-            height: 132px;
-            user-select: text;
-            -webkit-user-select: text;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-        }
-
-        .card:active { transform: scale(0.99); }
-
-        .card-info {
-            flex: 1;
-            padding: 10px 12px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .card-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 4px;
-        }
-
-        .badge {
-            font-size: 10px;
-            font-weight: 600;
-            padding: 2px 6px;
-            border-radius: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.2px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            user-select: none;
-        }
-
-        .badge:active { opacity: 0.7; }
-
-        .badge-part {
-            background: var(--gray-bg);
-            color: var(--label-primary);
-        }
-
-        .badge-group {
-            background: rgba(120, 120, 128, 0.1);
-            color: #3a3a3c;
-        }
-
-        .card-name {
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            border-bottom: 1px solid var(--separator);
-            padding-bottom: 4px;
-            word-break: break-word;
-            line-height: 1.2;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .info-btn {
-            font-size: 14px;
-            margin-left: 6px;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.1s;
-        }
-        .info-btn:active { transform: scale(1.2); }
-
-        .card-purpose {
-            font-size: 12px;
-            color: #55555c; 
-            line-height: 1.3;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-
-        .card-image-container {
-            position: relative;
-            width: 99px;
-            flex-shrink: 0;
-            background: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6px;
-            overflow: hidden;
-            user-select: none;
-        }
-
-        .card-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            cursor: pointer;
-        }
-
-        .no-image {
-            color: #d1d5db;
-            font-size: 10px;
-            text-align: center;
-        }
-
-        .status-dot {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-            z-index: 2;
-            cursor: help;
-        }
-        .dot-green { background-color: var(--green); }
-        .dot-yellow { background-color: var(--yellow); }
-        .dot-red { background-color: var(--red); }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.3);
-            z-index: 1000;
-            justify-content: center;
-            align-items: flex-end;
-        }
-
-        .modal-overlay.active { display: flex; }
-
-        .modal-content {
-            background: var(--card-bg);
-            border-radius: 16px 16px 0 0;
-            width: 100%;
-            max-width: 850px;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
-            animation: slideUp 0.25s ease-out;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-
-        .modal-header {
-            padding: 12px 20px;
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--separator);
-            position: relative;
-            text-align: center;
-        }
-        
-        .modal-header::before {
-            content: '';
-            position: absolute;
-            top: 6px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 4px;
-            background: var(--separator);
-            border-radius: 2px;
-        }
-
-        .modal-title { font-size: 16px; font-weight: 600; margin-top: 4px; }
-
-        .modal-body { padding: 8px 0; overflow-y: auto; background: var(--card-bg); }
-
-        .modal-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .modal-table tr { border-bottom: 0.5px solid var(--separator); cursor: pointer; transition: background 0.15s; }
-        .modal-table tr:nth-child(odd) { background-color: #ffffff; }
-        .modal-table tr:nth-child(even) { background-color: #e6f2ff; }
-        .modal-table tr:hover { filter: brightness(0.97); }
-        .modal-table tr:last-child { border-bottom: none; }
-        .modal-table td { padding: 6px 12px; font-size: 13px; vertical-align: middle; word-break: break-word; line-height: 1.25; }
-        .modal-table td.label { font-weight: 500; color: var(--label-secondary); width: 45%; text-align: right; border-right: 1px solid var(--separator); }
-        .modal-table td.value { color: var(--label-primary); width: 55%; text-align: left; font-weight: 400; }
-
-        .modal-footer {
-            padding: 12px 20px;
-            background: var(--card-bg);
-            border-top: 0.5px solid var(--separator);
-            display: flex;
-            gap: 12px;
-            justify-content: space-between;
-        }
-
-        .btn-modal-action {
-            flex: 1;
-            padding: 10px 0;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            border: none;
-            text-align: center;
-            text-decoration: none;
-            transition: opacity 0.2s, background 0.2s;
-        }
-        .btn-modal-action:active { opacity: 0.8; }
-        .btn-site { background: var(--gray-bg); color: var(--blue); }
-        .btn-site.disabled { opacity: 0.4; pointer-events: none; }
-        .btn-close-modal-footer { background: var(--gray-bg); color: var(--blue); }
-        .btn-close-modal-footer:hover { background: var(--gray-bg-hover); }
-
-        .modal-overlay.decode-overlay {
-            background: rgba(0, 0, 0, 0);
-            transition: background 0.2s ease, opacity 0.2s ease;
-            pointer-events: none;
-            opacity: 0;
-        }
-
-        .modal-overlay.decode-overlay.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .modal-overlay.decode-overlay.pinned {
-            background: rgba(0, 0, 0, 0.3);
-            pointer-events: auto;
-        }
-
-        .decode-modal-content {
-            border-radius: 16px;
-            max-width: 680px;
-            width: 92%;
-            margin: auto;
-            align-self: center;
-            background: var(--card-bg);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            border: 1px solid var(--separator);
-            overflow: hidden;
-            transition: opacity 0.2s ease;
-        }
-
-        .decode-modal-header {
-            text-align: center;
-            padding: 10px 12px;
-            background: var(--card-bg);
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-        }
-
-        .decode-modal-header::before { display: none; }
-
-        .tspt-header-blocks {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: flex-start;
-            gap: 2px 4px;
-            margin-top: 2px;
-        }
-
-        .tspt-block-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            border-radius: 4px;
-            padding: 1px 2px;
-            transition: background 0.15s, color 0.15s;
-        }
-
-        .tspt-block-item.highlighted {
-            background: rgba(0, 122, 255, 0.15);
-        }
-
-        .tspt-block-item.highlighted .tspt-block-text {
-            color: var(--blue);
-            border-bottom-color: var(--blue);
-        }
-
-        .tspt-block-text {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--label-primary);
-            padding: 0 2px;
-            border-bottom: 1px solid var(--separator);
-            min-width: 14px;
-            text-align: center;
-            line-height: 1.1;
-        }
-
-        .tspt-block-num {
-            font-size: 9px;
-            color: var(--label-secondary);
-            margin-top: 2px;
-            line-height: 1;
-        }
-
-        .tspt-block-sep {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--label-secondary);
-            align-self: flex-start;
-            margin-top: 0px;
-            line-height: 1.1;
-        }
-
-        .decode-table-container {
-            padding: 6px 16px 16px 16px;
-            background: var(--card-bg);
-            max-height: 60vh;
-            overflow-y: auto;
-        }
-
-        .decode-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        .decode-table th {
-            text-align: left;
-            padding: 6px 8px;
-            color: var(--label-secondary);
-            font-weight: 600;
-            border-bottom: 1px solid var(--separator);
-        }
-
-        .decode-table td {
-            padding: 6px 8px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            vertical-align: top;
-            color: var(--label-primary);
-        }
-
-        .decode-table tr {
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .decode-table tr.highlighted {
-            background: rgba(0, 122, 255, 0.12) !important;
-        }
-
-        .decode-table tr:last-child td { border-bottom: none; }
-
-        .decode-table .col-block { width: 32%; }
-        .decode-table .col-code { width: 18%; font-weight: 700; color: var(--blue); }
-        .decode-table .col-desc { width: 50%; }
-
-        .side-panel-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 998;
-        }
-        .side-panel-overlay.active { display: block; }
-
-        .side-panel {
-            position: fixed;
-            top: 0; right: -100%; bottom: 0;
-            width: 288px;
-            background: #f2f2f7;
-            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
-            z-index: 999;
-            transition: right 0.3s ease-in-out;
-            display: flex;
-            flex-direction: column;
-        }
-        .side-panel.active { right: 0; }
-
-        @media (max-width: 768px) {
-            .side-panel { width: 68vw; }
-        }
-
-        .panel-header {
-            padding: 12px 16px;
-            background: var(--card-bg);
-            border-bottom: 0.5px solid var(--separator);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .panel-tabs {
-            display: flex;
-            background: rgba(120, 120, 128, 0.12);
-            border-radius: 9px;
-            padding: 2px;
-            flex: 1;
-            margin-right: 8px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            border: none;
-            background: transparent;
-            padding: 6px 0;
-            font-size: 12px;
-            font-weight: 500;
-            border-radius: 7px;
-            cursor: pointer;
-            color: var(--label-primary);
-            transition: all 0.2s;
-        }
-
-        .tab-btn.active {
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-            font-weight: 600;
-        }
-        
-        .panel-body {
-            padding: 12px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .calc-box {
-            background: var(--card-bg);
-            border: 1px solid var(--separator);
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 12px;
-        }
-        .calc-field {
-            margin-bottom: 12px;
-        }
-        .calc-field label {
-            display: block;
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 6px;
-            color: var(--label-primary);
-        }
-        .calc-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid var(--separator);
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-        }
-        .calc-input:focus {
-            border-color: var(--blue);
-        }
-        .boss-options {
-            display: flex;
-            gap: 6px;
-        }
-        .boss-btn {
-            flex: 1;
-            padding: 8px 4px;
-            border: 1px solid var(--separator);
-            background: var(--gray-bg);
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            color: var(--label-primary);
-            text-align: center;
-            transition: all 0.2s;
-        }
-        .boss-btn.active {
-            background: var(--blue);
-            color: white;
-            border-color: var(--blue);
-        }
-        .calc-result {
-            background: rgba(0, 122, 255, 0.08);
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 13px;
-            color: var(--blue);
-            font-weight: 500;
-            line-height: 1.4;
-        }
-
-        .calc-result-warning {
-            background: rgba(255, 149, 0, 0.12);
-            border: 1px solid rgba(255, 149, 0, 0.3);
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 12.5px;
-            color: #d97706;
-            font-weight: 500;
-            line-height: 1.4;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .sort-btn {
-            display: block;
-            width: 100%;
-            margin-bottom: 8px;
-            padding: 10px 12px;
-            text-align: left;
-            background: var(--card-bg);
-            border: 1px solid var(--separator);
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 400;
-            color: var(--label-primary);
-            transition: background 0.2s;
-        }
-        .sort-btn:hover { background: var(--gray-bg-hover); }
-        .sort-btn:active { background: rgba(0,0,0,0.1); }
-
-        .filter-group {
-            margin-bottom: 8px;
-            background: var(--card-bg);
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid var(--separator);
-        }
-        
-        .filter-group-title {
-            width: 100%;
-            text-align: left;
-            padding: 8px 12px; 
-            background: transparent;
-            border: none;
-            font-weight: 400;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--label-primary);
-            font-size: 14px;
-            transition: background 0.2s, color 0.2s;
-        }
-
-        .filter-group-title:hover {
-            background: var(--gray-bg-hover);
-        }
-
-        .filter-group-title-left {
-            display: flex;
-            align-items: center;
-            flex: 1;
-            padding-right: 8px;
-        }
-
-        .filter-group-title-right {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-        }
-
-        .filter-group-title.has-selected {
-            color: var(--blue);
-            font-weight: 500;
-        }
-
-        .filter-group-title:active { background: rgba(0,0,0,0.1); }
-
-        .filter-dropdown {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            border-top: 0.5px solid transparent;
-        }
-        .filter-dropdown.open { max-height: 350px; overflow-y: auto; border-top: 0.5px solid var(--separator); }
-        
-        .filter-item {
-            display: flex;
-            align-items: center;
-            padding: 6px 12px;
-            cursor: pointer;
-            border-bottom: 0.5px solid var(--separator);
-            font-size: 13px;
-            transition: background 0.2s;
-        }
-        .filter-item:hover { background-color: var(--gray-bg-hover); }
-        .filter-item:last-child { border-bottom: none; }
-        
-        .filter-item input[type="checkbox"] {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            min-width: 20px;
-            min-height: 20px;
-            flex-shrink: 0;
-            background-color: var(--gray-bg);
-            border: none;
-            border-radius: 5px;
-            margin-right: 10px;
-            cursor: pointer;
-            position: relative;
-            transition: background 0.2s;
-        }
-        .filter-item input[type="checkbox"]:checked {
-            background-color: var(--blue);
-        }
-        .filter-item input[type="checkbox"]:checked::after {
-            content: '✓';
-            color: white;
-            font-size: 13px;
-            font-weight: bold;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .ios-toast {
-            position: fixed;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            background: rgba(40, 40, 40, 0.9);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            z-index: 3000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s, transform 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .ios-toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 50px;
-            font-size: 16px;
-            color: var(--label-secondary);
-            grid-column: 1 / -1;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Меню выбора</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+
+  /* Фоновое изображение */
+  .bg {
+    position: fixed;
+    inset: 0;
+    background-image: url('https://ooo-ferrum.ru/upload/medialibrary/1a5/1a5dedaaccf838ef89bdd512f8a2fb5d.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: scale(1.1); /* чтобы края не выглядывали при размытии */
+    filter: blur(20px) saturate(1.4) brightness(0.85);
+    z-index: 0;
+  }
+
+  /* Матовый эффект стекла поверх фона */
+  .glass-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px) saturate(1.2);
+    -webkit-backdrop-filter: blur(8px) saturate(1.2);
+    z-index: 1;
+  }
+
+  /* Тёмный градиент для контраста */
+  .glass-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.35) 100%);
+  }
+
+  /* Основной контейнер */
+  .container {
+    position: relative;
+    z-index: 2;
+    height: 100vh;
+    height: 100dvh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Заголовок */
+  .title {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 36px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.35);
+  }
+
+  .title h1 {
+    font-size: clamp(24px, 5vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .title p {
+    font-size: clamp(14px, 3vw, 17px);
+    font-weight: 400;
+    opacity: 0.85;
+  }
+
+  /* Кнопки */
+  .buttons {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    padding: 22px 26px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.18),
+      inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    color: #fff;
+    transition: transform 0.18s ease, background 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+    background: rgba(255, 255, 255, 0.32);
+  }
+
+  .btn-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+  }
+
+  .btn-title {
+    font-size: clamp(17px, 4vw, 19px);
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  }
+
+  .btn-subtitle {
+    font-size: clamp(12px, 2.8vw, 13px);
+    font-weight: 400;
+    opacity: 0.85;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  }
+
+  .btn-arrow {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .btn-arrow svg {
+    width: 16px;
+    height: 16px;
+    stroke: #fff;
+    stroke-width: 2.5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Подпись внизу */
+  .footer {
+    position: absolute;
+    bottom: max(24px, env(safe-area-inset-bottom));
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    z-index: 2;
+  }
+
+  /* Анимация появления */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .title { animation: fadeInUp 0.6s ease both; }
+  .btn:nth-child(1) { animation: fadeInUp 0.6s ease 0.1s both; }
+  .btn:nth-child(2) { animation: fadeInUp 0.6s ease 0.2s both; }
+
+  /* Для очень маленьких экранов */
+  @media (max-height: 500px) {
+    .title { margin-bottom: 20px; }
+    .btn { padding: 16px 22px; }
+  }
+
+  /* Уменьшаем размытие на слабых устройствах */
+  @media (max-width: 480px) {
+    .bg { filter: blur(14px) saturate(1.3) brightness(0.85); }
+  }
+</style>
 </head>
 <body>
+  <div class="bg"></div>
+  <div class="glass-overlay"></div>
 
-    <div class="header">
-        <div class="header-inner">
-            <div class="search-container">
-                <div class="input-wrapper">
-                    <input type="text" id="searchName" placeholder="Поиск по наименованию..." oninput="handleSearch()">
-                    <button class="clear-btn" id="clearName" onclick="clearInput('searchName', 'clearName')">×</button>
-                </div>
-                <div class="input-wrapper">
-                    <input type="text" id="searchGlobal" placeholder="Поиск по всей таблице..." oninput="handleSearch()">
-                    <button class="clear-btn" id="clearGlobal" onclick="clearInput('searchGlobal', 'clearGlobal')">×</button>
-                </div>
-            </div>
-            <div class="toolbar">
-                <div class="counter" id="counter">0 из 0</div>
-                <div class="toolbar-buttons">
-                    <button class="btn-top btn-double" id="btnUniquePart" onclick="toggleUniquePart()" title="Только уникальные УПП">Дубль</button>
-                    <button class="btn-top" onclick="openCombinedPanel()">Фильтр</button>
-                    <button class="btn-top btn-reset-header" id="clearFiltersBtn" onclick="clearAllFilters()" title="Сбросить фильтры">Сброс</button>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <div class="title">
+      <h1>Выберите раздел</h1>
+      <p>Перейдите к нужному инструменту подбора</p>
     </div>
 
-    <div class="cards-grid" id="cardsGrid">
-        <div class="loading">Идет загрузка данных, пожалуйста, подождите...</div>
+    <div class="buttons">
+      <a href="KIP.html" class="btn">
+        <div class="btn-content">
+          <span class="btn-title">Подбор КИПиА</span>
+          <span class="btn-subtitle">Контрольно-измерительные приборы</span>
+        </div>
+        <div class="btn-arrow">
+          <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+        </div>
+      </a>
+
+      <a href="KB.html" class="btn">
+        <div class="btn-content">
+          <span class="btn-title">Подбор кабельных вводов</span>
+          <span class="btn-subtitle">Заглушки, переходники, муфты и пр.</span>
+        </div>
+        <div class="btn-arrow">
+          <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+        </div>
+      </a>
     </div>
+  </div>
 
-    <!-- Модальное окно общей информации -->
-    <div class="modal-overlay" id="modalOverlay" onclick="if(event.target === this) closeModal()">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Детали</h2>
-            </div>
-            <div class="modal-body" id="modalBody">
-                <table class="modal-table" id="modalTable"></table>
-            </div>
-            <div class="modal-footer">
-                <a id="btnModalSite" class="btn-modal-action btn-site" href="#" target="_blank">Сайт</a>
-                <button class="btn-modal-action btn-close-modal-footer" onclick="closeModal()">Закрыть</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Всплывающая карточка ТСПТ с блоками заголовка -->
-    <div class="modal-overlay decode-overlay" id="decodeModalOverlay" onclick="if(event.target === this) closeDecodeModal(true)">
-        <div class="modal-content decode-modal-content" id="decodeModalContent">
-            <div class="modal-header decode-modal-header">
-                <div class="tspt-header-blocks" id="tsptHeaderBlocks"></div>
-            </div>
-            <div class="modal-body decode-table-container" id="decodeModalBody">
-                <table class="decode-table">
-                    <thead>
-                        <tr>
-                            <th class="col-block">Блок</th>
-                            <th class="col-code">Код</th>
-                            <th class="col-desc">Описание</th>
-                        </tr>
-                    </thead>
-                    <tbody id="decodeModalTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="image-modal" id="imageModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:2000; justify-content:center; align-items:center;" onclick="closeImageModal()">
-        <img id="fullImage" src="" alt="Просмотр" style="max-width:90%; max-height:90%; object-fit:contain; border-radius:8px;">
-    </div>
-
-    <div class="side-panel-overlay" id="panelOverlay" onclick="closePanels()"></div>
-
-    <div class="side-panel" id="combinedPanel">
-        <div class="panel-header">
-            <div class="panel-tabs">
-                <button class="tab-btn active" id="tabFilter" onclick="switchTab('filter')">Фильтр</button>
-                <button class="tab-btn" id="tabCalc" onclick="switchTab('calc')">Шток</button>
-                <button class="tab-btn" id="tabSort" onclick="switchTab('sort')">Сортировка</button>
-            </div>
-            <button class="status-toggle green" id="statusToggleBtn" onclick="toggleStatusFilter()" title="Актуальность"></button>
-        </div>
-        
-        <div class="panel-body" id="tabContentFilter">
-            <button class="btn btn-reset-panel" id="panelResetBtn" onclick="clearAllFilters()">Сбросить фильтры</button>
-            <div id="filterPanelContent"></div>
-        </div>
-
-        <div class="panel-body" id="tabContentCalc" style="display: none;">
-            <div class="calc-box">
-                <div class="calc-field">
-                    <label for="ductDiameter">Диаметр трубы/сечение воздуховода (мм):</label>
-                    <input type="number" id="ductDiameter" class="calc-input" placeholder="Введите размер в мм..." oninput="calculateStemLength()">
-                </div>
-                <div class="calc-field">
-                    <label>Размер бобышки:</label>
-                    <div class="boss-options">
-                        <button class="boss-btn" id="boss0" onclick="selectBoss(0)">0 мм</button>
-                        <button class="boss-btn active" id="boss50" onclick="selectBoss(50)">50 мм</button>
-                        <button class="boss-btn" id="boss100" onclick="selectBoss(100)">100 мм</button>
-                    </div>
-                </div>
-                <div class="calc-result-warning" id="calcResult">
-                    Введите корректный диаметр воздуховода или трубы.
-                </div>
-                <button class="btn btn-reset-panel" style="margin-top: 12px; margin-bottom: 0;" onclick="resetStemFilter()">Сбросить фильтр длины</button>
-            </div>
-        </div>
-
-        <div class="panel-body" id="tabContentSort" style="display: none;">
-            <button class="sort-btn" onclick="sortCards('ProjectName')">По Наименованию (А-Я)</button>
-            <button class="sort-btn" onclick="sortCards('Naznachenie')">По Назначению (А-Я)</button>
-            <button class="sort-btn" onclick="sortCards('Proizvodetel')">По Производителю (А-Я)</button>
-        </div>
-    </div>
-
-    <div class="ios-toast" id="iosToast">УПП скопирован</div>
-
-    <script>
-        const columnsMap = {
-            "PartNumber": "ТЭГ",
-            "ProjectName": "Наименование",
-            "Группа": "Группа",
-            "BlokVCK": "Блок в ВЦК",
-            "ParamKontrol": "Контролируемый параметр",
-            "VzryvVybor": "Наличие взрывозащиты",
-            "Vzryvozaschita": "Взрывозащита",
-            "TipSignala": "Тип сигнала",
-            "DiapazonUstanovkiIzmer": "Диапазон уставки измерения",
-            "Tochnost": "Точность",
-            "IP": "IP",
-            "Displej": "Наличие дисплея",
-            "Temperatura": "Температура",
-            "MPI": "Межповерочный интервал",
-            "Naznachenie": "Назначение",
-            "Proizvodetel": "Производитель",
-            "NaznachenieDlyaZip": "Назначение для ЗИП",
-            "ModelBZ": "Название в БЗ",
-            "Characteristic": "Характеристика",
-            "ActualStatus": "Статус актуальности",
-            "DiamKabelya": "Диаметр кабеля",
-            "KabVvodMetalRukav": "Металлорукав",
-            "KabVvod": "Кабельный ввод",
-            "PowerVoltage": "Напряжение",
-            "Manifold": "Манифольд",
-            "Соединение к прибору": "Присоединение к процессу",
-            "Класс": "Класс",
-            "Status": "Status",
-            "IMG": "Картинки",
-            "Link": "Ссылка на сайт",
-            "Комментарий": "Комментарий"
-        };
-
-        const filterColumns = [
-            "Proizvodetel",
-            "Группа",
-            "BlokVCK",
-            "Naznachenie",
-            "ActualStatus",
-            "ParamKontrol",
-            "VzryvVybor",
-            "Vzryvozaschita",
-            "TipSignala",
-            "DiapazonUstanovkiIzmer",
-            "Tochnost",
-            "IP",
-            "Displej",
-            "Temperatura",
-            "MPI",
-            "NaznachenieDlyaZip",
-            "ModelBZ",
-            "Characteristic",
-            "DiamKabelya",
-            "KabVvodMetalRukav",
-            "KabVvod",
-            "PowerVoltage",
-            "Manifold",
-            "Соединение к прибору",
-            "Класс"
-        ];
-
-        const modalOrderKeys = [
-            "Proizvodetel",
-            "Группа",
-            "Naznachenie",
-            "ParamKontrol",
-            "BlokVCK",
-            "VzryvVybor",
-            "Vzryvozaschita",
-            "TipSignala",
-            "DiapazonUstanovkiIzmer",
-            "Temperatura",
-            "Tochnost",
-            "IP",
-            "Displej",
-            "MPI",
-            "Characteristic",
-            "KabVvod",
-            "DiamKabelya",
-            "KabVvodMetalRukav",
-            "PowerVoltage",
-            "Manifold",
-            "Соединение к прибору",
-            "Класс",
-            "NaznachenieDlyaZip",
-            "ModelBZ",
-            "Комментарий"
-        ];
-
-        const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzAETiIKfUBvchm03dtQKognrImGtEbT5O13_WQpCe7exHxLvPXOAAqFdm9899nSeF3gVvkrTsTcej/pub?gid=1716395972&single=true&output=csv";
-        let rawData = [];
-        let activeFilters = {};
-        let currentSort = { key: null, direction: 'asc' };
-        
-        let filterStatus = true;
-        let filterOnlyUniquePart = false;
-        let tspt101Data = null;
-        let isDecodePinned = false;
-
-        let selectedBoss = 50;
-        let stemMinLength = null;
-        let stemMaxLength = null;
-
-        fetch('TSPT.json')
-            .then(res => res.json())
-            .then(data => { tspt101Data = data; })
-            .catch(err => console.warn('Файл TSPT.json не найден или содержит ошибки:', err));
-
-        function getProducerColor(str) {
-            if (!str) return { bg: 'rgba(142, 142, 147, 0.15)', text: '#8e8e93' };
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            const h = Math.abs(hash) % 360;
-            return {
-                bg: `hsla(${h}, 70%, 50%, 0.15)`,
-                text: `hsl(${h}, 80%, 32%)`
-            };
-        }
-
-        Papa.parse(csvUrl, {
-            download: true,
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                rawData = results.data;
-                buildFilterPanel();
-                renderCards();
-            },
-            error: function(err) {
-                document.getElementById('cardsGrid').innerHTML = `<div class="loading">Ошибка загрузки: ${err}</div>`;
-            }
-        });
-
-        function toggleStatusFilter() {
-            filterStatus = !filterStatus;
-            const btn = document.getElementById('statusToggleBtn');
-            btn.className = filterStatus ? 'status-toggle green' : 'status-toggle red';
-            renderCards();
-        }
-
-        function toggleUniquePart() {
-            filterOnlyUniquePart = !filterOnlyUniquePart;
-            const btn = document.getElementById('btnUniquePart');
-            if (filterOnlyUniquePart) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-            renderCards();
-        }
-
-        function renderCards() {
-            const grid = document.getElementById('cardsGrid');
-            const counter = document.getElementById('counter');
-            
-            let targetStatus = filterStatus ? "TRUE" : "FALSE";
-            let dataToRender = rawData.filter(item => (item["Status"] || "").toString().trim().toUpperCase() === targetStatus);
-
-            if (filterOnlyUniquePart) {
-                const seen = new Set();
-                dataToRender = dataToRender.filter(item => {
-                    const pn = (item["PartNumber"] || "").toString().trim();
-                    if (!pn) return true;
-                    if (seen.has(pn)) return false;
-                    seen.add(pn);
-                    return true;
-                });
-            }
-
-            for (let key in activeFilters) {
-                if (activeFilters[key].length > 0) {
-                    dataToRender = dataToRender.filter(item => activeFilters[key].includes(item[key] || ""));
-                }
-            }
-
-            if (stemMinLength !== null && stemMaxLength !== null) {
-                dataToRender = dataToRender.filter(item => {
-                    const charStr = (item["Characteristic"] || "").toString();
-                    const matches = charStr.match(/\b\d{2,4}\b/g);
-                    if (!matches) return false;
-                    
-                    return matches.some(valStr => {
-                        const val = parseFloat(valStr);
-                        return val >= stemMinLength && val <= stemMaxLength;
-                    });
-                });
-            }
-
-            if (currentSort.key) {
-                dataToRender.sort((a, b) => {
-                    let valA = (a[currentSort.key] || "").toString().toLowerCase();
-                    let valB = (b[currentSort.key] || "").toString().toLowerCase();
-                    if (valA < valB) return -1;
-                    if (valA > valB) return 1;
-                    return 0;
-                });
-                if (currentSort.direction === 'desc') dataToRender.reverse();
-            }
-
-            const nameQuery = document.getElementById('searchName').value.toLowerCase().trim();
-            const globalQuery = document.getElementById('searchGlobal').value.toLowerCase().trim();
-
-            let finalData = dataToRender.filter(item => {
-                const projectName = (item["ProjectName"] || '').toString().toLowerCase();
-                const matchName = nameQuery === '' || projectName.includes(nameQuery);
-
-                let matchGlobal = true;
-                if (globalQuery !== '') {
-                    matchGlobal = false;
-                    for (const key in columnsMap) {
-                        if (item[key]) {
-                            if (item[key].toString().toLowerCase().includes(globalQuery)) {
-                                matchGlobal = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                return matchName && matchGlobal;
-            });
-
-            const totalStatusCount = rawData.filter(item => (item["Status"] || "").toString().trim().toUpperCase() === targetStatus).length;
-            counter.innerText = `${finalData.length} из ${totalStatusCount}`;
-
-            if (finalData.length === 0) {
-                grid.innerHTML = '<div class="loading">Ничего не найдено</div>';
-                return;
-            }
-
-            grid.innerHTML = '';
-            finalData.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'card';
-
-                card.addEventListener('click', (e) => {
-                    const selection = window.getSelection();
-                    if (selection.toString().length > 0) return;
-                    if (e.target.classList.contains('card-image') || e.target.classList.contains('badge') || e.target.classList.contains('info-btn')) return;
-                    openModal(item);
-                });
-
-                const partNumber = item["PartNumber"] || '';
-                const producer = item["Proizvodetel"] || '';
-                const projectName = item["ProjectName"] || 'Без наименования';
-                const naznachenie = item["Naznachenie"] || '';
-                const imgRaw = item["IMG"] || '';
-                const imgUrl = imgRaw.split(",")[0].trim();
-                const isStatusFalse = (item["Status"] || "").toString().trim().toUpperCase() === "FALSE";
-
-                const groupRaw = item["Группа"] || '';
-                const groupClean = groupRaw.replace(/Группа\s*/gi, '').trim();
-
-                const producerStyle = getProducerColor(producer);
-
-                const statusRaw = (item["ActualStatus"] || '').trim().toUpperCase();
-                let dotHtml = '';
-                if (isStatusFalse) {
-                    dotHtml = '<div class="status-dot dot-red" title="Статус FALSE"></div>';
-                } else if (statusRaw === 'А' || statusRaw === 'A') {
-                    dotHtml = '<div class="status-dot dot-green" title="Популярный"></div>';
-                } else if (statusRaw === 'АК' || statusRaw === 'AK') {
-                    dotHtml = '<div class="status-dot dot-yellow" title="Редкий"></div>';
-                }
-
-                const isTspt101 = projectName.includes('ТСПТ') && projectName.includes('101');
-                const infoIconHtml = isTspt101 ? `<span class="info-btn" 
-                    onmouseenter="hoverDecodeModal(event, '${escapeHtml(projectName)}')" 
-                    onmouseleave="unhoverDecodeModal()" 
-                    onclick="pinDecodeModal(event, '${escapeHtml(projectName)}')">ℹ️</span>` : '';
-
-                card.innerHTML = `
-                    <div class="card-info">
-                        <div class="card-badges">
-                            ${partNumber ? `<span class="badge badge-part" onclick="copyPartNumber(event, '${escapeHtml(partNumber)}')">${escapeHtml(partNumber)}</span>` : ''}
-                            ${producer ? `<span class="badge badge-producer" style="background: ${producerStyle.bg}; color: ${producerStyle.text};" onclick="openProducerFilter(event, '${escapeHtml(producer)}')">${escapeHtml(producer)}</span>` : ''}
-                            ${groupClean ? `<span class="badge badge-group" onclick="openGroupFilter(event)">${escapeHtml(groupClean)}</span>` : ''}
-                        </div>
-                        <div class="card-name">
-                            <span>${escapeHtml(projectName)}</span>
-                            ${infoIconHtml}
-                        </div>
-                        <div class="card-purpose">${escapeHtml(naznachenie)}</div>
-                    </div>
-                    <div class="card-image-container">
-                        ${dotHtml}
-                        ${imgUrl ? `<img src="${escapeHtml(imgUrl)}" alt="Фото" class="card-image" onerror="this.outerHTML='<div class=\\'no-image\\'>Нет фото</div>'">` : '<div class="no-image">Нет фото</div>'}
-                    </div>
-                `;
-
-                const imgEl = card.querySelector('.card-image');
-                if (imgEl) {
-                    imgEl.onclick = (e) => {
-                        e.stopPropagation();
-                        openImageModal(imgUrl);
-                    };
-                }
-
-                grid.appendChild(card);
-            });
-            
-            updateHeaderCounters();
-        }
-
-        function copyPartNumber(e, text) {
-            e.stopPropagation();
-            navigator.clipboard.writeText(text).then(() => {
-                showToast("УПП скопирован");
-            });
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('iosToast');
-            toast.innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 1000);
-        }
-
-        function openProducerFilter(e, producerName) {
-            e.stopPropagation();
-            openSpecificFilterParam('Proizvodetel');
-        }
-
-        function openGroupFilter(e) {
-            e.stopPropagation();
-            openSpecificFilterParam('Группа');
-        }
-
-        function openSpecificFilterParam(key) {
-            if (!filterColumns.includes(key)) return;
-            openCombinedPanel();
-            switchTab('filter');
-            const groupTitleBtn = document.querySelector(`[data-filter-key="${key}"]`);
-            if (groupTitleBtn) {
-                const dropdown = groupTitleBtn.nextElementSibling;
-                if (dropdown && !dropdown.classList.contains('open')) {
-                    dropdown.classList.add('open');
-                    dropdown.scrollTop = 0;
-                }
-                setTimeout(() => {
-                    groupTitleBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }, 100);
-            }
-        }
-
-        function handleSearch() {
-            const nameQuery = document.getElementById('searchName').value;
-            const globalQuery = document.getElementById('searchGlobal').value;
-            document.getElementById('clearName').style.display = nameQuery ? 'flex' : 'none';
-            document.getElementById('clearGlobal').style.display = globalQuery ? 'flex' : 'none';
-            updateFilterButtonState();
-            renderCards();
-        }
-
-        function clearInput(inputId, btnId) {
-            document.getElementById(inputId).value = '';
-            document.getElementById(btnId).style.display = 'none';
-            handleSearch();
-        }
-
-        function openModal(item) {
-            const modalTable = document.getElementById('modalTable');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-            const btnSite = document.getElementById('btnModalSite');
-
-            modalTitle.innerText = item["ProjectName"] || "Карточка оборудования";
-            modalTable.innerHTML = '';
-
-            modalOrderKeys.forEach(key => {
-                if (item[key] !== undefined && item[key] !== null && item[key].toString().trim() !== '') {
-                    const row = modalTable.insertRow();
-                    const cell1 = row.insertCell(0);
-                    const cell2 = row.insertCell(1);
-                    cell1.className = 'label';
-                    cell2.className = 'value';
-                    cell1.innerText = columnsMap[key] || key;
-                    cell2.innerText = item[key];
-
-                    row.ondblclick = () => {
-                        closeModal();
-                        openSpecificFilterParam(key);
-                    };
-                }
-            });
-
-            if (item["Link"] && item["Link"].trim() !== '') {
-                btnSite.href = item["Link"].trim();
-                btnSite.classList.remove('disabled');
-            } else {
-                btnSite.href = "#";
-                btnSite.classList.add('disabled');
-            }
-
-            document.getElementById('modalOverlay').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            modalBody.scrollTop = 0;
-        }
-
-        function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        function hoverDecodeModal(e, sensorName) {
-            if (isDecodePinned) return;
-            fillDecodeTable(sensorName);
-            const overlay = document.getElementById('decodeModalOverlay');
-            overlay.classList.add('active');
-        }
-
-        function unhoverDecodeModal() {
-            if (isDecodePinned) return;
-            closeDecodeModal();
-        }
-
-        function pinDecodeModal(e, sensorName) {
-            e.stopPropagation();
-            isDecodePinned = true;
-
-            const overlay = document.getElementById('decodeModalOverlay');
-            overlay.classList.add('pinned');
-            
-            if (!overlay.classList.contains('active')) {
-                hoverDecodeModal(e, sensorName);
-            }
-        }
-
-        function closeDecodeModal(force = false) {
-            if (!force && isDecodePinned) return;
-            isDecodePinned = false;
-            const overlay = document.getElementById('decodeModalOverlay');
-            overlay.classList.remove('pinned');
-            overlay.classList.remove('active');
-        }
-
-        function fillDecodeTable(sensorName) {
-            const modalTableBody = document.getElementById('decodeModalTableBody');
-            const blocksContainer = document.getElementById('tsptHeaderBlocks');
-            modalTableBody.innerHTML = '';
-            blocksContainer.innerHTML = '';
-
-            if (!tspt101Data) {
-                modalTableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:15px; color:#8e8e93;">Загрузка данных расшифровки...</td></tr>';
-            } else {
-                const parsedData = parseTspt101Name(sensorName, tspt101Data);
-                
-                parsedData.forEach((item, index) => {
-                    const blockId = `tspt-block-${index}`;
-                    const rowId = `tspt-row-${index}`;
-
-                    const blockDiv = document.createElement('div');
-                    blockDiv.className = 'tspt-block-item';
-                    blockDiv.id = blockId;
-                    
-                    const textSpan = document.createElement('span');
-                    textSpan.className = 'tspt-block-text';
-                    textSpan.innerText = item.code;
-                    
-                    const numSpan = document.createElement('span');
-                    numSpan.className = 'tspt-block-num';
-                    numSpan.innerText = item.num || (index + 1);
-
-                    blockDiv.appendChild(textSpan);
-                    blockDiv.appendChild(numSpan);
-
-                    blockDiv.onmouseenter = () => {
-                        blockDiv.classList.add('highlighted');
-                        const row = document.getElementById(rowId);
-                        if (row) row.classList.add('highlighted');
-                    };
-                    blockDiv.onmouseleave = () => {
-                        blockDiv.classList.remove('highlighted');
-                        const row = document.getElementById(rowId);
-                        if (row) row.classList.remove('highlighted');
-                    };
-
-                    blocksContainer.appendChild(blockDiv);
-
-                    if (index < parsedData.length - 1) {
-                        const sep = document.createElement('span');
-                        sep.className = 'tspt-block-sep';
-                        sep.innerText = '-';
-                        blocksContainer.appendChild(sep);
-                    }
-                });
-
-                parsedData.forEach((item, index) => {
-                    const blockId = `tspt-block-${index}`;
-                    const rowId = `tspt-row-${index}`;
-
-                    const tr = modalTableBody.insertRow();
-                    tr.id = rowId;
-                    const tdBlock = tr.insertCell(0);
-                    const tdCode = tr.insertCell(1);
-                    const tdDesc = tr.insertCell(2);
-                    
-                    tdBlock.className = 'col-block';
-                    tdCode.className = 'col-code';
-                    tdDesc.className = 'col-desc';
-                    
-                    tdBlock.innerText = item.label;
-                    tdCode.innerText = item.code;
-                    tdDesc.innerText = item.value;
-
-                    tr.onmouseenter = () => {
-                        tr.classList.add('highlighted');
-                        const block = document.getElementById(blockId);
-                        if (block) block.classList.add('highlighted');
-                    };
-                    tr.onmouseleave = () => {
-                        tr.classList.remove('highlighted');
-                        const block = document.getElementById(blockId);
-                        if (block) block.classList.remove('highlighted');
-                    };
-                });
-            }
-        }
-
-        function parseTspt101Name(str, data) {
-            const list = [];
-            
-            let rangeMatch = str.match(/\(([^)]+)\)/);
-            let rangeVal = rangeMatch ? rangeMatch[1] : null;
-            let cleanStr = str.replace(/\([^)]+\)/, '').trim();
-
-            let hasUpi = cleanStr.includes('УПИ-420');
-            let hasHart = cleanStr.includes('HARTv7');
-            cleanStr = cleanStr.replace(/,\s*УПИ-420|\+HARTv7|УПИ-420/g, '').trim();
-
-            const parts = cleanStr.split('-').map(p => p.trim());
-
-            if (parts[0]) {
-                const tokens = parts[0].split(/\s+/);
-                const typeKey = tokens[0];
-                list.push({
-                    num: 1,
-                    label: "1. Тип датчика",
-                    code: typeKey,
-                    value: data.type[typeKey] || 'Термометр сопротивления платиновый'
-                });
-
-                if (tokens.length === 3) {
-                    const exKey = tokens[1];
-                    list.push({
-                        num: 2,
-                        label: "2. Вид взрывозащиты",
-                        code: exKey,
-                        value: data.ex[exKey] || ''
-                    });
-                    const modKey = tokens[2];
-                    list.push({
-                        num: 3,
-                        label: "3. Модификация",
-                        code: modKey,
-                        value: data.modification[modKey] || ''
-                    });
-                } else if (tokens.length === 2) {
-                    const modKey = tokens[1];
-                    list.push({
-                        num: 3,
-                        label: "3. Модификация",
-                        code: modKey,
-                        value: data.modification[modKey] || ''
-                    });
-                }
-            }
-
-            if (parts[1]) {
-                const cableKey = parts[1].charAt(0);
-                const nodeKey = parts[1].slice(1);
-
-                list.push({
-                    num: 4,
-                    label: "4. Кабельный ввод",
-                    code: cableKey,
-                    value: data.cableEntry[cableKey] || ''
-                });
-
-                list.push({
-                    num: 5,
-                    label: "5. Узел коммутации",
-                    code: nodeKey,
-                    value: data.switchingNode[nodeKey] || ''
-                });
-            }
-
-            if (parts[2]) {
-                const nshKey = parts[2];
-                list.push({
-                    num: 6,
-                    label: "6. НСХ",
-                    code: nshKey,
-                    value: data.nsh[nshKey] || ''
-                });
-            }
-
-            if (parts[3]) {
-                let p3 = parts[3];
-                let cls = "";
-                if (p3.startsWith("AA")) cls = "AA";
-                else if (p3.startsWith("A")) cls = "A";
-                else if (p3.startsWith("B")) cls = "B";
-                else if (p3.startsWith("C")) cls = "C";
-
-                if (cls) {
-                    list.push({
-                        num: 7,
-                        label: "7. Класс допуска",
-                        code: cls,
-                        value: `Класс допуска ${cls} по ГОСТ 6651-2009`
-                    });
-                    p3 = p3.slice(cls.length);
-                }
-
-                let scheme = p3.charAt(0);
-                if (["2", "3", "4"].includes(scheme)) {
-                    list.push({
-                        num: 8,
-                        label: "8. Схема соединения",
-                        code: scheme,
-                        value: data.wireScheme[scheme] || ''
-                    });
-                    p3 = p3.slice(1);
-                }
-
-                let sig = p3;
-                if (sig && data.signal[sig]) {
-                    list.push({
-                        num: 9,
-                        label: "9. Выходной сигнал",
-                        code: sig,
-                        value: data.signal[sig]
-                    });
-                }
-            }
-
-            if (parts[4]) {
-                const matKey = parts[4];
-                list.push({
-                    num: 10,
-                    label: "10. Материал оболочки",
-                    code: matKey,
-                    value: data.sheathMaterial[matKey] || matKey
-                });
-            }
-
-            if (parts[5]) {
-                list.push({
-                    num: 11,
-                    label: "11. Диаметр штока",
-                    code: parts[5],
-                    value: `Наружный диаметр ${parts[5]} мм`
-                });
-            }
-
-            if (parts[6]) {
-                list.push({
-                    num: 12,
-                    label: "12. Длина L",
-                    code: parts[6],
-                    value: `Монтажная длина ${parts[6]} мм`
-                });
-            }
-
-            if (parts[7]) {
-                list.push({
-                    num: 13,
-                    label: "13. Размер e",
-                    code: parts[7],
-                    value: `${parts[7]} мм`
-                });
-            }
-
-            if (parts[8]) {
-                list.push({
-                    num: 14,
-                    label: "14. Штуцер",
-                    code: parts[8],
-                    value: parts[8]
-                });
-            }
-
-            if (hasUpi) {
-                list.push({
-                    num: "—",
-                    label: "Преобразователь",
-                    code: "УПИ-420",
-                    value: data.extras["УПИ-420"]
-                });
-            }
-
-            if (hasHart) {
-                list.push({
-                    num: "—",
-                    label: "Протокол связи",
-                    code: "HARTv7",
-                    value: data.extras["HARTv7"]
-                });
-            }
-
-            if (rangeVal) {
-                list.push({
-                    num: "—",
-                    label: "Диапазон",
-                    code: rangeVal,
-                    value: `Диапазон измерения температур: ${rangeVal}`
-                });
-            }
-
-            return list;
-        }
-
-        function openImageModal(url) {
-            const fullImg = document.getElementById('fullImage');
-            fullImg.src = url;
-            document.getElementById('imageModal').style.display = 'flex';
-        }
-
-        function closeImageModal() {
-            document.getElementById('imageModal').style.display = 'none';
-        }
-
-        function openCombinedPanel() {
-            closePanels();
-            document.getElementById('panelOverlay').classList.add('active');
-            document.getElementById('combinedPanel').classList.add('active');
-        }
-
-        function switchTab(tab) {
-            const tabFilter = document.getElementById('tabFilter');
-            const tabCalc = document.getElementById('tabCalc');
-            const tabSort = document.getElementById('tabSort');
-            
-            const contentFilter = document.getElementById('tabContentFilter');
-            const contentCalc = document.getElementById('tabContentCalc');
-            const contentSort = document.getElementById('tabContentSort');
-
-            tabFilter.classList.remove('active');
-            tabCalc.classList.remove('active');
-            tabSort.classList.remove('active');
-
-            contentFilter.style.display = 'none';
-            contentCalc.style.display = 'none';
-            contentSort.style.display = 'none';
-
-            if (tab === 'filter') {
-                tabFilter.classList.add('active');
-                contentFilter.style.display = 'block';
-            } else if (tab === 'calc') {
-                tabCalc.classList.add('active');
-                contentCalc.style.display = 'block';
-            } else {
-                tabSort.classList.add('active');
-                contentSort.style.display = 'block';
-            }
-        }
-
-        function selectBoss(size) {
-            selectedBoss = size;
-            document.getElementById('boss0').classList.toggle('active', size === 0);
-            document.getElementById('boss50').classList.toggle('active', size === 50);
-            document.getElementById('boss100').classList.toggle('active', size === 100);
-            calculateStemLength();
-        }
-
-        function calculateStemLength() {
-            const inputVal = parseFloat(document.getElementById('ductDiameter').value);
-            const resContainer = document.getElementById('calcResult');
-
-            if (isNaN(inputVal) || inputVal <= 0) {
-                stemMinLength = null;
-                stemMaxLength = null;
-                resContainer.className = 'calc-result-warning';
-                resContainer.innerHTML = 'Введите корректный диаметр воздуховода или трубы.';
-                updateFilterButtonState();
-                renderCards();
-                return;
-            }
-
-            stemMinLength = Math.round((inputVal / 3) + selectedBoss);
-            stemMaxLength = Math.round(((2 * inputVal) / 3) + selectedBoss);
-
-            resContainer.className = 'calc-result';
-            resContainer.innerHTML = `Рекомендуемая длина штока с учетом бобышки (${selectedBoss} мм):<br><b>от ${stemMinLength} мм до ${stemMaxLength} мм</b>`;
-            
-            updateFilterButtonState();
-            renderCards();
-        }
-
-        function resetStemFilter() {
-            document.getElementById('ductDiameter').value = '';
-            stemMinLength = null;
-            stemMaxLength = null;
-            const resContainer = document.getElementById('calcResult');
-            resContainer.className = 'calc-result-warning';
-            resContainer.innerHTML = 'Введите корректный диаметр воздуховода или трубы.';
-            updateFilterButtonState();
-            renderCards();
-        }
-
-        function closePanels() {
-            document.getElementById('panelOverlay').classList.remove('active');
-            document.getElementById('combinedPanel').classList.remove('active');
-            document.querySelectorAll('.filter-dropdown').forEach(d => d.classList.remove('open'));
-        }
-
-        function sortCards(key) {
-            if (currentSort.key === key) {
-                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSort.key = key;
-                currentSort.direction = 'asc';
-            }
-            closePanels();
-            renderCards();
-        }
-
-        function buildFilterPanel() {
-            const panelContent = document.getElementById('filterPanelContent');
-            panelContent.innerHTML = '';
-
-            filterColumns.forEach(key => {
-                const displayName = columnsMap[key];
-                if(!displayName) return;
-
-                let uniqueVals = [...new Set(rawData.map(item => (item[key] || "").trim()).filter(v => v !== ""))];
-                if (uniqueVals.length === 0) return;
-
-                uniqueVals.sort();
-
-                const groupDiv = document.createElement('div');
-                groupDiv.className = 'filter-group';
-
-                const btn = document.createElement('button');
-                btn.className = 'filter-group-title';
-                btn.setAttribute('data-filter-key', key);
-                btn.innerHTML = `
-                    <div class="filter-group-title-left">
-                        <span>${displayName}</span>
-                    </div>
-                    <div class="filter-group-title-right">
-                        <span class="group-counter" style="color: var(--label-secondary); font-size: 12px;">0/${uniqueVals.length}</span>
-                        <span style="color: var(--label-secondary); font-size: 11px;">▼</span>
-                    </div>
-                `;
-                
-                btn.onclick = () => {
-                    const dropdown = groupDiv.querySelector('.filter-dropdown');
-                    const isOpen = dropdown.classList.contains('open');
-                    
-                    if (!isOpen) {
-                        dropdown.classList.add('open');
-                        dropdown.scrollTop = 0;
-                    } else {
-                        dropdown.classList.remove('open');
-                    }
-                };
-
-                const dropdown = document.createElement('div');
-                dropdown.className = 'filter-dropdown';
-
-                uniqueVals.forEach(val => {
-                    const lbl = document.createElement('label');
-                    lbl.className = 'filter-item';
-                    const cb = document.createElement('input');
-                    cb.type = 'checkbox';
-                    cb.value = val;
-                    cb.onchange = (e) => {
-                        toggleFilter(key, val, e.target.checked);
-                        updateGroupTitleStyle(groupDiv, key);
-                    };
-                    lbl.appendChild(cb);
-
-                    let itemText = val;
-                    if (key === "Proizvodetel") {
-                        const prodCount = rawData.filter(i => (i["Proizvodetel"] || "").trim() === val).length;
-                        itemText += ` <span style="color: var(--label-secondary); font-size: 12px; margin-left: 4px;">(${prodCount})</span>`;
-                        lbl.innerHTML = '';
-                        lbl.appendChild(cb);
-                        const textSpan = document.createElement('span');
-                        textSpan.innerHTML = itemText;
-                        lbl.appendChild(textSpan);
-                    } else {
-                        lbl.appendChild(document.createTextNode(val));
-                    }
-
-                    dropdown.appendChild(lbl);
-                });
-
-                groupDiv.appendChild(btn);
-                groupDiv.appendChild(dropdown);
-                panelContent.appendChild(groupDiv);
-            });
-            updateHeaderCounters();
-        }
-
-        function updateHeaderCounters() {
-            filterColumns.forEach(key => {
-                const btn = document.querySelector(`[data-filter-key="${key}"]`);
-                if (!btn) return;
-
-                const counterSpan = btn.querySelector('.group-counter');
-                if (!counterSpan) return;
-
-                const totalVals = [...new Set(rawData.map(item => (item[key] || "").trim()).filter(v => v !== ""))].length;
-                const selectedCount = activeFilters[key] ? activeFilters[key].length : 0;
-
-                counterSpan.innerText = `${selectedCount}/${totalVals}`;
-            });
-        }
-
-        function updateGroupTitleStyle(groupDiv, key) {
-            const btn = groupDiv.querySelector('.filter-group-title');
-            if (activeFilters[key] && activeFilters[key].length > 0) {
-                btn.classList.add('has-selected');
-            } else {
-                btn.classList.remove('has-selected');
-            }
-        }
-
-        function toggleFilter(key, val, isChecked) {
-            if (!activeFilters[key]) activeFilters[key] = [];
-            if (isChecked) {
-                if (!activeFilters[key].includes(val)) activeFilters[key].push(val);
-            } else {
-                activeFilters[key] = activeFilters[key].filter(v => v !== val);
-            }
-            
-            updateFilterButtonState();
-            renderCards();
-        }
-
-        let resetClickCount = 0;
-        let resetClickTimer = null;
-
-        function clearAllFilters() {
-            resetClickCount++;
-            clearTimeout(resetClickTimer);
-
-            if (resetClickCount === 4) {
-                resetClickCount = 0;
-                window.location.href = 'KB.html';
-                return;
-            }
-
-            resetClickTimer = setTimeout(() => {
-                resetClickCount = 0;
-            }, 1500);
-
-            activeFilters = {};
-            filterOnlyUniquePart = false;
-            document.getElementById('btnUniquePart').classList.remove('active');
-            
-            document.querySelectorAll('.filter-dropdown input[type="checkbox"]').forEach(cb => cb.checked = false);
-            document.querySelectorAll('.filter-group-title').forEach(btn => btn.classList.remove('has-selected'));
-            clearInput('searchName', 'clearName');
-            clearInput('searchGlobal', 'clearGlobal');
-            currentSort = { key: null, direction: 'asc' };
-            
-            resetStemFilter();
-
-            updateFilterButtonState();
-            renderCards();
-        }
-
-        function updateFilterButtonState() {
-            const btnHeader = document.getElementById('clearFiltersBtn');
-            const btnPanel = document.getElementById('panelResetBtn');
-            let isFiltered = false;
-
-            for (let key in activeFilters) {
-                if (activeFilters[key].length > 0) {
-                    isFiltered = true;
-                    break;
-                }
-            }
-
-            if (stemMinLength !== null && stemMaxLength !== null) {
-                isFiltered = true;
-            }
-
-            const nameQuery = document.getElementById('searchName').value.trim();
-            const globalQuery = document.getElementById('searchGlobal').value.trim();
-            if (nameQuery !== '' || globalQuery !== '') {
-                isFiltered = true;
-            }
-
-            if (isFiltered) {
-                btnHeader.classList.add('active');
-                btnPanel.classList.add('active');
-            } else {
-                btnHeader.classList.remove('active');
-                btnPanel.classList.remove('active');
-            }
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-            return text.toString().replace(/[&<>"']/g, m => map[m]);
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-                closeDecodeModal(true);
-                closeImageModal();
-                closePanels();
-            }
-        });
-    </script>
+  <div class="footer">© Ferrum — система подбора оборудования</div>
 </body>
 </html>
