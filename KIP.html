@@ -163,7 +163,6 @@
             border-color: var(--blue);
         }
 
-        /* Кнопка Дубль: белая, с красным перечеркиванием при нажатии */
         .btn-double.active {
             position: relative;
             background-color: var(--card-bg);
@@ -205,10 +204,7 @@
         .status-toggle.green::after { background: var(--green); }
         .status-toggle.red::after { background: var(--red); }
 
-        /* Кнопка Сброс: в активном состоянии остается белой с красным текстом */
-        .btn-reset-header {
-            display: none;
-        }
+        .btn-reset-header { display: none; }
         .btn-top.btn-reset-header.active {
             display: flex;
             background-color: var(--card-bg);
@@ -300,16 +296,8 @@
         }
 
         .badge:active { opacity: 0.7; }
-
-        .badge-part {
-            background: var(--gray-bg);
-            color: var(--label-primary);
-        }
-
-        .badge-group {
-            background: rgba(120, 120, 128, 0.1);
-            color: #3a3a3c;
-        }
+        .badge-part { background: var(--gray-bg); color: var(--label-primary); }
+        .badge-group { background: rgba(120, 120, 128, 0.1); color: #3a3a3c; }
 
         .card-name {
             font-size: 13px;
@@ -437,7 +425,6 @@
         }
 
         .modal-title { font-size: 16px; font-weight: 600; margin-top: 4px; }
-
         .modal-body { padding: 8px 0; overflow-y: auto; background: var(--card-bg); }
 
         .modal-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
@@ -483,12 +470,7 @@
             pointer-events: none;
             opacity: 0;
         }
-
-        .modal-overlay.decode-overlay.active {
-            display: flex;
-            opacity: 1;
-        }
-
+        .modal-overlay.decode-overlay.active { display: flex; opacity: 1; }
         .modal-overlay.decode-overlay.pinned {
             background: rgba(0, 0, 0, 0.3);
             pointer-events: auto;
@@ -513,7 +495,6 @@
             background: var(--card-bg);
             border-bottom: 1px solid rgba(0,0,0,0.06);
         }
-
         .decode-modal-header::before { display: none; }
 
         .tspt-header-blocks {
@@ -535,10 +516,7 @@
             transition: background 0.15s, color 0.15s;
         }
 
-        .tspt-block-item.highlighted {
-            background: rgba(0, 122, 255, 0.15);
-        }
-
+        .tspt-block-item.highlighted { background: rgba(0, 122, 255, 0.15); }
         .tspt-block-item.highlighted .tspt-block-text {
             color: var(--blue);
             border-bottom-color: var(--blue);
@@ -604,12 +582,8 @@
             transition: background 0.15s;
         }
 
-        .decode-table tr.highlighted {
-            background: rgba(0, 122, 255, 0.12) !important;
-        }
-
+        .decode-table tr.highlighted { background: rgba(0, 122, 255, 0.12) !important; }
         .decode-table tr:last-child td { border-bottom: none; }
-
         .decode-table .col-block { width: 32%; }
         .decode-table .col-code { width: 18%; font-weight: 700; color: var(--blue); }
         .decode-table .col-desc { width: 50%; }
@@ -689,9 +663,7 @@
             padding: 14px;
             margin-bottom: 12px;
         }
-        .calc-field {
-            margin-bottom: 12px;
-        }
+        .calc-field { margin-bottom: 12px; }
         .calc-field label {
             display: block;
             font-size: 13px;
@@ -707,13 +679,9 @@
             font-size: 14px;
             outline: none;
         }
-        .calc-input:focus {
-            border-color: var(--blue);
-        }
-        .boss-options {
-            display: flex;
-            gap: 6px;
-        }
+        .calc-input:focus { border-color: var(--blue); }
+
+        .boss-options { display: flex; gap: 6px; }
         .boss-btn {
             flex: 1;
             padding: 8px 4px;
@@ -798,9 +766,7 @@
             transition: background 0.2s, color 0.2s;
         }
 
-        .filter-group-title:hover {
-            background: var(--gray-bg-hover);
-        }
+        .filter-group-title:hover { background: var(--gray-bg-hover); }
 
         .filter-group-title-left {
             display: flex;
@@ -859,9 +825,7 @@
             position: relative;
             transition: background 0.2s;
         }
-        .filter-item input[type="checkbox"]:checked {
-            background-color: var(--blue);
-        }
+        .filter-item input[type="checkbox"]:checked { background-color: var(--blue); }
         .filter-item input[type="checkbox"]:checked::after {
             content: '✓';
             color: white;
@@ -904,10 +868,31 @@
         }
 
         /* Стили для МК */
+        .mk-subgroup { margin-bottom: 20px; border: 1px solid var(--separator); border-radius: 8px; overflow: hidden; }
+        .mk-subgroup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--gray-bg);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .btn-copy-subgroup {
+            height: 28px;
+            padding: 0 10px;
+            background-color: var(--blue);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+        }
         .mk-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .mk-table th { text-align: left; padding: 8px; color: var(--label-secondary); font-weight: 600; border-bottom: 1px solid var(--separator); }
+        .mk-table th { text-align: left; padding: 8px; color: var(--label-secondary); font-weight: 600; border-bottom: 1px solid var(--separator); background: #fff; }
         .mk-table td { padding: 8px; border-bottom: 0.5px solid var(--separator); vertical-align: top; }
-        .mk-select { width: 100%; max-width: 250px; padding: 4px 8px; border: 1px solid var(--separator); border-radius: 6px; background: var(--card-bg); font-size: 13px; color: var(--label-primary); outline: none; }
+        .mk-table tr:last-child td { border-bottom: none; }
     </style>
 </head>
 <body>
@@ -959,7 +944,6 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-modal-action btn-close-modal-footer" onclick="closeMKModal()">Закрыть</button>
-                <button class="btn-modal-action btn-site" onclick="copyMKResults()">Копировать</button>
             </div>
         </div>
     </div>
@@ -1088,59 +1072,20 @@
         };
 
         const filterColumns = [
-            "Proizvodetel",
-            "Группа",
-            "BlokVCK",
-            "Naznachenie",
-            "ActualStatus",
-            "ParamKontrol",
-            "VzryvVybor",
-            "Vzryvozaschita",
-            "TipSignala",
-            "DiapazonUstanovkiIzmer",
-            "Tochnost",
-            "IP",
-            "Displej",
-            "Temperatura",
-            "MPI",
-            "NaznachenieDlyaZip",
-            "ModelBZ",
-            "Characteristic",
-            "DiamKabelya",
-            "KabVvodMetalRukav",
-            "KabVvod",
-            "PowerVoltage",
-            "Manifold",
-            "Соединение к прибору",
-            "Класс"
+            "Proizvodetel", "Группа", "BlokVCK", "Naznachenie", "ActualStatus",
+            "ParamKontrol", "VzryvVybor", "Vzryvozaschita", "TipSignala",
+            "DiapazonUstanovkiIzmer", "Tochnost", "IP", "Displej", "Temperatura",
+            "MPI", "NaznachenieDlyaZip", "ModelBZ", "Characteristic", "DiamKabelya",
+            "KabVvodMetalRukav", "KabVvod", "PowerVoltage", "Manifold",
+            "Соединение к прибору", "Класс"
         ];
 
         const modalOrderKeys = [
-            "Proizvodetel",
-            "Группа",
-            "Naznachenie",
-            "ParamKontrol",
-            "BlokVCK",
-            "VzryvVybor",
-            "Vzryvozaschita",
-            "TipSignala",
-            "DiapazonUstanovkiIzmer",
-            "Temperatura",
-            "Tochnost",
-            "IP",
-            "Displej",
-            "MPI",
-            "Characteristic",
-            "KabVvod",
-            "DiamKabelya",
-            "KabVvodMetalRukav",
-            "PowerVoltage",
-            "Manifold",
-            "Соединение к прибору",
-            "Класс",
-            "NaznachenieDlyaZip",
-            "ModelBZ",
-            "Комментарий"
+            "Proizvodetel", "Группа", "Naznachenie", "ParamKontrol", "BlokVCK",
+            "VzryvVybor", "Vzryvozaschita", "TipSignala", "DiapazonUstanovkiIzmer",
+            "Temperatura", "Tochnost", "IP", "Displej", "MPI", "Characteristic",
+            "KabVvod", "DiamKabelya", "KabVvodMetalRukav", "PowerVoltage", "Manifold",
+            "Соединение к прибору", "Класс", "NaznachenieDlyaZip", "ModelBZ", "Комментарий"
         ];
 
         const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzAETiIKfUBvchm03dtQKognrImGtEbT5O13_WQpCe7exHxLvPXOAAqFdm9899nSeF3gVvkrTsTcej/pub?gid=1716395972&single=true&output=csv";
@@ -1148,6 +1093,7 @@
         
         let rawData = [];
         let mkData = [];
+        let mkSubgroups = []; // Глобальная переменная для хранения подгрупп МК
         let activeFilters = {};
         let currentSort = { key: null, direction: 'asc' };
         
@@ -1166,9 +1112,7 @@
             .catch(err => console.warn('Файл TSPT.json не найден или содержит ошибки:', err));
 
         Papa.parse(csvUrl, {
-            download: true,
-            header: true,
-            skipEmptyLines: true,
+            download: true, header: true, skipEmptyLines: true,
             complete: function(results) {
                 rawData = results.data;
                 buildFilterPanel();
@@ -1180,49 +1124,33 @@
         });
 
         Papa.parse(mkCsvUrl, {
-            download: true,
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                mkData = results.data;
-            }
+            download: true, header: true, skipEmptyLines: true,
+            complete: function(results) { mkData = results.data; }
         });
 
         function getProducerColor(str) {
             if (!str) return { bg: 'rgba(142, 142, 147, 0.15)', text: '#8e8e93' };
             let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            }
+            for (let i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); }
             const h = Math.abs(hash) % 360;
-            return {
-                bg: `hsla(${h}, 70%, 50%, 0.15)`,
-                text: `hsl(${h}, 80%, 32%)`
-            };
+            return { bg: `hsla(${h}, 70%, 50%, 0.15)`, text: `hsl(${h}, 80%, 32%)` };
         }
 
         function toggleStatusFilter() {
             filterStatus = !filterStatus;
-            const btn = document.getElementById('statusToggleBtn');
-            btn.className = filterStatus ? 'status-toggle green' : 'status-toggle red';
+            document.getElementById('statusToggleBtn').className = filterStatus ? 'status-toggle green' : 'status-toggle red';
             renderCards();
         }
 
         function toggleUniquePart() {
             filterOnlyUniquePart = !filterOnlyUniquePart;
-            const btn = document.getElementById('btnUniquePart');
-            if (filterOnlyUniquePart) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
+            document.getElementById('btnUniquePart').classList.toggle('active', filterOnlyUniquePart);
             renderCards();
         }
 
         function renderCards() {
             const grid = document.getElementById('cardsGrid');
             const counter = document.getElementById('counter');
-            
             let targetStatus = filterStatus ? "TRUE" : "FALSE";
             let dataToRender = rawData.filter(item => (item["Status"] || "").toString().trim().toUpperCase() === targetStatus);
 
@@ -1248,7 +1176,6 @@
                     const charStr = (item["Characteristic"] || "").toString();
                     const matches = charStr.match(/\b\d{2,4}\b/g);
                     if (!matches) return false;
-                    
                     return matches.some(valStr => {
                         const val = parseFloat(valStr);
                         return val >= stemMinLength && val <= stemMaxLength;
@@ -1273,16 +1200,13 @@
             let finalData = dataToRender.filter(item => {
                 const projectName = (item["ProjectName"] || '').toString().toLowerCase();
                 const matchName = nameQuery === '' || projectName.includes(nameQuery);
-
                 let matchGlobal = true;
                 if (globalQuery !== '') {
                     matchGlobal = false;
                     for (const key in columnsMap) {
-                        if (item[key]) {
-                            if (item[key].toString().toLowerCase().includes(globalQuery)) {
-                                matchGlobal = true;
-                                break;
-                            }
+                        if (item[key] && item[key].toString().toLowerCase().includes(globalQuery)) {
+                            matchGlobal = true;
+                            break;
                         }
                     }
                 }
@@ -1301,7 +1225,6 @@
             finalData.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'card';
-
                 card.addEventListener('click', (e) => {
                     const selection = window.getSelection();
                     if (selection.toString().length > 0) return;
@@ -1316,21 +1239,15 @@
                 const imgRaw = item["IMG"] || '';
                 const imgUrl = imgRaw.split(",")[0].trim();
                 const isStatusFalse = (item["Status"] || "").toString().trim().toUpperCase() === "FALSE";
-
                 const groupRaw = item["Группа"] || '';
                 const groupClean = groupRaw.replace(/Группа\s*/gi, '').trim();
-
                 const producerStyle = getProducerColor(producer);
 
                 const statusRaw = (item["ActualStatus"] || '').trim().toUpperCase();
                 let dotHtml = '';
-                if (isStatusFalse) {
-                    dotHtml = '<div class="status-dot dot-red" title="Статус FALSE"></div>';
-                } else if (statusRaw === 'А' || statusRaw === 'A') {
-                    dotHtml = '<div class="status-dot dot-green" title="Популярный"></div>';
-                } else if (statusRaw === 'АК' || statusRaw === 'AK') {
-                    dotHtml = '<div class="status-dot dot-yellow" title="Редкий"></div>';
-                }
+                if (isStatusFalse) dotHtml = '<div class="status-dot dot-red" title="Статус FALSE"></div>';
+                else if (statusRaw === 'А' || statusRaw === 'A') dotHtml = '<div class="status-dot dot-green" title="Популярный"></div>';
+                else if (statusRaw === 'АК' || statusRaw === 'AK') dotHtml = '<div class="status-dot dot-yellow" title="Редкий"></div>';
 
                 const isTspt101 = projectName.includes('ТСПТ') && projectName.includes('101');
                 const infoIconHtml = isTspt101 ? `<span class="info-btn" 
@@ -1359,15 +1276,10 @@
 
                 const imgEl = card.querySelector('.card-image');
                 if (imgEl) {
-                    imgEl.onclick = (e) => {
-                        e.stopPropagation();
-                        openImageModal(imgUrl);
-                    };
+                    imgEl.onclick = (e) => { e.stopPropagation(); openImageModal(imgUrl); };
                 }
-
                 grid.appendChild(card);
             });
-            
             updateHeaderCounters();
         }
 
@@ -1375,12 +1287,23 @@
         // Логика МК
         // ==========================================
 
-        function openMKModal() {
-            // Сбрасываем поля при открытии
+        async function openMKModal() {
             document.getElementById('mkTagInput').value = '';
             document.getElementById('mkResultsContainer').innerHTML = '<p style="color: var(--label-secondary); text-align: center; margin-top: 20px;">Введите ТЭГ и нажмите "Найти", чтобы получить список МК.</p>';
             document.getElementById('mkModalOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
+
+            // Пытаемся прочитать буфер обмена и сразу выполнить поиск
+            try {
+                const text = await navigator.clipboard.readText();
+                const tag = text.trim();
+                if (tag) {
+                    document.getElementById('mkTagInput').value = tag;
+                    searchMK();
+                }
+            } catch (err) {
+                console.warn('Чтение буфера обмена не удалось (возможно, нет HTTPS или нет разрешения):', err);
+            }
         }
 
         function closeMKModal() {
@@ -1414,8 +1337,6 @@
 
             const groupLower = group.toLowerCase();
             let matchingRows = [];
-            
-            // 1. Находим индекс заголовка главной группы
             let groupIndex = mkData.findIndex(row => {
                 const kod = (row['Код 1С'] || '').toString().trim().toLowerCase();
                 const name = (row['Полное наименование'] || '').toString().trim().toLowerCase();
@@ -1423,9 +1344,7 @@
             });
             
             if (groupIndex !== -1) {
-                matchingRows.push(mkData[groupIndex]); // Добавляем саму главную группу
-
-                // 2. Идем вниз до следующей главной группы
+                matchingRows.push(mkData[groupIndex]); 
                 for (let i = groupIndex + 1; i < mkData.length; i++) {
                     const row = mkData[i];
                     const kod = (row['Код 1С'] || '').toString().trim();
@@ -1433,21 +1352,11 @@
                     const qty = (row['Кол-во'] || '').toString().trim();
                     const unit = (row['Ед. Изм.'] || '').toString().trim();
 
-                    // Пропускаем полностью пустые строки
                     if (kod === '' && name === '' && qty === '' && unit === '') continue;
-
                     const kodLower = kod.toLowerCase();
                     const nameLower = name.toLowerCase();
-
-                    // Условие остановки: встретили следующую главную группу
-                    // Главная группа — это строка, в которой есть слово "группа" в коде или названии, и нет количества/ед. изм.
                     const isMainGroup = (kodLower.startsWith('группа') || nameLower.startsWith('группа')) && qty === '' && unit === '';
-                    
-                    if (isMainGroup) {
-                        break; // Прерываем цикл, так как наткнулись на следующую группу
-                    }
-
-                    // Если это не новая главная группа — добавляем (это может быть подгруппа "Комплект" или позиция)
+                    if (isMainGroup) break;
                     matchingRows.push(row);
                 }
             }
@@ -1457,96 +1366,105 @@
                 return;
             }
 
-            // Формируем визуальный вывод
-            let html = `<div style="margin-bottom: 12px; padding: 12px; background: var(--gray-bg); border-radius: 10px;">
-                <div style="font-size: 12px; color: var(--label-secondary); margin-bottom: 4px;">Найденное оборудование:</div>
-                <div style="font-weight: 600; margin-bottom: 8px;">${escapeHtml(projectName)}</div>
-                <div style="font-size: 13px;">Группа: <b>${escapeHtml(group)}</b></div>
-                <div style="font-size: 12px; color: var(--label-secondary); margin-top: 8px;">Строк в списке: ${matchingRows.length}</div>
-            </div>`;
+            // Группируем элементы по подгруппам
+            mkSubgroups = [];
+            let currentSubgroup = null;
 
-            html += '<div style="overflow-x: auto;"><table class="mk-table"><thead><tr><th>Код 1С</th><th>Полное наименование</th><th>Кол-во</th><th>Ед. Изм.</th></tr></thead><tbody>';
-            
-            // Выводим список построчно
             matchingRows.forEach((row, index) => {
-                const kod = (row['Код 1С'] || '').toString().trim();
                 const qty = (row['Кол-во'] || '').toString().trim();
                 const unit = (row['Ед. Изм.'] || '').toString().trim();
                 const name = (row['Полное наименование'] || '').toString().trim();
-                
-                // Заголовки подгрупп (например "Комплект 1") выделяем жирным и фоном
-                // Также выделяем саму главную группу (индекс 0)
-                const isHeaderRow = (index === 0) || (qty === '' && unit === '' && (name.toLowerCase().includes('комплект') || name.toLowerCase().includes('подгруппа')));
-                
-                let rowStyle = isHeaderRow ? 'font-weight: 600; background: var(--gray-bg);' : '';
-                let padding = isHeaderRow ? '8px 12px' : '8px 12px 8px 24px';
-                
-                html += `<tr style="${rowStyle}">`;
-                html += `<td style="white-space: nowrap; padding: ${padding};">${renderCell(kod)}</td>`;
-                html += `<td style="padding: ${padding};">${renderCell(name)}</td>`;
-                html += `<td style="padding: ${padding};">${renderCell(qty)}</td>`;
-                html += `<td style="padding: ${padding};">${renderCell(unit)}</td>`;
-                html += '</tr>';
+
+                const isMainGroup = (index === 0);
+                const isSubgroupHeader = !isMainGroup && (qty === '' && unit === '');
+
+                if (isSubgroupHeader) {
+                    currentSubgroup = { name: name || 'Подгруппа', rows: [] };
+                    mkSubgroups.push(currentSubgroup);
+                } else if (!isMainGroup) {
+                    if (!currentSubgroup) {
+                        currentSubgroup = { name: 'Состав группы', rows: [] };
+                        mkSubgroups.push(currentSubgroup);
+                    }
+                    currentSubgroup.rows.push(row);
+                }
             });
-            html += '</tbody></table></div>';
+
+            // Если подгрупп не оказалось, но элементы есть
+            if (mkSubgroups.length === 0 && matchingRows.length > 1) {
+                mkSubgroups.push({ name: 'Состав группы', rows: matchingRows.slice(1) });
+            } else if (mkSubgroups.length === 0 && matchingRows.length === 1) {
+                mkSubgroups.push({ name: 'Состав группы', rows: [] });
+            }
+
+            // Формируем визуальный вывод
+            let html = `<div style="margin-bottom: 16px; padding: 12px; background: var(--gray-bg); border-radius: 10px;">
+                <div style="font-size: 12px; color: var(--label-secondary); margin-bottom: 4px;">Найденное оборудование:</div>
+                <div style="font-weight: 600; margin-bottom: 8px;">${escapeHtml(projectName)}</div>
+                <div style="font-size: 13px;">Группа: <b>${escapeHtml(group)}</b></div>
+            </div>`;
+
+            mkSubgroups.forEach((sub, idx) => {
+                html += `<div class="mk-subgroup">`;
+                html += `<div class="mk-subgroup-header">
+                            <span>${escapeHtml(sub.name)}</span>
+                            <button class="btn-copy-subgroup" onclick="copySubgroup(${idx})">Копировать</button>
+                         </div>`;
+                
+                html += '<div style="overflow-x: auto;"><table class="mk-table"><thead><tr><th>Код 1С</th><th>Полное наименование</th><th>Кол-во</th><th>Ед. Изм.</th></tr></thead><tbody>';
+                
+                if (sub.rows.length === 0) {
+                    html += '<tr><td colspan="4" style="text-align:center; color:var(--label-secondary); padding:10px;">Нет позиций</td></tr>';
+                } else {
+                    sub.rows.forEach(row => {
+                        const kod = (row['Код 1С'] || '').toString().trim();
+                        const qty = (row['Кол-во'] || '').toString().trim();
+                        const unit = (row['Ед. Изм.'] || '').toString().trim();
+                        const name = (row['Полное наименование'] || '').toString().trim();
+                        
+                        html += `<tr>`;
+                        html += `<td style="white-space: nowrap; padding: 8px 12px;">${escapeHtml(kod)}</td>`;
+                        html += `<td style="padding: 8px 12px;">${escapeHtml(name)}</td>`;
+                        html += `<td style="padding: 8px 12px;">${escapeHtml(qty)}</td>`;
+                        html += `<td style="padding: 8px 12px;">${escapeHtml(unit)}</td>`;
+                        html += '</tr>';
+                    });
+                }
+                html += '</tbody></table></div>';
+                html += `</div>`;
+            });
             
             container.innerHTML = html;
         }
 
-        function renderCell(value) {
-            if (!value) return '';
-            const valStr = value.toString().trim();
-            
-            // Если в ячейке несколько значений (через запятую или перенос строки), выводим как выпадающий список
-            if (valStr.includes(',') || valStr.includes('\n')) {
-                const options = valStr.split(/[,\\n]/).map(v => v.trim()).filter(v => v !== '');
-                if (options.length > 1) {
-                    const optsHtml = options.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
-                    return `<select class="mk-select">${optsHtml}</select>`;
-                }
-            }
-            return escapeHtml(valStr);
-        }
-
-        function copyMKResults() {
-            const table = document.querySelector('#mkResultsContainer table');
-            if (!table) {
+        function copySubgroup(index) {
+            const sub = mkSubgroups[index];
+            if (!sub || sub.rows.length === 0) {
                 showToast("Нет данных для копирования");
                 return;
             }
-            
+
             let tsv = [];
-            const rows = table.querySelectorAll('tr');
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('th, td');
-                let rowData = [];
-                cells.forEach(cell => {
-                    const select = cell.querySelector('select');
-                    if (select) {
-                        // Если это выпадающий список, собираем все варианты обратно через запятую
-                        let options = [];
-                        for(let i=0; i<select.options.length; i++) {
-                            options.push(select.options[i].text);
-                        }
-                        // Заключаем в кавычки, чтобы при вставке в Excel все варианты остались в одной ячейке
-                        rowData.push(`"${options.join(', ')}"`);
-                    } else {
-                        // Очищаем текст от лишних переносов и табуляций
-                        let text = cell.innerText.replace(/\t/g, ' ').replace(/\n/g, ' ').replace(/\r/g, ' ').trim();
-                        // Если есть кавычки внутри текста, экранируем их
-                        if (text.includes('"')) {
-                            text = text.replace(/"/g, '""');
-                            text = `"${text}"`;
-                        }
-                        rowData.push(text);
+            tsv.push(['Код 1С', 'Полное наименование', 'Кол-во', 'Ед. Изм.'].join('\t'));
+            
+            sub.rows.forEach(row => {
+                const kod = (row['Код 1С'] || '').toString().replace(/\t/g, ' ').replace(/\n/g, ' ').trim();
+                const name = (row['Полное наименование'] || '').toString().replace(/\t/g, ' ').replace(/\n/g, ' ').trim();
+                const qty = (row['Кол-во'] || '').toString().replace(/\t/g, ' ').replace(/\n/g, ' ').trim();
+                const unit = (row['Ед. Изм.'] || '').toString().replace(/\t/g, ' ').replace(/\n/g, ' ').trim();
+
+                let rowData = [kod, name, qty, unit].map(text => {
+                    if (text.includes('"')) {
+                        return `"${text.replace(/"/g, '""')}"`;
                     }
+                    return text;
                 });
                 tsv.push(rowData.join('\t'));
             });
-            
+
             const tsvString = tsv.join('\n');
             navigator.clipboard.writeText(tsvString).then(() => {
-                showToast("Список скопирован");
+                showToast(`Подгруппа скопирована`);
             });
         }
 
@@ -1556,18 +1474,14 @@
 
         function copyPartNumber(e, text) {
             e.stopPropagation();
-            navigator.clipboard.writeText(text).then(() => {
-                showToast("УПП скопирован");
-            });
+            navigator.clipboard.writeText(text).then(() => { showToast("УПП скопирован"); });
         }
 
         function showToast(msg) {
             const toast = document.getElementById('iosToast');
             toast.innerText = msg;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 1000);
+            setTimeout(() => { toast.classList.remove('show'); }, 1000);
         }
 
         function openProducerFilter(e, producerName) {
@@ -1591,9 +1505,7 @@
                     dropdown.classList.add('open');
                     dropdown.scrollTop = 0;
                 }
-                setTimeout(() => {
-                    groupTitleBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }, 100);
+                setTimeout(() => { groupTitleBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
             }
         }
 
@@ -1659,8 +1571,7 @@
         function hoverDecodeModal(e, sensorName) {
             if (isDecodePinned) return;
             fillDecodeTable(sensorName);
-            const overlay = document.getElementById('decodeModalOverlay');
-            overlay.classList.add('active');
+            document.getElementById('decodeModalOverlay').classList.add('active');
         }
 
         function unhoverDecodeModal() {
@@ -1671,10 +1582,8 @@
         function pinDecodeModal(e, sensorName) {
             e.stopPropagation();
             isDecodePinned = true;
-
             const overlay = document.getElementById('decodeModalOverlay');
             overlay.classList.add('pinned');
-            
             if (!overlay.classList.contains('active')) {
                 hoverDecodeModal(e, sensorName);
             }
@@ -1698,11 +1607,9 @@
                 modalTableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:15px; color:#8e8e93;">Загрузка данных расшифровки...</td></tr>';
             } else {
                 const parsedData = parseTspt101Name(sensorName, tspt101Data);
-                
                 parsedData.forEach((item, index) => {
                     const blockId = `tspt-block-${index}`;
                     const rowId = `tspt-row-${index}`;
-
                     const blockDiv = document.createElement('div');
                     blockDiv.className = 'tspt-block-item';
                     blockDiv.id = blockId;
@@ -1728,7 +1635,6 @@
                         const row = document.getElementById(rowId);
                         if (row) row.classList.remove('highlighted');
                     };
-
                     blocksContainer.appendChild(blockDiv);
 
                     if (index < parsedData.length - 1) {
@@ -1742,7 +1648,6 @@
                 parsedData.forEach((item, index) => {
                     const blockId = `tspt-block-${index}`;
                     const rowId = `tspt-row-${index}`;
-
                     const tr = modalTableBody.insertRow();
                     tr.id = rowId;
                     const tdBlock = tr.insertCell(0);
@@ -1773,7 +1678,6 @@
 
         function parseTspt101Name(str, data) {
             const list = [];
-            
             let rangeMatch = str.match(/\(([^)]+)\)/);
             let rangeVal = rangeMatch ? rangeMatch[1] : null;
             let cleanStr = str.replace(/\([^)]+\)/, '').trim();
@@ -1787,66 +1691,29 @@
             if (parts[0]) {
                 const tokens = parts[0].split(/\s+/);
                 const typeKey = tokens[0];
-                list.push({
-                    num: 1,
-                    label: "1. Тип датчика",
-                    code: typeKey,
-                    value: data.type[typeKey] || 'Термометр сопротивления платиновый'
-                });
+                list.push({ num: 1, label: "1. Тип датчика", code: typeKey, value: data.type[typeKey] || 'Термометр сопротивления платиновый' });
 
                 if (tokens.length === 3) {
                     const exKey = tokens[1];
-                    list.push({
-                        num: 2,
-                        label: "2. Вид взрывозащиты",
-                        code: exKey,
-                        value: data.ex[exKey] || ''
-                    });
+                    list.push({ num: 2, label: "2. Вид взрывозащиты", code: exKey, value: data.ex[exKey] || '' });
                     const modKey = tokens[2];
-                    list.push({
-                        num: 3,
-                        label: "3. Модификация",
-                        code: modKey,
-                        value: data.modification[modKey] || ''
-                    });
+                    list.push({ num: 3, label: "3. Модификация", code: modKey, value: data.modification[modKey] || '' });
                 } else if (tokens.length === 2) {
                     const modKey = tokens[1];
-                    list.push({
-                        num: 3,
-                        label: "3. Модификация",
-                        code: modKey,
-                        value: data.modification[modKey] || ''
-                    });
+                    list.push({ num: 3, label: "3. Модификация", code: modKey, value: data.modification[modKey] || '' });
                 }
             }
 
             if (parts[1]) {
                 const cableKey = parts[1].charAt(0);
                 const nodeKey = parts[1].slice(1);
-
-                list.push({
-                    num: 4,
-                    label: "4. Кабельный ввод",
-                    code: cableKey,
-                    value: data.cableEntry[cableKey] || ''
-                });
-
-                list.push({
-                    num: 5,
-                    label: "5. Узел коммутации",
-                    code: nodeKey,
-                    value: data.switchingNode[nodeKey] || ''
-                });
+                list.push({ num: 4, label: "4. Кабельный ввод", code: cableKey, value: data.cableEntry[cableKey] || '' });
+                list.push({ num: 5, label: "5. Узел коммутации", code: nodeKey, value: data.switchingNode[nodeKey] || '' });
             }
 
             if (parts[2]) {
                 const nshKey = parts[2];
-                list.push({
-                    num: 6,
-                    label: "6. НСХ",
-                    code: nshKey,
-                    value: data.nsh[nshKey] || ''
-                });
+                list.push({ num: 6, label: "6. НСХ", code: nshKey, value: data.nsh[nshKey] || '' });
             }
 
             if (parts[3]) {
@@ -1858,116 +1725,60 @@
                 else if (p3.startsWith("C")) cls = "C";
 
                 if (cls) {
-                    list.push({
-                        num: 7,
-                        label: "7. Класс допуска",
-                        code: cls,
-                        value: `Класс допуска ${cls} по ГОСТ 6651-2009`
-                    });
+                    list.push({ num: 7, label: "7. Класс допуска", code: cls, value: `Класс допуска ${cls} по ГОСТ 6651-2009` });
                     p3 = p3.slice(cls.length);
                 }
 
                 let scheme = p3.charAt(0);
                 if (["2", "3", "4"].includes(scheme)) {
-                    list.push({
-                        num: 8,
-                        label: "8. Схема соединения",
-                        code: scheme,
-                        value: data.wireScheme[scheme] || ''
-                    });
+                    list.push({ num: 8, label: "8. Схема соединения", code: scheme, value: data.wireScheme[scheme] || '' });
                     p3 = p3.slice(1);
                 }
 
                 let sig = p3;
                 if (sig && data.signal[sig]) {
-                    list.push({
-                        num: 9,
-                        label: "9. Выходной сигнал",
-                        code: sig,
-                        value: data.signal[sig]
-                    });
+                    list.push({ num: 9, label: "9. Выходной сигнал", code: sig, value: data.signal[sig] });
                 }
             }
 
             if (parts[4]) {
                 const matKey = parts[4];
-                list.push({
-                    num: 10,
-                    label: "10. Материал оболочки",
-                    code: matKey,
-                    value: data.sheathMaterial[matKey] || matKey
-                });
+                list.push({ num: 10, label: "10. Материал оболочки", code: matKey, value: data.sheathMaterial[matKey] || matKey });
             }
 
             if (parts[5]) {
-                list.push({
-                    num: 11,
-                    label: "11. Диаметр штока",
-                    code: parts[5],
-                    value: `Наружный диаметр ${parts[5]} мм`
-                });
+                list.push({ num: 11, label: "11. Диаметр штока", code: parts[5], value: `Наружный диаметр ${parts[5]} мм` });
             }
 
             if (parts[6]) {
-                list.push({
-                    num: 12,
-                    label: "12. Длина L",
-                    code: parts[6],
-                    value: `Монтажная длина ${parts[6]} мм`
-                });
+                list.push({ num: 12, label: "12. Длина L", code: parts[6], value: `Монтажная длина ${parts[6]} мм` });
             }
 
             if (parts[7]) {
-                list.push({
-                    num: 13,
-                    label: "13. Размер e",
-                    code: parts[7],
-                    value: `${parts[7]} мм`
-                });
+                list.push({ num: 13, label: "13. Размер e", code: parts[7], value: `${parts[7]} мм` });
             }
 
             if (parts[8]) {
-                list.push({
-                    num: 14,
-                    label: "14. Штуцер",
-                    code: parts[8],
-                    value: parts[8]
-                });
+                list.push({ num: 14, label: "14. Штуцер", code: parts[8], value: parts[8] });
             }
 
             if (hasUpi) {
-                list.push({
-                    num: "—",
-                    label: "Преобразователь",
-                    code: "УПИ-420",
-                    value: data.extras["УПИ-420"]
-                });
+                list.push({ num: "—", label: "Преобразователь", code: "УПИ-420", value: data.extras["УПИ-420"] });
             }
 
             if (hasHart) {
-                list.push({
-                    num: "—",
-                    label: "Протокол связи",
-                    code: "HARTv7",
-                    value: data.extras["HARTv7"]
-                });
+                list.push({ num: "—", label: "Протокол связи", code: "HARTv7", value: data.extras["HARTv7"] });
             }
 
             if (rangeVal) {
-                list.push({
-                    num: "—",
-                    label: "Диапазон",
-                    code: rangeVal,
-                    value: `Диапазон измерения температур: ${rangeVal}`
-                });
+                list.push({ num: "—", label: "Диапазон", code: rangeVal, value: `Диапазон измерения температур: ${rangeVal}` });
             }
 
             return list;
         }
 
         function openImageModal(url) {
-            const fullImg = document.getElementById('fullImage');
-            fullImg.src = url;
+            document.getElementById('fullImage').src = url;
             document.getElementById('imageModal').style.display = 'flex';
         }
 
@@ -1982,31 +1793,22 @@
         }
 
         function switchTab(tab) {
-            const tabFilter = document.getElementById('tabFilter');
-            const tabCalc = document.getElementById('tabCalc');
-            const tabSort = document.getElementById('tabSort');
-            
-            const contentFilter = document.getElementById('tabContentFilter');
-            const contentCalc = document.getElementById('tabContentCalc');
-            const contentSort = document.getElementById('tabContentSort');
-
-            tabFilter.classList.remove('active');
-            tabCalc.classList.remove('active');
-            tabSort.classList.remove('active');
-
-            contentFilter.style.display = 'none';
-            contentCalc.style.display = 'none';
-            contentSort.style.display = 'none';
+            document.getElementById('tabFilter').classList.remove('active');
+            document.getElementById('tabCalc').classList.remove('active');
+            document.getElementById('tabSort').classList.remove('active');
+            document.getElementById('tabContentFilter').style.display = 'none';
+            document.getElementById('tabContentCalc').style.display = 'none';
+            document.getElementById('tabContentSort').style.display = 'none';
 
             if (tab === 'filter') {
-                tabFilter.classList.add('active');
-                contentFilter.style.display = 'block';
+                document.getElementById('tabFilter').classList.add('active');
+                document.getElementById('tabContentFilter').style.display = 'block';
             } else if (tab === 'calc') {
-                tabCalc.classList.add('active');
-                contentCalc.style.display = 'block';
+                document.getElementById('tabCalc').classList.add('active');
+                document.getElementById('tabContentCalc').style.display = 'block';
             } else {
-                tabSort.classList.add('active');
-                contentSort.style.display = 'block';
+                document.getElementById('tabSort').classList.add('active');
+                document.getElementById('tabContentSort').style.display = 'block';
             }
         }
 
@@ -2037,7 +1839,6 @@
 
             resContainer.className = 'calc-result';
             resContainer.innerHTML = `Рекомендуемая длина штока с учетом бобышки (${selectedBoss} мм):<br><b>от ${stemMinLength} мм до ${stemMaxLength} мм</b>`;
-            
             updateFilterButtonState();
             renderCards();
         }
@@ -2080,7 +1881,6 @@
 
                 let uniqueVals = [...new Set(rawData.map(item => (item[key] || "").trim()).filter(v => v !== ""))];
                 if (uniqueVals.length === 0) return;
-
                 uniqueVals.sort();
 
                 const groupDiv = document.createElement('div');
@@ -2102,7 +1902,6 @@
                 btn.onclick = () => {
                     const dropdown = groupDiv.querySelector('.filter-dropdown');
                     const isOpen = dropdown.classList.contains('open');
-                    
                     if (!isOpen) {
                         dropdown.classList.add('open');
                         dropdown.scrollTop = 0;
@@ -2138,7 +1937,6 @@
                     } else {
                         lbl.appendChild(document.createTextNode(val));
                     }
-
                     dropdown.appendChild(lbl);
                 });
 
@@ -2153,13 +1951,10 @@
             filterColumns.forEach(key => {
                 const btn = document.querySelector(`[data-filter-key="${key}"]`);
                 if (!btn) return;
-
                 const counterSpan = btn.querySelector('.group-counter');
                 if (!counterSpan) return;
-
                 const totalVals = [...new Set(rawData.map(item => (item[key] || "").trim()).filter(v => v !== ""))].length;
                 const selectedCount = activeFilters[key] ? activeFilters[key].length : 0;
-
                 counterSpan.innerText = `${selectedCount}/${totalVals}`;
             });
         }
@@ -2180,7 +1975,6 @@
             } else {
                 activeFilters[key] = activeFilters[key].filter(v => v !== val);
             }
-            
             updateFilterButtonState();
             renderCards();
         }
@@ -2198,22 +1992,17 @@
                 return;
             }
 
-            resetClickTimer = setTimeout(() => {
-                resetClickCount = 0;
-            }, 1500);
+            resetClickTimer = setTimeout(() => { resetClickCount = 0; }, 1500);
 
             activeFilters = {};
             filterOnlyUniquePart = false;
             document.getElementById('btnUniquePart').classList.remove('active');
-            
             document.querySelectorAll('.filter-dropdown input[type="checkbox"]').forEach(cb => cb.checked = false);
             document.querySelectorAll('.filter-group-title').forEach(btn => btn.classList.remove('has-selected'));
             clearInput('searchName', 'clearName');
             clearInput('searchGlobal', 'clearGlobal');
             currentSort = { key: null, direction: 'asc' };
-            
             resetStemFilter();
-
             updateFilterButtonState();
             renderCards();
         }
@@ -2230,15 +2019,11 @@
                 }
             }
 
-            if (stemMinLength !== null && stemMaxLength !== null) {
-                isFiltered = true;
-            }
+            if (stemMinLength !== null && stemMaxLength !== null) isFiltered = true;
 
             const nameQuery = document.getElementById('searchName').value.trim();
             const globalQuery = document.getElementById('searchGlobal').value.trim();
-            if (nameQuery !== '' || globalQuery !== '') {
-                isFiltered = true;
-            }
+            if (nameQuery !== '' || globalQuery !== '') isFiltered = true;
 
             if (isFiltered) {
                 btnHeader.classList.add('active');
