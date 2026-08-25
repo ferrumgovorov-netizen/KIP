@@ -902,6 +902,12 @@
             color: var(--label-secondary);
             grid-column: 1 / -1;
         }
+
+        /* Стили для МК */
+        .mk-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .mk-table th { text-align: left; padding: 8px; color: var(--label-secondary); font-weight: 600; border-bottom: 1px solid var(--separator); }
+        .mk-table td { padding: 8px; border-bottom: 0.5px solid var(--separator); vertical-align: top; }
+        .mk-select { width: 100%; max-width: 200px; padding: 4px 8px; border: 1px solid var(--separator); border-radius: 6px; background: var(--card-bg); font-size: 13px; color: var(--label-primary); outline: none; }
     </style>
 </head>
 <body>
@@ -921,6 +927,7 @@
             <div class="toolbar">
                 <div class="counter" id="counter">0 из 0</div>
                 <div class="toolbar-buttons">
+                    <button class="btn-top" onclick="openMKModal()">МК</button>
                     <button class="btn-top btn-double" id="btnUniquePart" onclick="toggleUniquePart()" title="Только уникальные УПП">Дубль</button>
                     <button class="btn-top" onclick="openCombinedPanel()">Фильтр</button>
                     <button class="btn-top btn-reset-header" id="clearFiltersBtn" onclick="clearAllFilters()" title="Сбросить фильтры">Сброс</button>
@@ -931,6 +938,30 @@
 
     <div class="cards-grid" id="cardsGrid">
         <div class="loading">Идет загрузка данных, пожалуйста, подождите...</div>
+    </div>
+
+    <!-- Модальное окно МК -->
+    <div class="modal-overlay" id="mkModalOverlay" onclick="if(event.target === this) closeMKModal()">
+        <div class="modal-content" style="align-self: center; border-radius: 16px; max-width: 850px; margin: auto;">
+            <div class="modal-header" style="text-align: left;">
+                <h2 class="modal-title">Поиск МК по ТЭГу</h2>
+            </div>
+            <div class="modal-body" style="padding: 16px; max-height: 70vh;">
+                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                    <div class="input-wrapper" style="min-width: auto;">
+                        <input type="text" id="mkTagInput" placeholder="Введите ТЭГ оборудования..." onkeydown="if(event.key==='Enter') searchMK()">
+                    </div>
+                    <button class="btn-top active" onclick="searchMK()">Найти</button>
+                </div>
+                <div id="mkResultsContainer">
+                    <p style="color: var(--label-secondary); text-align: center; margin-top: 20px;">Введите ТЭГ и нажмите "Найти", чтобы получить список МК.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-action btn-close-modal-footer" onclick="closeMKModal()">Закрыть</button>
+                <button class="btn-modal-action btn-site" onclick="copyMKResults()">Копировать</button>
+            </div>
+        </div>
     </div>
 
     <!-- Модальное окно общей информации -->
@@ -1113,7 +1144,10 @@
         ];
 
         const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzAETiIKfUBvchm03dtQKognrImGtEbT5O13_WQpCe7exHxLvPXOAAqFdm9899nSeF3gVvkrTsTcej/pub?gid=1716395972&single=true&output=csv";
+        const mkCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzAETiIKfUBvchm03dtQKognrImGtEbT5O13_WQpCe7exHxLvPXOAAqFdm9899nSeF3gVvkrTsTcej/pub?gid=1536569480&single=true&output=csv";
+        
         let rawData = [];
+        let mkData = [];
         let activeFilters = {};
         let currentSort = { key: null, direction: 'asc' };
         
@@ -1131,19 +1165,6 @@
             .then(data => { tspt101Data = data; })
             .catch(err => console.warn('Файл TSPT.json не найден или содержит ошибки:', err));
 
-        function getProducerColor(str) {
-            if (!str) return { bg: 'rgba(142, 142, 147, 0.15)', text: '#8e8e93' };
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            const h = Math.abs(hash) % 360;
-            return {
-                bg: `hsla(${h}, 70%, 50%, 0.15)`,
-                text: `hsl(${h}, 80%, 32%)`
-            };
-        }
-
         Papa.parse(csvUrl, {
             download: true,
             header: true,
@@ -1157,6 +1178,28 @@
                 document.getElementById('cardsGrid').innerHTML = `<div class="loading">Ошибка загрузки: ${err}</div>`;
             }
         });
+
+        Papa.parse(mkCsvUrl, {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            complete: function(results) {
+                mkData = results.data;
+            }
+        });
+
+        function getProducerColor(str) {
+            if (!str) return { bg: 'rgba(142, 142, 147, 0.15)', text: '#8e8e93' };
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const h = Math.abs(hash) % 360;
+            return {
+                bg: `hsla(${h}, 70%, 50%, 0.15)`,
+                text: `hsl(${h}, 80%, 32%)`
+            };
+        }
 
         function toggleStatusFilter() {
             filterStatus = !filterStatus;
@@ -1327,6 +1370,154 @@
             
             updateHeaderCounters();
         }
+
+        // ==========================================
+        // Логика МК
+        // ==========================================
+
+        function openMKModal() {
+            document.getElementById('mkModalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMKModal() {
+            document.getElementById('mkModalOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function searchMK() {
+            const tagInput = document.getElementById('mkTagInput');
+            const tag = tagInput.value.trim();
+            const container = document.getElementById('mkResultsContainer');
+
+            if (!tag) {
+                container.innerHTML = '<p style="color: var(--red); text-align: center; margin-top: 20px;">Пожалуйста, введите ТЭГ.</p>';
+                return;
+            }
+
+            const localItem = rawData.find(i => (i['PartNumber'] || '').toString().trim().toLowerCase() === tag.toLowerCase());
+            if (!localItem) {
+                container.innerHTML = '<p style="color: var(--red); text-align: center; margin-top: 20px;">ТЭГ не найден в основной таблице.</p>';
+                return;
+            }
+            
+            const projectName = (localItem['ProjectName'] || '').trim();
+            const group = (localItem['Группа'] || '').trim();
+
+            if (!group) {
+                container.innerHTML = '<p style="color: var(--red); text-align: center; margin-top: 20px;">У данного ТЭГа не указана группа.</p>';
+                return;
+            }
+
+            let matchingRows = [];
+            const groupLower = group.toLowerCase();
+            
+            // 1. Ищем иерархию (если "Код 1С" содержит иерархические коды, например "1.1", "1.1.1")
+            matchingRows = mkData.filter(row => {
+                const kod = (row['Код 1С'] || '').toString().trim().toLowerCase();
+                return kod === groupLower || kod.startsWith(groupLower + '.') || kod.startsWith(groupLower + '-') || kod.startsWith(groupLower + '_');
+            });
+            
+            // 2. Если не найдено, ищем блочную структуру (группа - заголовок, далее идут подгруппы и элементы)
+            if (matchingRows.length <= 1) {
+                matchingRows = [];
+                const groupIndex = mkData.findIndex(row => (row['Код 1С'] || '').toString().trim().toLowerCase() === groupLower);
+                if (groupIndex !== -1) {
+                    matchingRows.push(mkData[groupIndex]);
+                    for (let i = groupIndex + 1; i < mkData.length; i++) {
+                        const row = mkData[i];
+                        const kod = (row['Код 1С'] || '').toString().trim();
+                        const qty = (row['Кол-во'] || '').toString().trim();
+                        const unit = (row['Ед. Изм.'] || '').toString().trim();
+                        const name = (row['Полное наименование'] || '').toString().trim();
+                        
+                        // Условие остановки: встретили новый заголовок группы (без количества и ед. изм.)
+                        if (kod !== '' && qty === '' && unit === '' && name !== '') {
+                            // Если это подгруппа (с дефисом или отступом), продолжаем
+                            if (name.startsWith('-') || name.startsWith('  ')) {
+                                matchingRows.push(row);
+                            } else {
+                                break; // Новая основная группа - прерываем
+                            }
+                        } else {
+                            matchingRows.push(row);
+                        }
+                    }
+                }
+            }
+
+            if (matchingRows.length === 0) {
+                container.innerHTML = `<p style="color: var(--red); text-align: center; margin-top: 20px;">В таблице МК не найдено данных для группы: <b>${escapeHtml(group)}</b></p>`;
+                return;
+            }
+
+            let html = `<div style="margin-bottom: 12px; padding: 12px; background: var(--gray-bg); border-radius: 10px;">
+                <div style="font-size: 12px; color: var(--label-secondary); margin-bottom: 4px;">Найденное оборудование:</div>
+                <div style="font-weight: 600; margin-bottom: 8px;">${escapeHtml(projectName)}</div>
+                <div style="font-size: 13px;">Группа: <b>${escapeHtml(group)}</b></div>
+                <div style="font-size: 12px; color: var(--label-secondary); margin-top: 8px;">Позиций в группе: ${matchingRows.length}</div>
+            </div>`;
+
+            html += '<div style="overflow-x: auto;"><table class="mk-table"><thead><tr><th>Код 1С</th><th>Полное наименование</th><th>Кол-во</th><th>Ед. Изм.</th></tr></thead><tbody>';
+            
+            matchingRows.forEach(row => {
+                html += '<tr>';
+                html += `<td style="white-space: nowrap;">${renderCell(row['Код 1С'])}</td>`;
+                html += `<td>${renderCell(row['Полное наименование'])}</td>`;
+                html += `<td>${renderCell(row['Кол-во'])}</td>`;
+                html += `<td>${renderCell(row['Ед. Изм.'])}</td>`;
+                html += '</tr>';
+            });
+            html += '</tbody></table></div>';
+            
+            container.innerHTML = html;
+        }
+
+        function renderCell(value) {
+            if (!value) return '';
+            const valStr = value.toString().trim();
+            // Если в ячейке несколько значений (через запятую или перенос), выводим как список
+            if (valStr.includes(',') || valStr.includes('\n')) {
+                const options = valStr.split(/,\s*|\n/).map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+                return `<select class="mk-select">${options}</select>`;
+            }
+            return escapeHtml(valStr);
+        }
+
+        function copyMKResults() {
+            const table = document.querySelector('#mkResultsContainer table');
+            if (!table) {
+                showToast("Нет данных для копирования");
+                return;
+            }
+            
+            let tsv = [];
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('th, td');
+                let rowData = [];
+                cells.forEach(cell => {
+                    const select = cell.querySelector('select');
+                    if (select) {
+                        rowData.push(select.value);
+                    } else {
+                        // Заменяем табы и переносы для корректного формата TSV
+                        let text = cell.innerText.replace(/\t/g, ' ').replace(/\n/g, ' ');
+                        rowData.push(text);
+                    }
+                });
+                tsv.push(rowData.join('\t'));
+            });
+            
+            const tsvString = tsv.join('\n');
+            navigator.clipboard.writeText(tsvString).then(() => {
+                showToast("Список скопирован");
+            });
+        }
+
+        // ==========================================
+        // Конец логики МК
+        // ==========================================
 
         function copyPartNumber(e, text) {
             e.stopPropagation();
@@ -2032,6 +2223,7 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeModal();
+                closeMKModal();
                 closeDecodeModal(true);
                 closeImageModal();
                 closePanels();
