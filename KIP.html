@@ -1385,6 +1385,10 @@
             document.body.style.overflow = 'auto';
         }
 
+               // ==========================================
+        // Логика МК (заменить эти функции)
+        // ==========================================
+
         function searchMK() {
             const tagInput = document.getElementById('mkTagInput');
             const tag = tagInput.value.trim();
@@ -1409,39 +1413,44 @@
                 return;
             }
 
-            let matchingRows = [];
             const groupLower = group.toLowerCase();
+            let matchingRows = [];
             
-            // 1. Ищем иерархию (если "Код 1С" содержит иерархические коды, например "1.1", "1.1.1")
-            matchingRows = mkData.filter(row => {
-                const kod = (row['Код 1С'] || '').toString().trim().toLowerCase();
-                return kod === groupLower || kod.startsWith(groupLower + '.') || kod.startsWith(groupLower + '-') || kod.startsWith(groupLower + '_');
-            });
+            const groupIndex = mkData.findIndex(row => (row['Код 1С'] || '').toString().trim().toLowerCase() === groupLower);
             
-            // 2. Если не найдено, ищем блочную структуру (группа - заголовок, далее идут подгруппы и элементы)
-            if (matchingRows.length <= 1) {
-                matchingRows = [];
-                const groupIndex = mkData.findIndex(row => (row['Код 1С'] || '').toString().trim().toLowerCase() === groupLower);
-                if (groupIndex !== -1) {
-                    matchingRows.push(mkData[groupIndex]);
-                    for (let i = groupIndex + 1; i < mkData.length; i++) {
-                        const row = mkData[i];
-                        const kod = (row['Код 1С'] || '').toString().trim();
-                        const qty = (row['Кол-во'] || '').toString().trim();
-                        const unit = (row['Ед. Изм.'] || '').toString().trim();
-                        const name = (row['Полное наименование'] || '').toString().trim();
-                        
-                        // Условие остановки: встретили новый заголовок группы (без количества и ед. изм.)
-                        if (kod !== '' && qty === '' && unit === '' && name !== '') {
-                            // Если это подгруппа (с дефисом или отступом), продолжаем
-                            if (name.startsWith('-') || name.startsWith('  ')) {
-                                matchingRows.push(row);
-                            } else {
-                                break; // Новая основная группа - прерываем
-                            }
-                        } else {
+            if (groupIndex !== -1) {
+                matchingRows.push(mkData[groupIndex]); // Добавляем саму главную группу
+
+                for (let i = groupIndex + 1; i < mkData.length; i++) {
+                    const row = mkData[i];
+                    const kod = (row['Код 1С'] || '').toString().trim();
+                    const qty = (row['Кол-во'] || '').toString().trim();
+                    const unit = (row['Ед. Изм.'] || '').toString().trim();
+                    const name = (row['Полное наименование'] || '').toString().trim();
+
+                    // Пропускаем полностью пустые строки
+                    if (kod === '' && qty === '' && unit === '' && name === '') continue;
+
+                    const kodLower = kod.toLowerCase();
+
+                    // 1. Если код является дочерним (начинаается с кода группы + точка/дефис), берем
+                    if (kodLower.startsWith(groupLower + '.') || kodLower.startsWith(groupLower + '-') || kodLower.startsWith(groupLower + '_')) {
+                        matchingRows.push(row);
+                        continue;
+                    }
+
+                    // 2. Если нет количества и единиц измерения — это заголовок (либо подгруппа, либо новая главная группа)
+                    if (qty === '' && unit === '') {
+                        // Если у заголовка нет кода, ИЛИ в названии есть слова "Комплект/Подгруппа" — это подгруппа нашей группы!
+                        if (kod === '' || name.toLowerCase().includes('комплект') || name.toLowerCase().includes('подгруппа')) {
                             matchingRows.push(row);
+                        } else {
+                            // Иначе это новая главная группа — прекращаем сбор
+                            break;
                         }
+                    } else {
+                        // 3. Если есть количество или ед. изм. — это позиция (материал), берем
+                        matchingRows.push(row);
                     }
                 }
             }
@@ -1451,21 +1460,35 @@
                 return;
             }
 
+            // Формируем визуальный вывод
             let html = `<div style="margin-bottom: 12px; padding: 12px; background: var(--gray-bg); border-radius: 10px;">
                 <div style="font-size: 12px; color: var(--label-secondary); margin-bottom: 4px;">Найденное оборудование:</div>
                 <div style="font-weight: 600; margin-bottom: 8px;">${escapeHtml(projectName)}</div>
                 <div style="font-size: 13px;">Группа: <b>${escapeHtml(group)}</b></div>
-                <div style="font-size: 12px; color: var(--label-secondary); margin-top: 8px;">Позиций в группе: ${matchingRows.length}</div>
+                <div style="font-size: 12px; color: var(--label-secondary); margin-top: 8px;">Строк в списке: ${matchingRows.length}</div>
             </div>`;
 
             html += '<div style="overflow-x: auto;"><table class="mk-table"><thead><tr><th>Код 1С</th><th>Полное наименование</th><th>Кол-во</th><th>Ед. Изм.</th></tr></thead><tbody>';
             
-            matchingRows.forEach(row => {
-                html += '<tr>';
-                html += `<td style="white-space: nowrap;">${renderCell(row['Код 1С'])}</td>`;
-                html += `<td>${renderCell(row['Полное наименование'])}</td>`;
-                html += `<td>${renderCell(row['Кол-во'])}</td>`;
-                html += `<td>${renderCell(row['Ед. Изм.'])}</td>`;
+            // Выводим список построчно
+            matchingRows.forEach((row, index) => {
+                const kod = (row['Код 1С'] || '').toString().trim();
+                const qty = (row['Кол-во'] || '').toString().trim();
+                const unit = (row['Ед. Изм.'] || '').toString().trim();
+                const name = (row['Полное наименование'] || '').toString().trim();
+                
+                // Заголовки подгрупп (например "Комплект 1") выделяем жирным и фоном
+                const isHeaderRow = (qty === '' && unit === '');
+                let rowStyle = isHeaderRow ? 'font-weight: 600; background: var(--gray-bg);' : '';
+                
+                // Делаем отступ для позиций внутри комплектов
+                let padding = isHeaderRow ? '8px 12px' : '8px 12px 8px 24px';
+                
+                html += `<tr style="${rowStyle}">`;
+                html += `<td style="white-space: nowrap; padding: ${padding};">${renderCell(kod)}</td>`;
+                html += `<td style="padding: ${padding};">${renderCell(name)}</td>`;
+                html += `<td style="padding: ${padding};">${renderCell(qty)}</td>`;
+                html += `<td style="padding: ${padding};">${renderCell(unit)}</td>`;
                 html += '</tr>';
             });
             html += '</tbody></table></div>';
@@ -1476,10 +1499,14 @@
         function renderCell(value) {
             if (!value) return '';
             const valStr = value.toString().trim();
-            // Если в ячейке несколько значений (через запятую или перенос), выводим как список
+            // Если в ячейке несколько значений (через запятую или перенос строки), выводим как выпадающий список
             if (valStr.includes(',') || valStr.includes('\n')) {
-                const options = valStr.split(/,\s*|\n/).map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
-                return `<select class="mk-select">${options}</select>`;
+                // Разбиваем строку, очищаем от пустых элементов
+                const options = valStr.split(/[,\\n]/).map(v => v.trim()).filter(v => v !== '');
+                if (options.length > 1) {
+                    const optsHtml = options.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+                    return `<select class="mk-select" style="width: 100%; max-width: 250px; padding: 4px 8px; border: 1px solid var(--separator); border-radius: 6px; background: var(--card-bg); font-size: 13px; color: var(--label-primary); outline: none;">${optsHtml}</select>`;
+                }
             }
             return escapeHtml(valStr);
         }
@@ -1499,10 +1526,21 @@
                 cells.forEach(cell => {
                     const select = cell.querySelector('select');
                     if (select) {
-                        rowData.push(select.value);
+                        // Если это выпадающий список, собираем все варианты обратно через запятую
+                        let options = [];
+                        for(let i=0; i<select.options.length; i++) {
+                            options.push(select.options[i].text);
+                        }
+                        // Заключаем в кавычки, чтобы при вставке в Excel все варианты остались в одной ячейке
+                        rowData.push(`"${options.join(', ')}"`);
                     } else {
-                        // Заменяем табы и переносы для корректного формата TSV
-                        let text = cell.innerText.replace(/\t/g, ' ').replace(/\n/g, ' ');
+                        // Очищаем текст от лишних переносов и табуляций
+                        let text = cell.innerText.replace(/\t/g, ' ').replace(/\n/g, ' ').replace(/\r/g, ' ').trim();
+                        // Если есть кавычки внутри текста, экранируем их
+                        if (text.includes('"')) {
+                            text = text.replace(/"/g, '""');
+                            text = `"${text}"`;
+                        }
                         rowData.push(text);
                     }
                 });
