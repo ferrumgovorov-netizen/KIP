@@ -59,28 +59,7 @@
             gap: 12px;
             margin-bottom: 12px;
             flex-wrap: wrap;
-            align-items: center;
         }
-
-        .home-btn {
-            width: 40px;
-            height: 40px;
-            min-width: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 0.5px solid rgba(0,0,0,0.12);
-            border-radius: 12px;
-            cursor: pointer;
-            color: var(--blue);
-            transition: all 0.2s;
-        }
-        .home-btn:hover { background: rgba(255, 255, 255, 0.95); }
-        .home-btn:active { transform: scale(0.95); }
-        .home-btn svg { width: 22px; height: 22px; fill: currentColor; }
 
         .input-wrapper {
             position: relative;
@@ -157,11 +136,11 @@
         }
 
         .btn-top {
-            height: 36px;
+            height: 40px;
             padding: 0 14px;
             background-color: var(--card-bg);
             border: 1px solid var(--separator);
-            border-radius: 10px;
+            border-radius: 12px;
             font-weight: 600;
             font-size: 13px;
             color: var(--label-primary);
@@ -269,9 +248,9 @@
         }
 
         .card {
-            background: var(--card-bg);
+            background: transparent;
             border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            box-shadow: none;
             cursor: pointer;
             overflow: hidden;
             transition: transform 0.15s, box-shadow 0.15s;
@@ -280,11 +259,6 @@
             height: 132px;
             user-select: text;
             -webkit-user-select: text;
-        }
-
-        /* Чередование цветов карточек: белое и серое */
-        .card:nth-child(even) {
-            background: var(--bg-gradient);
         }
 
         .card:hover {
@@ -456,7 +430,7 @@
         .modal-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         .modal-table tr { border-bottom: 0.5px solid var(--separator); cursor: pointer; transition: background 0.15s; }
         .modal-table tr:nth-child(odd) { background-color: #ffffff; }
-        .modal-table tr:nth-child(even) { background-color: #f2f2f7; }
+        .modal-table tr:nth-child(even) { background-color: #f2f2f7; } /* Изменено на серый */
         .modal-table tr:hover { filter: brightness(0.97); }
         .modal-table tr:last-child { border-bottom: none; }
         .modal-table td { padding: 6px 12px; font-size: 13px; vertical-align: middle; word-break: break-word; line-height: 1.25; }
@@ -635,7 +609,7 @@
         }
         .side-panel.active { right: 0; }
 
-        @media (max-width: 1100px) {
+        @media (max-width: 768px) {
             .side-panel { width: 68vw; }
         }
 
@@ -903,6 +877,8 @@
             background: var(--gray-bg);
             font-weight: 600;
             font-size: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
         .btn-copy-subgroup {
             height: 28px;
@@ -916,31 +892,31 @@
             cursor: pointer;
         }
         .mk-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .mk-table th { text-align: left; padding: 8px; color: var(--label-secondary); font-weight: 600; border-bottom: 1px solid var(--separator); background: #fff; position: relative; }
+        .mk-table th { text-align: left; padding: 8px; color: var(--label-secondary); font-weight: 600; border-bottom: 1px solid var(--separator); background: #fff; }
         .mk-table td { padding: 8px; border-bottom: 0.5px solid var(--separator); vertical-align: top; }
         .mk-table tr:last-child td { border-bottom: none; }
-        .mk-copy-col {
+        
+        .th-copy {
             display: inline-block;
             margin-left: 6px;
             cursor: pointer;
-            color: var(--label-secondary);
+            opacity: 0.4;
             font-size: 12px;
-            opacity: 0.5;
-            transition: opacity 0.2s, color 0.2s;
-            user-select: none;
+            transition: opacity 0.2s;
         }
-        .mk-copy-col:hover { opacity: 1; color: var(--blue); }
-        .mk-select-analog {
+        .th-copy:hover { opacity: 1; color: var(--blue); }
+
+        .mk-analog-select {
             width: 100%;
-            padding: 4px 6px;
-            border: 1px solid var(--separator);
+            padding: 6px 8px;
+            border: 1px solid var(--blue);
             border-radius: 6px;
             font-size: 13px;
-            background: var(--card-bg);
+            background-color: rgba(0, 122, 255, 0.05);
+            color: var(--blue);
             cursor: pointer;
             outline: none;
         }
-        .mk-select-analog:focus { border-color: var(--blue); }
     </style>
 </head>
 <body>
@@ -948,9 +924,11 @@
     <div class="header">
         <div class="header-inner">
             <div class="search-container">
-                <button class="home-btn" onclick="window.location.href='index.html'" title="Домой" aria-label="Домой">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 3l-10 9h3v8h5v-5h4v5h5v-8h3z"/>
+                <!-- Кнопка Домой -->
+                <button class="btn-top" onclick="window.location.href='index.html'" style="height: 40px; padding: 0 12px; flex-shrink: 0;" title="Домой">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
                     </svg>
                 </button>
                 <div class="input-wrapper">
@@ -967,7 +945,7 @@
                 <div class="toolbar-buttons">
                     <button class="btn-top" onclick="openMKModal()">МК</button>
                     <button class="btn-top btn-double" id="btnUniquePart" onclick="toggleUniquePart()" title="Только уникальные УПП">Дубли</button>
-                    <button class="btn-top" id="btnOpenFilter" onclick="openCombinedPanel()">Фильтр</button>
+                    <button class="btn-top" onclick="openCombinedPanel()">Фильтр</button>
                     <button class="btn-top btn-reset-header" id="clearFiltersBtn" onclick="clearAllFilters()" title="Сбросить фильтры">Сброс</button>
                 </div>
             </div>
@@ -1143,19 +1121,12 @@
 
         const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzAETiIKfUBvchm03dtQKognrImGtEbT5O13_WQpCe7exHxLvPXOAAqFdm9899nSeF3gVvkrTsTcej/pub?gid=1716395972&single=true&output=csv";
         const mkCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzAETiIKfUBvchm03dtQKognrImGtEbT5O13_WQpCe7exHxLvPXOAAqFdm9899nSeF3gVvkrTsTcej/pub?gid=1536569480&single=true&output=csv";
-        const baseDataCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzAETiIKfUBvchm03dtQKognrImGtEbT5O13_WQpCe7exHxLvPXOAAqFdm9899nSeF3gVvkrTsTcej/pub?gid=0&single=true&output=csv";
-
-        const analogColumns = [
-            "Аналог 1", "Аналог 2", "Аналог 3", "Аналог 4", "Аналог 5", "Аналог 6",
-            "Аналог 7", "Аналог 8", "Аналог 9", "Аналог 10", "Аналог 11", "Аналог 12"
-        ];
-
-        const mkHeaders = ["Код 1С", "Полное наименование", "Кол-во", "Ед. Изм."];
+        const dbCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzAETiIKfUBvchm03dtQKognrImGtEbT5O13_WQpCe7exHxLvPXOAAqFdm9899nSeF3gVvkrTsTcej/pub?gid=1807556285&single=true&output=csv";
         
         let rawData = [];
         let mkData = [];
-        let mkSubgroups = [];
-        let tagDecodeMap = new Map();
+        let dbDataMap = {}; // Словарь для расшифровок ТЭГов аналогов
+        let mkSubgroups = []; 
         let activeFilters = {};
         let currentSort = { key: null, direction: 'asc' };
         
@@ -1168,18 +1139,6 @@
         let stemMinLength = null;
         let stemMaxLength = null;
 
-        // Desktop flag — true для ПК версии (ширина > 1100px)
-        let isDesktop = window.innerWidth > 1100;
-
-        window.addEventListener('resize', () => {
-            const wasDesktop = isDesktop;
-            isDesktop = window.innerWidth > 1100;
-            if (wasDesktop !== isDesktop) {
-                if (!isDesktop) closePanels();
-                else openCombinedPanel();
-            }
-        });
-
         fetch('TSPT.json')
             .then(res => res.json())
             .then(data => { tspt101Data = data; })
@@ -1191,8 +1150,6 @@
                 rawData = results.data;
                 buildFilterPanel();
                 renderCards();
-                // Авто-открытие панели фильтрации для ПК версии
-                if (isDesktop) openCombinedPanel();
             },
             error: function(err) {
                 document.getElementById('cardsGrid').innerHTML = `<div class="loading">Ошибка загрузки: ${err}</div>`;
@@ -1204,19 +1161,15 @@
             complete: function(results) { mkData = results.data; }
         });
 
-        // Загрузка листа "База данных" для расшифровки ТЭГов
-        Papa.parse(baseDataCsvUrl, {
+        // Загрузка базы данных для расшифровки аналогов
+        Papa.parse(dbCsvUrl, {
             download: true, header: true, skipEmptyLines: true,
             complete: function(results) {
-                tagDecodeMap.clear();
                 results.data.forEach(row => {
                     const tag = (row['PartNumber'] || '').toString().trim();
                     const decode = (row['ProjectName'] || '').toString().trim();
-                    if (tag) tagDecodeMap.set(tag, decode);
+                    if (tag) dbDataMap[tag.toLowerCase()] = decode;
                 });
-            },
-            error: function(err) {
-                console.warn('Не удалось загрузить лист "База данных":', err);
             }
         });
 
@@ -1402,16 +1355,6 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Получить массив аналогов из строки МК
-        function getAnalogs(row) {
-            const analogs = [];
-            analogColumns.forEach(col => {
-                const v = (row[col] || '').toString().trim();
-                if (v) analogs.push(v);
-            });
-            return analogs;
-        }
-
         function searchMK() {
             const tagInput = document.getElementById('mkTagInput');
             const tag = tagInput.value.trim();
@@ -1503,38 +1446,46 @@
             </div>`;
 
             mkSubgroups.forEach((sub, idx) => {
-                html += `<div class="mk-subgroup">`;
+                html += `<div class="mk-subgroup" id="mk-subgroup-${idx}">`;
                 html += `<div class="mk-subgroup-header">
                             <span>${escapeHtml(sub.name)}</span>
-                            <button class="btn-copy-subgroup" onclick="copySubgroup(${idx})">Копировать</button>
+                            <button class="btn-copy-subgroup" onclick="copySubgroup(${idx})">Копировать всё</button>
                          </div>`;
                 
                 html += '<div style="overflow-x: auto;"><table class="mk-table"><thead><tr>';
-                mkHeaders.forEach(h => {
-                    html += `<th>${escapeHtml(h)}<span class="mk-copy-col" onclick="copyColumn(${idx}, '${escapeHtml(h)}')" title="Копировать столбец">⧉</span></th>`;
-                });
+                html += `<th>Код 1С <span class="th-copy" onclick="copyColumn(${idx}, 0)" title="Копировать столбец">⧉</span></th>`;
+                html += `<th>Полное наименование <span class="th-copy" onclick="copyColumn(${idx}, 1)" title="Копировать столбец">⧉</span></th>`;
+                html += `<th>Кол-во <span class="th-copy" onclick="copyColumn(${idx}, 2)" title="Копировать столбец">⧉</span></th>`;
+                html += `<th>Ед. Изм. <span class="th-copy" onclick="copyColumn(${idx}, 3)" title="Копировать столбец">⧉</span></th>`;
                 html += '</tr></thead><tbody>';
                 
                 if (sub.rows.length === 0) {
                     html += '<tr><td colspan="4" style="text-align:center; color:var(--label-secondary); padding:10px;">Нет позиций</td></tr>';
                 } else {
-                    sub.rows.forEach(row => {
+                    sub.rows.forEach((row, rowIndex) => {
                         const kod = (row['Код 1С'] || '').toString().trim();
                         const qty = (row['Кол-во'] || '').toString().trim();
                         const unit = (row['Ед. Изм.'] || '').toString().trim();
                         const name = (row['Полное наименование'] || '').toString().trim();
-                        const analogs = getAnalogs(row);
-                        const hasAnalogs = analogs.length > 0;
 
-                        let nameCellHtml;
-                        if (hasAnalogs) {
-                            let opts = `<option value="">${escapeHtml(name)}</option>`;
-                            analogs.forEach(a => {
-                                const decode = tagDecodeMap.get(a);
-                                const label = decode ? `${escapeHtml(a)} — ${escapeHtml(decode)}` : escapeHtml(a);
-                                opts += `<option value="${escapeHtml(a)}">${label}</option>`;
+                        // Проверка наличия аналогов
+                        const analogCols = ['Аналог 1','Аналог 2','Аналог 3','Аналог 4','Аналог 5','Аналог 6','Аналог 7','Аналог 8','Аналог 9','Аналог 10','Аналог 11','Аналог 12'];
+                        let analogs = [];
+                        analogCols.forEach(col => {
+                            const val = (row[col] || '').toString().trim();
+                            if (val) analogs.push(val);
+                        });
+
+                        let nameCellHtml = '';
+                        if (analogs.length > 0) {
+                            nameCellHtml = `<select class="mk-analog-select" data-row-index="${rowIndex}">`;
+                            nameCellHtml += `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
+                            analogs.forEach(analogTag => {
+                                const decoded = dbDataMap[analogTag.toLowerCase()] || '';
+                                const displayText = decoded ? `${analogTag} - ${decoded}` : analogTag;
+                                nameCellHtml += `<option value="${escapeHtml(analogTag)}">${escapeHtml(displayText)}</option>`;
                             });
-                            nameCellHtml = `<select class="mk-select-analog" onchange="copyAnalog(this)">${opts}</select>`;
+                            nameCellHtml += `</select>`;
                         } else {
                             nameCellHtml = escapeHtml(name);
                         }
@@ -1554,59 +1505,59 @@
             container.innerHTML = html;
         }
 
-        // Копирование одного столбца подгруппы
-        function copyColumn(subIdx, headerName) {
-            const sub = mkSubgroups[subIdx];
-            if (!sub || sub.rows.length === 0) {
-                showToast("Нет данных для копирования");
-                return;
-            }
-            const colKey = headerName;
-            let tsv = [colKey];
-            sub.rows.forEach(row => {
-                const v = (row[colKey] || '').toString().replace(/\t/g, ' ').replace(/\n/g, ' ').trim();
-                tsv.push(v);
+        function copyColumn(subIndex, colIndex) {
+            const subContainer = document.getElementById(`mk-subgroup-${subIndex}`);
+            if (!subContainer) return showToast("Ошибка копирования");
+            
+            const rows = subContainer.querySelectorAll('tbody tr');
+            let colData = [];
+            rows.forEach(tr => {
+                const cells = tr.querySelectorAll('td');
+                if (cells[colIndex]) {
+                    const cell = cells[colIndex];
+                    // Если в ячейке есть выпадающий список, берем выбранное значение
+                    let val = cell.querySelector('select') ? cell.querySelector('select').value : cell.innerText.trim();
+                    colData.push(val.replace(/\t/g, ' ').replace(/\n/g, ' '));
+                }
             });
-            navigator.clipboard.writeText(tsv.join('\n')).then(() => {
-                showToast(`Столбец "${headerName}" скопирован`);
-            });
-        }
 
-        // Копирование выбранного аналога из выпадающего списка
-        function copyAnalog(selectEl) {
-            const val = selectEl.value;
-            if (!val) return;
-            navigator.clipboard.writeText(val).then(() => {
-                showToast(`ТЭГ "${val}" скопирован`);
-                selectEl.value = '';
-            });
+            if (colData.length === 0) return showToast("Нет данных для копирования");
+            navigator.clipboard.writeText(colData.join('\n')).then(() => showToast('Столбец скопирован'));
         }
 
         function copySubgroup(index) {
-            const sub = mkSubgroups[index];
-            if (!sub || sub.rows.length === 0) {
-                showToast("Нет данных для копирования");
-                return;
-            }
+            const subContainer = document.getElementById(`mk-subgroup-${index}`);
+            if (!subContainer) return showToast("Ошибка копирования");
 
+            const rows = subContainer.querySelectorAll('tbody tr');
             let tsv = [];
-            tsv.push(mkHeaders.join('\t'));
-            
-            sub.rows.forEach(row => {
-                const rowData = mkHeaders.map(h => {
-                    let text = (row[h] || '').toString().replace(/\t/g, ' ').replace(/\n/g, ' ').trim();
-                    if (text.includes('"')) {
-                        return `"${text.replace(/"/g, '""')}"`;
-                    }
+            tsv.push(['Код 1С', 'Полное наименование', 'Кол-во', 'Ед. Изм.'].join('\t'));
+
+            let hasData = false;
+            rows.forEach(tr => {
+                const cells = tr.querySelectorAll('td');
+                if(cells.length < 4) return;
+
+                let kod = cells[0].innerText.trim();
+                let nameCell = cells[1];
+                // Берем значение из select, если он есть, иначе текст ячейки
+                let name = nameCell.querySelector('select') ? nameCell.querySelector('select').value : nameCell.innerText.trim();
+                let qty = cells[2].innerText.trim();
+                let unit = cells[3].innerText.trim();
+
+                if(kod || name || qty || unit) hasData = true;
+
+                let rowData = [kod, name, qty, unit].map(text => {
+                    if (text.includes('"')) return `"${text.replace(/"/g, '""')}"`;
                     return text;
                 });
                 tsv.push(rowData.join('\t'));
             });
 
+            if(!hasData) return showToast("Нет данных для копирования");
+
             const tsvString = tsv.join('\n');
-            navigator.clipboard.writeText(tsvString).then(() => {
-                showToast(`Подгруппа скопирована`);
-            });
+            navigator.clipboard.writeText(tsvString).then(() => showToast(`Подгруппа скопирована`));
         }
 
         // ==========================================
@@ -1928,26 +1879,9 @@
         }
 
         function openCombinedPanel() {
+            closePanels();
             document.getElementById('panelOverlay').classList.add('active');
             document.getElementById('combinedPanel').classList.add('active');
-            document.getElementById('btnOpenFilter').classList.add('active');
-        }
-
-        function closePanels() {
-            document.getElementById('panelOverlay').classList.remove('active');
-            document.getElementById('combinedPanel').classList.remove('active');
-            document.getElementById('btnOpenFilter').classList.remove('active');
-            document.querySelectorAll('.filter-dropdown').forEach(d => d.classList.remove('open'));
-        }
-
-        // Переключение панели фильтрации (для ПК — только кнопкой, для мобильных — обычное поведение)
-        function toggleFilterPanel() {
-            const panel = document.getElementById('combinedPanel');
-            if (panel.classList.contains('active')) {
-                closePanels();
-            } else {
-                openCombinedPanel();
-            }
         }
 
         function switchTab(tab) {
@@ -2010,6 +1944,12 @@
             resContainer.innerHTML = 'Введите корректный диаметр воздуховода или трубы.';
             updateFilterButtonState();
             renderCards();
+        }
+
+        function closePanels() {
+            document.getElementById('panelOverlay').classList.remove('active');
+            document.getElementById('combinedPanel').classList.remove('active');
+            document.querySelectorAll('.filter-dropdown').forEach(d => d.classList.remove('open'));
         }
 
         function sortCards(key) {
@@ -2198,20 +2138,8 @@
                 closeMKModal();
                 closeDecodeModal(true);
                 closeImageModal();
-                // На ПК версию панель фильтрации по Escape не закрываем
-                if (!isDesktop) closePanels();
+                closePanels();
             }
-        });
-
-        // На ПК версию оверлей панели фильтрации не закрывает саму панель
-        document.addEventListener('DOMContentLoaded', () => {
-            const panelOverlay = document.getElementById('panelOverlay');
-            panelOverlay.addEventListener('click', (e) => {
-                if (isDesktop) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                }
-            }, true);
         });
     </script>
 </body>
