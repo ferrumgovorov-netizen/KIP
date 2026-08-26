@@ -1,3 +1,6 @@
+Вот обновленный код. Я добавил третью кнопку «Поиск по ВЦК» с указанной вами ссылкой, а также добавил CSS-правило для её плавного появления (анимация `fadeInUp` для третьего элемента), чтобы она выглядела гармонично наряду с остальными.
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -190,6 +193,7 @@
   .title { animation: fadeInUp 0.6s ease both; }
   .btn:nth-child(1) { animation: fadeInUp 0.6s ease 0.1s both; }
   .btn:nth-child(2) { animation: fadeInUp 0.6s ease 0.2s both; }
+  .btn:nth-child(3) { animation: fadeInUp 0.6s ease 0.3s both; } /* Добавлена анимация для новой кнопки */
 
   /* Для очень маленьких экранов */
   @media (max-height: 500px) {
@@ -233,9 +237,21 @@
           <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
         </div>
       </a>
+
+      <!-- Новая кнопка -->
+      <a href="https://skyrillchanel2000-source.github.io/YPPEMEPXXFPDKEXFPMXFPDKE/" class="btn">
+        <div class="btn-content">
+          <span class="btn-title">Поиск по ВЦК</span>
+          <span class="btn-subtitle">Поиск оборудования по коду</span>
+        </div>
+        <div class="btn-arrow">
+          <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+        </div>
+      </a>
     </div>
   </div>
 
-  <div class="footer">v1.0 08.2026</div>
+  <div class="footer">© Ferrum — система подбора оборудования</div>
 </body>
 </html>
+```
