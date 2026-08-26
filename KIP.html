@@ -248,7 +248,7 @@
         }
 
         .card {
-            background: var(--card-bg); /* Белая заливка мини-карточек */
+            background: var(--card-bg);
             border-radius: 14px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.04);
             cursor: pointer;
@@ -883,16 +883,16 @@
         .btn-copy-subgroup {
             height: 28px;
             padding: 0 10px;
-            background-color: var(--blue);
-            color: #FFFFFF;
-            border: none;
+            background-color: var(--gray-bg); /* Серый цвет */
+            color: var(--label-primary);
+            border: 1px solid var(--separator);
             border-radius: 6px;
             font-weight: 600;
             font-size: 12px;
             cursor: pointer;
         }
         .mk-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .mk-table th { text-align: left; padding: 8px; color: var(--label-secondary); font-weight: 600; border-bottom: 1px solid var(--separator); background: #fff; }
+        .mk-table th { text-align: left; padding: 8px; color: var(--label-secondary); font-weight: 600; border-bottom: 1px solid var(--separator); background: #fff; white-space: nowrap; /* Запрет переноса для заголовков */ }
         .mk-table td { padding: 8px; border-bottom: 0.5px solid var(--separator); vertical-align: top; }
         .mk-table tr:last-child td { border-bottom: none; }
         
@@ -900,11 +900,12 @@
             display: inline-block;
             margin-left: 6px;
             cursor: pointer;
-            opacity: 0.4;
+            opacity: 1;
             font-size: 12px;
+            color: var(--blue); /* Голубой цвет */
             transition: opacity 0.2s;
         }
-        .th-copy:hover { opacity: 1; color: var(--blue); }
+        .th-copy:hover { opacity: 0.7; }
 
         .mk-analog-select {
             width: 100%;
@@ -1471,10 +1472,10 @@
                         const unit = (row['Ед. Изм.'] || '').toString().trim();
                         const name = (row['Полное наименование'] || '').toString().trim();
 
-                        // Обрезание Код 1С до 16 символов
+                        // Обрезание Код 1С до 12 символов
                         let displayKod = kod;
-                        if (kod.length > 16) {
-                            displayKod = kod.substring(0, 16) + '...';
+                        if (kod.length > 12) {
+                            displayKod = kod.substring(0, 12) + '...';
                         }
 
                         const analogCols = ['Аналог 1','Аналог 2','Аналог 3','Аналог 4','Аналог 5','Аналог 6','Аналог 7','Аналог 8','Аналог 9','Аналог 10','Аналог 11','Аналог 12'];
@@ -1486,12 +1487,23 @@
 
                         let nameCellHtml = '';
                         if (analogs.length > 0) {
-                            // Формирование выпадающего списка: отображаем только уникальные наименования, а ТЭГ меняем в Коде 1С
-                            nameCellHtml = `<select class="mk-analog-select" onchange="updateKod(this)">`;
-                            nameCellHtml += `<option value="${escapeHtml(name)}" data-tag="${escapeHtml(kod)}">${escapeHtml(name)}</option>`;
+                            // Используем Map для сбора уникальных наименований (без учета ТЭГа)
+                            let optionsMap = new Map();
+                            
+                            // Добавляем исходное наименование
+                            optionsMap.set(name, { tag: kod, name: name });
+                            
+                            // Добавляем аналоги
                             analogs.forEach(analogTag => {
-                                const decoded = dbDataMap[analogTag.toLowerCase()] || analogTag; // Берем расшифровку (наименование без ТЭГа)
-                                nameCellHtml += `<option value="${escapeHtml(decoded)}" data-tag="${escapeHtml(analogTag)}">${escapeHtml(decoded)}</option>`;
+                                const decoded = dbDataMap[analogTag.toLowerCase()] || analogTag;
+                                if (!optionsMap.has(decoded)) {
+                                    optionsMap.set(decoded, { tag: analogTag, name: decoded });
+                                }
+                            });
+
+                            nameCellHtml = `<select class="mk-analog-select" onchange="updateKod(this)">`;
+                            optionsMap.forEach(opt => {
+                                nameCellHtml += `<option value="${escapeHtml(opt.name)}" data-tag="${escapeHtml(opt.tag)}">${escapeHtml(opt.name)}</option>`;
                             });
                             nameCellHtml += `</select>`;
                         } else {
@@ -1519,8 +1531,8 @@
             const selectedTag = selectEl.options[selectEl.selectedIndex].getAttribute('data-tag') || '';
             
             let displayKod = selectedTag;
-            if (selectedTag.length > 16) {
-                displayKod = selectedTag.substring(0, 16) + '...';
+            if (selectedTag.length > 12) {
+                displayKod = selectedTag.substring(0, 12) + '...';
             }
             
             kodCell.innerText = displayKod;
