@@ -248,9 +248,9 @@
         }
 
         .card {
-            background: transparent;
+            background: var(--card-bg); /* Белая заливка мини-карточек */
             border-radius: 14px;
-            box-shadow: none;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
             cursor: pointer;
             overflow: hidden;
             transition: transform 0.15s, box-shadow 0.15s;
@@ -430,7 +430,7 @@
         .modal-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         .modal-table tr { border-bottom: 0.5px solid var(--separator); cursor: pointer; transition: background 0.15s; }
         .modal-table tr:nth-child(odd) { background-color: #ffffff; }
-        .modal-table tr:nth-child(even) { background-color: #f2f2f7; } /* Изменено на серый */
+        .modal-table tr:nth-child(even) { background-color: #f2f2f7; }
         .modal-table tr:hover { filter: brightness(0.97); }
         .modal-table tr:last-child { border-bottom: none; }
         .modal-table td { padding: 6px 12px; font-size: 13px; vertical-align: middle; word-break: break-word; line-height: 1.25; }
@@ -917,6 +917,10 @@
             cursor: pointer;
             outline: none;
         }
+
+        .mk-kod-cell {
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -1125,7 +1129,7 @@
         
         let rawData = [];
         let mkData = [];
-        let dbDataMap = {}; // Словарь для расшифровок ТЭГов аналогов
+        let dbDataMap = {}; 
         let mkSubgroups = []; 
         let activeFilters = {};
         let currentSort = { key: null, direction: 'asc' };
@@ -1161,7 +1165,6 @@
             complete: function(results) { mkData = results.data; }
         });
 
-        // Загрузка базы данных для расшифровки аналогов
         Papa.parse(dbCsvUrl, {
             download: true, header: true, skipEmptyLines: true,
             complete: function(results) {
@@ -1468,7 +1471,12 @@
                         const unit = (row['Ед. Изм.'] || '').toString().trim();
                         const name = (row['Полное наименование'] || '').toString().trim();
 
-                        // Проверка наличия аналогов
+                        // Обрезание Код 1С до 16 символов
+                        let displayKod = kod;
+                        if (kod.length > 16) {
+                            displayKod = kod.substring(0, 16) + '...';
+                        }
+
                         const analogCols = ['Аналог 1','Аналог 2','Аналог 3','Аналог 4','Аналог 5','Аналог 6','Аналог 7','Аналог 8','Аналог 9','Аналог 10','Аналог 11','Аналог 12'];
                         let analogs = [];
                         analogCols.forEach(col => {
@@ -1478,12 +1486,12 @@
 
                         let nameCellHtml = '';
                         if (analogs.length > 0) {
-                            nameCellHtml = `<select class="mk-analog-select" data-row-index="${rowIndex}">`;
-                            nameCellHtml += `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
+                            // Формирование выпадающего списка: отображаем только уникальные наименования, а ТЭГ меняем в Коде 1С
+                            nameCellHtml = `<select class="mk-analog-select" onchange="updateKod(this)">`;
+                            nameCellHtml += `<option value="${escapeHtml(name)}" data-tag="${escapeHtml(kod)}">${escapeHtml(name)}</option>`;
                             analogs.forEach(analogTag => {
-                                const decoded = dbDataMap[analogTag.toLowerCase()] || '';
-                                const displayText = decoded ? `${analogTag} - ${decoded}` : analogTag;
-                                nameCellHtml += `<option value="${escapeHtml(analogTag)}">${escapeHtml(displayText)}</option>`;
+                                const decoded = dbDataMap[analogTag.toLowerCase()] || analogTag; // Берем расшифровку (наименование без ТЭГа)
+                                nameCellHtml += `<option value="${escapeHtml(decoded)}" data-tag="${escapeHtml(analogTag)}">${escapeHtml(decoded)}</option>`;
                             });
                             nameCellHtml += `</select>`;
                         } else {
@@ -1491,7 +1499,7 @@
                         }
                         
                         html += `<tr>`;
-                        html += `<td style="white-space: nowrap; padding: 8px 12px;">${escapeHtml(kod)}</td>`;
+                        html += `<td class="mk-kod-cell" style="padding: 8px 12px;" title="${escapeHtml(kod)}" data-full-kod="${escapeHtml(kod)}">${escapeHtml(displayKod)}</td>`;
                         html += `<td style="padding: 8px 12px;">${nameCellHtml}</td>`;
                         html += `<td style="padding: 8px 12px;">${escapeHtml(qty)}</td>`;
                         html += `<td style="padding: 8px 12px;">${escapeHtml(unit)}</td>`;
@@ -1505,6 +1513,21 @@
             container.innerHTML = html;
         }
 
+        function updateKod(selectEl) {
+            const tr = selectEl.closest('tr');
+            const kodCell = tr.querySelector('.mk-kod-cell');
+            const selectedTag = selectEl.options[selectEl.selectedIndex].getAttribute('data-tag') || '';
+            
+            let displayKod = selectedTag;
+            if (selectedTag.length > 16) {
+                displayKod = selectedTag.substring(0, 16) + '...';
+            }
+            
+            kodCell.innerText = displayKod;
+            kodCell.setAttribute('title', selectedTag);
+            kodCell.setAttribute('data-full-kod', selectedTag);
+        }
+
         function copyColumn(subIndex, colIndex) {
             const subContainer = document.getElementById(`mk-subgroup-${subIndex}`);
             if (!subContainer) return showToast("Ошибка копирования");
@@ -1515,8 +1538,14 @@
                 const cells = tr.querySelectorAll('td');
                 if (cells[colIndex]) {
                     const cell = cells[colIndex];
-                    // Если в ячейке есть выпадающий список, берем выбранное значение
-                    let val = cell.querySelector('select') ? cell.querySelector('select').value : cell.innerText.trim();
+                    let val = '';
+                    if (cell.querySelector('select')) {
+                        val = cell.querySelector('select').value;
+                    } else if (cell.getAttribute('data-full-kod')) {
+                        val = cell.getAttribute('data-full-kod');
+                    } else {
+                        val = cell.innerText.trim();
+                    }
                     colData.push(val.replace(/\t/g, ' ').replace(/\n/g, ' '));
                 }
             });
@@ -1538,9 +1567,11 @@
                 const cells = tr.querySelectorAll('td');
                 if(cells.length < 4) return;
 
-                let kod = cells[0].innerText.trim();
+                let kodCell = cells[0];
                 let nameCell = cells[1];
-                // Берем значение из select, если он есть, иначе текст ячейки
+                
+                // Берем полный ТЭГ из data-full-kod
+                let kod = kodCell.getAttribute('data-full-kod') || kodCell.innerText.trim();
                 let name = nameCell.querySelector('select') ? nameCell.querySelector('select').value : nameCell.innerText.trim();
                 let qty = cells[2].innerText.trim();
                 let unit = cells[3].innerText.trim();
