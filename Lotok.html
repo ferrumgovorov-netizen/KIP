@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Расчёт заполняемости кабельного лотка · поперечное сечение</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Unbounded:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root{
+    --paper:#F4F0E5; --field:#FAF7EE; --page:#E6E0CF;
+    --ink:#262319; --soft:#6F6858; --line:rgba(38,35,25,.35);
+    --accent:#C8471D; --ok:#2F6B4F; --warn:#8F6410;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --sans:'IBM Plex Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  ::selection{background:var(--accent);color:var(--paper)}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--page); color:var(--ink); font-family:var(--sans);
+    padding:26px 16px 40px; font-size:14px; line-height:1.45;
+  }
+  .sheet{
+    max-width:1360px; margin:0 auto; background:var(--paper);
+    border:1px solid var(--ink); padding:26px 30px 26px; position:relative;
+    box-shadow:0 30px 70px -35px rgba(43,36,18,.5);
+  }
+  .sheet::before{content:''; position:absolute; inset:7px; border:1px solid rgba(38,35,25,.28); pointer-events:none}
+  header{
+    display:flex; justify-content:space-between; align-items:flex-end; gap:24px;
+    border-bottom:2px solid var(--ink); padding:10px 4px 16px; margin-bottom:22px;
+  }
+  .doc-line{font:500 10px var(--mono); letter-spacing:.22em; color:var(--accent); margin-bottom:9px}
+  h1{font:500 clamp(17px,2.2vw,23px)/1.18 'Unbounded'; text-transform:uppercase; letter-spacing:.015em}
+  .head-meta{font:400 10px/1.8 var(--mono); letter-spacing:.12em; color:var(--soft); text-align:right; white-space:nowrap}
+  .head-meta b{color:var(--ink); font-weight:600}
+  main{display:grid; grid-template-columns:352px 1fr; align-items:start}
+  .dwg{border-left:1px solid var(--line); padding-left:26px; min-width:0}
+  .sec{padding:2px 2px 18px}
+  .sec + .sec{border-top:1px dashed rgba(38,35,25,.3); margin-top:6px; padding-top:16px}
+  .sec h2{
+    display:flex; align-items:baseline; gap:10px; margin-bottom:13px;
+    font:600 10.5px var(--mono); letter-spacing:.2em; text-transform:uppercase;
+  }
+  .sec h2 .num{color:var(--accent); font-weight:600}
+  .matrix{display:grid; grid-template-columns:34px repeat(8,1fr); gap:3px}
+  .mx-h{font:400 9.5px var(--mono); color:var(--soft); text-align:center; align-self:end; padding-bottom:2px}
+  .mx-l{font:400 9.5px var(--mono); color:var(--soft); align-self:center}
+  .mx-c{aspect-ratio:1; border:1px solid rgba(38,35,25,.35); background:transparent; cursor:pointer; padding:0; transition:.12s}
+  .mx-c:hover{border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+  .mx-c.on{background:var(--ink); border-color:var(--ink)}
+  .tray-line{font:400 11px var(--mono); color:var(--soft); margin-top:11px}
+  .tray-line b{color:var(--ink); font-weight:600}
+  /* чекбокс перегородки */
+  .chk{
+    display:flex; align-items:center; gap:10px; margin-top:13px; cursor:pointer;
+    user-select:none; -webkit-user-select:none; font:500 10.5px var(--mono); letter-spacing:.08em;
+  }
+  .chk input{position:absolute; opacity:0; pointer-events:none}
+  .chk .box{width:15px; height:15px; border:1px solid var(--ink); position:relative; flex:none; transition:.12s; background:transparent}
+  .chk:hover .box{box-shadow:inset 0 0 0 1px var(--ink)}
+  .chk input:checked + .box{background:var(--ink)}
+  .chk input:checked + .box::after{
+    content:''; position:absolute; left:4.5px; top:1.5px; width:4px; height:8px;
+    border:solid var(--paper); border-width:0 1.5px 1.5px 0; transform:rotate(45deg);
+  }
+  .fld-row{margin-top:13px}
+  .fld-row > label{display:block; font:400 9.5px var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--soft); margin-bottom:6px}
+  .seg{display:inline-flex; border:1px solid var(--ink)}
+  .seg button{
+    font:500 11px var(--mono); background:transparent; color:var(--ink); border:0;
+    border-right:1px solid var(--ink); padding:6px 11px; cursor:pointer; transition:.12s;
+  }
+  .seg button:last-child{border-right:0}
+  .seg button:hover{background:rgba(38,35,25,.08)}
+  .seg button.on{background:var(--ink); color:var(--paper)}
+  .crow{display:grid; grid-template-columns:62px 52px 74px 24px 24px; align-items:center; gap:6px; margin-bottom:8px}
+  .crow .sp{font:400 10px var(--mono); color:var(--soft)}
+  input[type=number]{
+    font:500 13px var(--mono); color:var(--ink); background:transparent;
+    border:0; border-bottom:1px solid rgba(38,35,25,.45); padding:5px 2px; width:100%;
+  }
+  input[type=number]:focus{outline:none; border-bottom-color:var(--accent)}
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input[type=number]{appearance:textfield;-moz-appearance:textfield}
+  .del{
+    width:24px;height:24px;border:0;background:transparent;color:var(--soft);
+    cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s;
+  }
+  .del:hover{color:var(--accent)}
+  .del svg{width:14px;height:14px}
+  .ghost{
+    width:100%; display:flex; align-items:center; justify-content:center; gap:7px;
+    border:1px dashed rgba(38,35,25,.5); background:transparent; color:var(--ink);
+    font:500 11px var(--mono); letter-spacing:.06em; padding:8px; cursor:pointer; transition:.12s;
+  }
+  .ghost:hover{border-style:solid; border-color:var(--ink); background:rgba(38,35,25,.05)}
+  .ghost svg{width:13px;height:13px}
+  details.ref{margin-top:15px}
+  details.ref summary{
+    font:500 10px var(--mono); letter-spacing:.16em; text-transform:uppercase;
+    color:var(--soft); cursor:pointer; user-select:none; list-style:none; padding:3px 0;
+  }
+  details.ref summary::-webkit-details-marker{display:none}
+  details.ref summary::before{content:'+ '; color:var(--accent); font-weight:600}
+  details.ref[open] summary::before{content:'− '}
+  details.ref summary:hover{color:var(--ink)}
+  details.ref ol{margin:9px 0 0 16px}
+  details.ref li{font-size:11.5px; line-height:1.55; margin-bottom:7px; color:#403B2E}
+  details.ref li b{font-weight:600}
+  /* ═══ выдвижная панель справочника (слева) ═══ */
+  .ref-scrim{
+    position:fixed; inset:0; z-index:55; background:rgba(38,35,25,.16);
+    opacity:0; pointer-events:none; transition:opacity .22s;
+  }
+  .ref-scrim.on{opacity:1; pointer-events:auto}
+  .ref-panel{
+    position:fixed; left:0; top:0; bottom:0; width:326px; z-index:60;
+    background:var(--paper); border-right:1px solid var(--ink);
+    box-shadow:14px 0 34px -16px rgba(43,36,18,.6);
+    display:flex; flex-direction:column;
+    transform:translateX(-103%); transition:transform .22s ease;
+  }
+  .ref-panel.open{transform:none}
+  .ref-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 14px 11px; border-bottom:1px solid var(--line);
+  }
+  .ref-title{font:600 10.5px var(--mono); letter-spacing:.16em; text-transform:uppercase}
+  .ref-title #refCount{color:var(--accent); font-weight:600}
+  .ref-close{
+    border:0; background:transparent; color:var(--soft); cursor:pointer;
+    width:26px; height:26px; display:flex; align-items:center; justify-content:center; transition:.12s;
+  }
+  .ref-close:hover{color:var(--accent)}
+  .ref-close svg{width:15px;height:15px}
+  /* поиск в справочнике */
+  .ref-search{position:relative; margin:12px 14px 8px}
+  .ref-search input{
+    width:100%; font:500 12px var(--mono); color:var(--ink); background:transparent;
+    border:0; border-bottom:1px solid rgba(38,35,25,.45); padding:6px 24px 6px 2px;
+  }
+  .ref-search input::placeholder{color:var(--soft); font-weight:400}
+  .ref-search input:focus{outline:none; border-bottom-color:var(--accent)}
+  .ref-search svg{position:absolute; right:2px; top:50%; transform:translateY(-50%); width:13px; height:13px; color:var(--soft); pointer-events:none}
+  /* прокручиваемый список внутри панели */
+  .ref-panel .ref-scroll{
+    flex:1; max-height:none; overflow-y:auto; overscroll-behavior:contain;
+    padding:0 14px; scrollbar-width:thin; scrollbar-color:rgba(38,35,25,.35) transparent;
+  }
+  .ref-panel .ref-scroll::-webkit-scrollbar{width:8px}
+  .ref-panel .ref-scroll::-webkit-scrollbar-track{background:transparent}
+  .ref-panel .ref-scroll::-webkit-scrollbar-thumb{background:rgba(38,35,25,.3); border:2px solid var(--paper)}
+  #refTable{width:100%; border-collapse:collapse; table-layout:fixed}
+  #refTable td{font-size:11.5px; padding:3.5px 4px; border-bottom:1px solid rgba(38,35,25,.14); cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  #refTable td.d{text-align:right; font:500 11.5px var(--mono); width:52px}
+  #refTable tr:hover td{background:rgba(38,35,25,.06)}
+  .ref-empty{display:none; font:italic 400 11px var(--sans); color:var(--soft); padding:8px 2px}
+  .ref-panel .ref-note{padding:10px 14px 13px; border-top:1px solid var(--line); margin-top:0}
+  .ref-note{font:italic 400 9.5px var(--sans); color:var(--soft)}
+  .btns{display:flex; gap:9px; margin-top:16px}
+  .bt{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:8px;
+    font:500 11.5px var(--mono); letter-spacing:.04em; padding:10px 6px;
+    border:1px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer; transition:.14s;
+  }
+  .bt svg{width:13px;height:13px}
+  .bt:hover{background:var(--ink); color:var(--paper)}
+  .bt:disabled{opacity:.45; pointer-events:none}
+  /* строка статуса над чертежом — не перекрывает подписи кабелей */
+  .dwg-head{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    margin-bottom:9px; min-height:25px;
+  }
+  .dwg-head .pill{position:static}
+  .dwg-head .pill.over{display:none}
+  .canvas-wrap{
+    position:relative; height:clamp(430px,56vh,660px);
+    border:1px solid rgba(38,35,25,.4); background:var(--field); user-select:none; -webkit-user-select:none;
+  }
+  #cv{width:100%; height:100%; display:block; touch-action:none; cursor:crosshair}
+  .pill{
+    position:absolute; pointer-events:none; display:flex; align-items:center; gap:7px;
+    font:500 9.5px var(--mono); letter-spacing:.14em; padding:5px 10px;
+    border:1px solid rgba(38,35,25,.4); background:rgba(250,247,238,.92); color:var(--ink);
+  }
+  .pill .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1s infinite}
+  .pill.done .dot{animation:none;background:var(--ok)}
+  .pill.over{border-color:var(--accent);color:var(--accent)}
+  .pill.hint{bottom:10px;left:10px;border-color:transparent;background:transparent;color:var(--soft);transition:opacity .8s}
+  @keyframes pulse{50%{opacity:.15}}
+  .legend{display:flex; flex-wrap:wrap; gap:4px 8px; margin-top:10px; min-height:26px}
+  .lg{
+    display:flex; align-items:center; gap:8px; font:400 11px var(--mono);
+    padding:3.5px 8px; border:1px solid transparent; transition:.12s; cursor:default;
+  }
+  .lg:hover{border-color:rgba(38,35,25,.4)}
+  .lg .sw{width:12px;height:12px;border-radius:50%;border:1px solid rgba(30,27,20,.5)}
+  .lg .nm{color:var(--soft)}
+  .stamp{
+    margin-top:24px; border:1.5px solid var(--ink); background:var(--paper);
+    display:grid; grid-template-columns:1.25fr 1.15fr .85fr .9fr 1.5fr 1.1fr 1.45fr;
+  }
+  .cell{padding:11px 14px 13px; border-left:1px solid var(--line); min-width:0}
+  .cell:first-child{border-left:0}
+  .cell h3{font:500 8.5px var(--mono); letter-spacing:.2em; text-transform:uppercase; color:var(--soft); margin-bottom:7px}
+  .cell .v{font:500 15px var(--mono); white-space:nowrap}
+  .cell .s{font:400 9.5px var(--mono); color:var(--soft); margin-top:4px; white-space:nowrap}
+  .v.big{font:500 27px/1 'Unbounded'; letter-spacing:.01em}
+  .scale{position:relative; height:9px; border:1px solid rgba(38,35,25,.55); margin-top:9px;
+    background:repeating-linear-gradient(-45deg, rgba(38,35,25,.16) 0 2px, transparent 2px 6px)}
+  .scale i{position:absolute; top:0; bottom:0}
+  .scale #z1{left:0; width:40%; background:var(--field)}
+  .scale #z2{left:40%; width:10%; background:rgba(38,35,25,.1)}
+  .scale .mark{top:-3px; bottom:-3px; width:3px; background:var(--accent); transition:left .25s}
+  .ticks{position:relative; height:13px; margin-top:3px; font:400 8.5px var(--mono); color:var(--soft)}
+  .ticks span{position:absolute; transform:translateX(-50%)}
+  .stamp-verdict{
+    display:inline-block; border:2px solid currentColor; padding:7px 12px 6px; margin-top:5px;
+    font:600 11.5px var(--mono); letter-spacing:.1em; transform:rotate(-3deg);
+    position:relative; white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis;
+  }
+  .stamp-verdict::after{content:''; position:absolute; inset:2px; border:1px solid currentColor; opacity:.55}
+  .v-ok{color:var(--ok)} .v-warn{color:var(--warn)} .v-bad{color:var(--accent)} .v-idle{color:var(--soft)}
+  .footnote{
+    display:flex; justify-content:space-between; gap:20px; margin-top:12px; padding:0 2px;
+    font:400 10px var(--sans); color:var(--soft);
+  }
+  .footnote .f{font-family:var(--mono); letter-spacing:.04em}
+  @media (max-width:1080px){
+    main{grid-template-columns:1fr}
+    .dwg{border-left:0; padding-left:0; margin-top:22px}
+    .stamp{grid-template-columns:repeat(2,1fr)}
+    .cell{border-top:1px solid var(--line)}
+    .cell:nth-child(-n+2){border-top:0}
+    .cell:nth-child(odd){border-left:0}
+    .footnote{flex-direction:column; gap:4px}
+    .ref-panel{width:min(326px,92vw)}
+  }
+</style>
+</head>
+<body>
+<div class="ref-scrim" id="refScrim"></div>
+
+<!-- ═══ Выдвижная панель справочника (слева) ═══ -->
+<div class="ref-panel" id="refPanel">
+  <div class="ref-head">
+    <div class="ref-title">Справочник кабелей · <span id="refCount">0</span></div>
+    <button class="ref-close" id="refClose" title="Закрыть (Esc)"><i data-lucide="x"></i></button>
+  </div>
+  <div class="ref-search">
+    <input id="refSearch" type="text" placeholder="Поиск по марке…" autocomplete="off" spellcheck="false">
+    <i data-lucide="search"></i>
+  </div>
+  <div class="ref-scroll" id="refScroll">
+    <table id="refTable"></table>
+    <div class="ref-empty" id="refEmpty">Ничего не найдено</div>
+  </div>
+  <div class="ref-note">Клик по строке — добавить кабель в расчёт. Диаметры ориентировочные, уточняйте по ГОСТ / ТУ изготовителя.</div>
+</div>
+
+<div class="sheet">
+  <header>
+    <div>
+      <div class="doc-line">ФОРМА КС-3 · ПОПЕРЕЧНЫЙ РАЗРЕЗ · ФИЗИЧЕСКАЯ МОДЕЛЬ УКЛАДКИ</div>
+      <h1>Расчёт заполняемости<br>кабельного лотка</h1>
+    </div>
+    <div class="head-meta">
+      ЛОТОК НЕПЕРФОРИРОВАННЫЙ · <b>ДКС</b><br>
+      СЕЧЕНИЕ · ГОСТ Р 52868<br>
+      ЕДИНИЦЫ: ММ · СЕТКА 10 ММ · <b>t = 1,0</b>
+    </div>
+  </header>
+
+  <main>
+    <!-- ═══ Панель параметров ═══ -->
+    <aside class="panel">
+      <section class="sec">
+        <h2><span class="num">01</span>Лоток ДКС</h2>
+        <div class="matrix" id="matrix"></div>
+        <div class="tray-line">Сечение: <b id="trayLabel">—</b> · внутреннее <span id="trayInLabel">—</span></div>
+        <label class="chk">
+          <input type="checkbox" id="chkDiv">
+          <span class="box"></span>
+          ПЕРЕГОРОДКА · t 1 ММ · ВО ВСЮ ВЫСОТУ
+        </label>
+      </section>
+
+      <section class="sec">
+        <h2><span class="num">02</span>Кабели</h2>
+        <div id="cableRows"></div>
+        <button class="ghost" id="addRow"><i data-lucide="plus"></i>ДОБАВИТЬ ТИП КАБЕЛЯ</button>
+        <button class="ghost" id="btnRef" style="margin-top:8px"><i data-lucide="book-open"></i>СПРАВОЧНИК КАБЕЛЕЙ · <span id="refBtnCount">0</span></button>
+      </section>
+
+      <section class="sec">
+        <h2><span class="num">03</span>Оценка результата</h2>
+        <div class="fld-row" style="margin-top:0">
+          <label>Норматив заполняемости (многослойная прокладка)</label>
+          <div class="seg" id="segNorm"></div>
+        </div>
+        <div class="btns">
+          <button class="bt" id="btnRe"><i data-lucide="refresh-ccw"></i>ПЕРЕУЛОЖИТЬ</button>
+          <button class="bt" id="btnAuto"><i data-lucide="crosshair"></i>ПОДОБРАТЬ ЛОТОК</button>
+        </div>
+        <details class="ref">
+          <summary>Методика расчёта</summary>
+          <ol>
+            <li><b>Полезное сечение.</b> A = (W − 2t)·(H − t) при t = 1 мм, за вычетом скруглений нижних углов (радиус гиба ≈ 3t) и площади перегородки, если она установлена.</li>
+            <li><b>Укладка.</b> Сечение кабеля — круг наружным диаметром ∅. Осадка моделируется физически: круги контактируют точечно и образуют клиновидные зазоры, которые остаются незаполненными, — поэтому фактическое заполнение всегда ниже суммы площадей. Предел упаковки кругов (гексагональная решётка) π/√12 ≈ 90,7 %, свободная засыпка даёт 55–65 %.</li>
+            <li><b>Заполняемость.</b> K = Σ(π·∅²/4) ÷ A × 100 % — считается по факту осадки, без коэффициентов.</li>
+            <li><b>Норматив.</b> Ориентиры ДКС при многослойной прокладке: силовые кабели — K ≤ 40 %, слаботочные — K ≤ 50 %. Перегородка позволяет разделять цепи и считать каждую её сторону отдельно по своему нормативу.</li>
+            <li><b>Габаритный контроль.</b> Ни одно сечение не должно выходить выше кромки борта — контролируется по результату симуляции.</li>
+          </ol>
+        </details>
+      </section>
+    </aside>
+
+    <!-- ═══ Чертёж ═══ -->
+    <section class="dwg">
+      <div class="dwg-head">
+        <div class="pill" id="pillStatus"><i class="dot"></i><span id="pillText">УКЛАДКА</span></div>
+        <div class="pill over" id="pillOver"></div>
+      </div>
+      <div class="canvas-wrap" id="wrap">
+        <canvas id="cv"></canvas>
+        <div class="pill hint" id="pillHint">Кабели и перегородку можно перетаскивать мышью</div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </section>
+  </main>
+
+  <!-- ═══ Штамп ═══ -->
+  <footer class="stamp">
+    <div class="cell">
+      <h3>Лоток</h3>
+      <div class="v" id="stTray">—</div>
+      <div class="s" id="stTraySub">—</div>
+    </div>
+    <div class="cell">
+      <h3>Кабели</h3>
+      <div class="v" id="stCount">—</div>
+      <div class="s" id="stCountSub">—</div>
+    </div>
+    <div class="cell">
+      <h3>Σ S кабелей</h3>
+      <div class="v" id="stScab">—</div>
+      <div class="s">π·∅²/4, все сечения</div>
+    </div>
+    <div class="cell">
+      <h3>S сечения</h3>
+      <div class="v" id="sStray">—</div>
+      <div class="s">полезное, вн.</div>
+    </div>
+    <div class="cell">
+      <h3>Заполняемость K</h3>
+      <div class="v big" id="stK">—</div>
+      <div class="scale"><i id="z1"></i><i id="z2"></i><i class="mark" id="kMark"></i></div>
+      <div class="ticks">
+        <span style="left:5px">0</span>
+        <span id="tickNorm" style="left:40%">40</span>
+        <span style="left:50%">50</span>
+        <span style="left:calc(100% - 8px)">100</span>
+      </div>
+    </div>
+    <div class="cell">
+      <h3>Слой кабелей</h3>
+      <div class="v" id="stLevel">—</div>
+      <div class="s" id="stLevelSub">—</div>
+    </div>
+    <div class="cell">
+      <h3>Заключение</h3>
+      <div class="stamp-verdict v-idle" id="verdict">РАСЧЁТ</div>
+    </div>
+  </footer>
+  <div class="footnote">
+    <div>Диаметры в справочнике — ориентировочные. Расчёт носит рекомендательный характер; окончательный выбор сечения — по проекту с учётом теплоотвода и разделения цепей.</div>
+    <div class="f">K = Σ(π∅²/4) / [(W−2t)(H−t)]</div>
+  </div>
+</div>
+
+<datalist id="diaList"></datalist>
+
+<script>
+'use strict';
+/* ═══════════════ СПРАВОЧНИКИ И СОСТОЯНИЕ ═══════════════ */
+const T = 1;                                       // толщина металла, мм — фиксированная
+const DKS_W = [50,100,150,200,300,400,500,600];
+const DKS_H = [50,80,100];
+const PALETTE = ['#A03D22','#37505E','#77672C','#4C5B43','#5B4A68','#2F5D55','#7A4A32','#3F4348','#96702F','#8E4A5B'];
+const REFERENCE = [
+  ['ВВГнг(А)-ХЛ LS 3х1,5',12.2],
+  ['ВВГнг(А)-LS 2х1,5',11],
+  ['ВВГнг(А)-LS 2х2,5',12.5],
+  ['ВВГнг(А)-LS 3х1,5',12.2],
+  ['ВВГнг(А)-LS 3х2,5',13.1],
+  ['ВВГнг(А)-LS 4х1,5',13],
+  ['ВВГнг(А)-LS 4х2,5',14],
+  ['ВВГнг(А)-LS 5х2,5',15],
+  ['ВВГнг(А)-LS 5х4',14],
+  ['КГВВнг(А)-LS 2х1,5',10],
+  ['КГВВнг(А)-LS 2х2,5',10.1],
+  ['КГВВнг(А)-LS 4х2,5',11.5],
+  ['КГВВнг(А)-LS 4х2,5',12.4],
+  ['КГВВнг(А)-LS 4х6',16],
+  ['КГВВнг(А)-LS 4х10',18.4],
+  ['КГВВнг(А)-LS 4х16',21.3],
+  ['КГВВнг(А)-LS 4х25',27],
+  ['КГВЭВнг(А)-LS 4х2,5',14.2],
+  ['КГВЭВнг(А)-LS 4х2,5',11.6],
+  ['КГВЭВнг(А)-LS 4х4',17.5],
+  ['КГВЭВнг(А)-LS 4х6',18.1],
+  ['КГВЭВнг(А)-LS 4х10',21.9],
+  ['КГВЭВнг(А)-LS 4х16',25.7],
+  ['КГВЭВнг(А)-LS 4х25',28.3],
+  ['КГВЭВнг(А)-LS 4х35',34],
+  ['КГВЭВнг(А)-LS 4х50',37],
+  ['КПСВЭВнг(А)-LS 1х2х1,5',7.2],
+  ['КПСВЭВнг(А)-LS 1х2х1',6],
+  ['МКЭШВнг(А)-HF 1х2х1',10.7],
+  ['МКЭШВнг(А)-HF 2х2х1',13],
+  ['МКЭШВнг(А)-HF 3х2х1',14],
+  ['МКЭШВнг(А)-HF 4х2х1',14.5],
+  ['МКЭШВнг(А)-HF 5х2х1',15],
+  ['МКЭШВнг(А)-HF 7х2х1',16],
+  ['МКЭШвнг(А)-LS 1х2х1',10.5],
+  ['МКЭШвнг(А)-LS 1х2х1,0',10.3],
+  ['МКЭШвнг(А)-LS 1х2х1,5',11.3],
+  ['МКЭШвнг(А)-LS 2х2х1,5',14.6],
+  ['МКЭШвнг(А)-LS 3х2х1,0',13.7],
+  ['МКЭШвнг(А)-LS 8х2х1,0',18],
+  ['ПВКВ 1х1,5',3.3],
+  ['ПВКВ 1х2,5',4.1],
+  ['ПВКВ 1х4',4.7],
+  ['ПВКВ 1х6',5.6],
+  ['ПВКВ 1х10',7.1],
+  ['ПВКВ 1х16',8.8],
+  ['ПВСнг(А)-LS 2х1,5',8.5],
+  ['ПВСнг(А)-LS 3х0,75',6.6],
+  ['ПВСнг(А)-LS 3х1,5',9.3],
+  ['ПУГВ 1х1,5',3],
+  ['ПУГВ 1х6',4.7],
+  ['ПУГВ 1х10',6],
+  ['ПУГВ 1х16',7.6],
+  ['ПУГВ 1х25',9.6],
+  ['ПУГВнг(А)-LS 1х2,5',3.5],
+  ['ПУГВнг(А)-LS 1х6',4.7],
+  ['ПУГВнг(А)-LS 1х16',7.6],
+  ['СПЕЦЛАН F/UTP Cat 5e PVC LSнг(А)-LS 4х2х0,52',8.1],
+  ['СегментЛАН F/UTP Cat5e PVCLSнг(А)-LS 4х2х0,52',7],
+  ['Энерготерм-400нг(A)-FRLS 4х1,5',11.8],
+  ['Энерготерм-400нг(A)-FRLS 4х2,5',13.8],
+  ['Энерготерм-400нг(A)-FRLS 4х4',15.2],
+  ['Энерготерм-400нг(A)-FRLS 4х6',18.1],
+  ['Энерготерм-400нг(A)-FRLS 4х10',21],
+  ['Энерготерм-400нг(A)-FRLS 4х16',24.2],
+  ['Уралтерм-400нг(A)-FRLS 4х4',15],
+  ['ВБШвнг(А)-LS 4х4ок(N)',13.9],
+  ['МКЭКШВнг(А)-LS 1х2х1.0',10.5],
+  ['КУМП-ПсАсзнг(А)-FRHF 3х1,5',13.4],
+  ['КУМП-ПсОЭсзнг(А)-FRHF 1х2х1,0',12.5],
+  ['КУМП-ПсИЭОЭсзнг(А)-FRHF 2х2х1,0',17.9],
+  ['КУМП-ПсИЭОЭсзнг(А)-FRHF 3х2х1,0',18.5],
+  ['ППГнг(А)-HF 3х1,5',10],
+  ['ППГнг(А)-HF 2х1,5',9],
+  ['КГПЭПнг(А)-HF 4х2,5',13.9],
+  ['КГПЭПнг(А)-HF 4х4',15.8],
+];
+const state = { W:200, H:50, cables:[], norm:40, divider:false, divX:null };
+
+const $ = s => document.querySelector(s);
+const el = id => document.getElementById(id);
+const TAU = Math.PI*2;
+const ACCENT = '#C8471D', INK = '38,35,25';
+const clampN = (v,a,b)=>Math.min(b,Math.max(a,v));
+
+const fmt = (x,d=1)=>x.toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtmm = x=>fmt(x, x>=100?1:2);
+const fmtI = x=>Math.round(x).toLocaleString('ru-RU');
+function plural(n,a,b,c){const m=n%100;if(m>=11&&m<=14)return c;switch(n%10){case 1:return a;case 2:case 3:case 4:return b;default:return c;}}
+
+/* ═══════════════ ФИЗИЧЕСКАЯ МОДЕЛЬ УКЛАДКИ ═══════════════
+   Круглые сечения свободно оседают в лоток: гравитация, точечные
+   контакты круг-круг и круг-стенка, трение. Зазоры между кругами
+   возникают естественно и остаются незаполненными.            */
+const STEP=1/240, GRAV=15000, DAMP=0.995, REST=0.03, FRIC=0.12, VCAP=650, MAXB=500;
+
+function makeSim(W,H,t,cables,divOn,divX){
+  const Win=W-2*t, Hin=H-t;
+  const rf=Math.min(3,Math.max(1,t*3));            // внутренний радиус гиба
+  const s={W,H,t,Win,Hin,rf,L:0,R:Win,T:0,B:Hin,
+    balls:[],queue:[],qi:0,cool:0,time:0,settleT:0,settled:true,
+    blocked:0,total:0,drag:null,divDrag:false,avgV:99,quick:false,trunc:false,cell:10,
+    div:null};
+  if(divOn && Win>3){
+    s.div={x:clampN(divX==null?(Win-1)/2:divX, 0, Win-1), w:1};
+  }
+  let list=[];
+  for(const c of cables){
+    const r=c.d/2;
+    if(2*r>Win-0.5){ s.blocked+=c.n; continue; }   // ∅ шире лотка
+    for(let i=0;i<c.n;i++) list.push({r,gi:c.gi});
+  }
+  list.sort((a,b)=>b.r-a.r||Math.random()-0.5);    // крупные — первыми
+  if(list.length>MAXB){ list.length=MAXB; s.trunc=true; }
+  s.queue=list; s.total=list.length+s.blocked;
+  let mr=1; for(const it of list) if(it.r>mr) mr=it.r;
+  s.cell=Math.max(8, mr*2.05);
+  s.settled=list.length===0;
+  return s;
+}
+
+function spawnBatch(s,k){
+  while(k-->0 && s.qi<s.queue.length){
+    const it=s.queue[s.qi++], r=it.r;
+    s.balls.push({
+      x:r+1+Math.random()*Math.max(0.01, s.Win-2*r-2),
+      y:-(15+Math.random()*80),
+      vx:(Math.random()-0.5)*70, vy:30,
+      r, gi:it.gi, id:s.balls.length
+    });
+  }
+}
+
+function collide(s,a,b,ia,ib){
+  const dx=b.x-a.x, dy=b.y-a.y, rs=a.r+b.r, d2=dx*dx+dy*dy;
+  if(d2>=rs*rs) return;
+  const isum=ia+ib; if(isum===0) return;
+  let d=Math.sqrt(d2), nx,ny;
+  if(d<1e-6){nx=0;ny=-1;} else {nx=dx/d; ny=dy/d;}
+  const corr=(rs-d)/isum*0.9;                       // позиционная развязка
+  a.x-=nx*corr*ia; a.y-=ny*corr*ia;
+  b.x+=nx*corr*ib; b.y+=ny*corr*ib;
+  const rvx=b.vx-a.vx, rvy=b.vy-a.vy, vn=rvx*nx+rvy*ny;
+  if(vn<0){
+    const j=-(1+REST)*vn/isum;                      // нормальный импульс
+    a.vx-=j*nx*ia; a.vy-=j*ny*ia;
+    b.vx+=j*nx*ib; b.vy+=j*ny*ib;
+    const tx=-ny, ty=nx, vt=rvx*tx+rvy*ty;          // трение покоя
+    let jt=-vt/isum;
+    const mj=Math.abs(j)*FRIC;
+    if(jt>mj)jt=mj; else if(jt<-mj)jt=-mj;
+    a.vx-=jt*tx*ia; a.vy-=jt*ty*ia;
+    b.vx+=jt*tx*ib; b.vy+=jt*ty*ib;
+  }
+}
+
+function walls(s,b){
+  if(b.x-b.r<s.L){ b.x=s.L+b.r; if(b.vx<0)b.vx*=-REST; b.vy*=0.985; }
+  if(b.x+b.r>s.R){ b.x=s.R-b.r; if(b.vx>0)b.vx*=-REST; b.vy*=0.985; }
+  if(b.y+b.r>s.B){ b.y=s.B-b.r; if(b.vy>0)b.vy*=-REST; b.vx*=0.985; }
+  if(b.r<s.rf){                                     // скругление углов дна
+    const lim=s.rf-b.r;
+    let cx=s.L+s.rf, cy=s.B-s.rf;
+    if(b.x<cx && b.y>cy){
+      const dx=b.x-cx, dy=b.y-cy, d=Math.hypot(dx,dy);
+      if(d>lim){ b.x=cx+dx/d*lim; b.y=cy+dy/d*lim; }
+    }
+    cx=s.R-s.rf;
+    if(b.x>cx && b.y>cy){
+      const dx=b.x-cx, dy=b.y-cy, d=Math.hypot(dx,dy);
+      if(d>lim){ b.x=cx+dx/d*lim; b.y=cy+dy/d*lim; }
+    }
+  }
+  if(s.div && b.y+b.r>0){                           // перегородка во всю высоту лотка
+    const d=s.div, mid=d.x+d.w/2;
+    if(b.x<mid){
+      if(b.x+b.r>d.x){ b.x=d.x-b.r; if(b.vx>0)b.vx*=-REST; b.vy*=0.985; }
+    }else{
+      if(b.x-b.r<d.x+d.w){ b.x=d.x+d.w+b.r; if(b.vx<0)b.vx*=-REST; b.vy*=0.985; }
+    }
+  }
+}
+
+function stepSim(s){
+  s.time+=STEP;
+  const rem=s.queue.length-s.qi;
+  if(rem>0){
+    s.cool-=STEP;
+    if(s.cool<=0){
+      spawnBatch(s, rem>140?8:rem>50?3:1);
+      s.cool=rem>140?0.012:rem>50?0.022:0.034;
+    }
+  }
+  const bs=s.balls, n=bs.length;
+  for(let i=0;i<n;i++){
+    const b=bs[i];
+    if(s.drag && s.drag.b===b){                     // кинематическое перетаскивание кабеля
+      const px=b.x, py=b.y;
+      b.x+=(s.drag.tx-b.x)*0.5; b.y+=(s.drag.ty-b.y)*0.5;
+      b.vx=(b.x-px)/STEP; b.vy=(b.y-py)/STEP;
+      const v=Math.hypot(b.vx,b.vy);
+      if(v>VCAP){b.vx*=VCAP/v;b.vy*=VCAP/v;}
+    } else {
+      b.vy+=GRAV*STEP;
+      b.vx*=DAMP; b.vy*=DAMP;
+      const v=Math.hypot(b.vx,b.vy);
+      if(v>VCAP){b.vx*=VCAP/v;b.vy*=VCAP/v;}
+      b.x+=b.vx*STEP; b.y+=b.vy*STEP;
+    }
+  }
+  // пространственная сетка — соседи по 9 ячейкам
+  const g=new Map(), cs=s.cell;
+  for(let i=0;i<n;i++){
+    const b=bs[i], k=Math.floor(b.x/cs)+Math.floor(b.y/cs)*100000;
+    let a=g.get(k); if(!a){a=[];g.set(k,a);} a.push(b);
+  }
+  const im=b=>(s.drag&&s.drag.b===b)?0:1/(b.r*b.r);
+  const iters=s.quick?4:6;
+  for(let it=0;it<iters;it++){
+    for(let i=0;i<n;i++){
+      const a=bs[i], cx=Math.floor(a.x/cs), cy=Math.floor(a.y/cs);
+      for(let gx=cx-1;gx<=cx+1;gx++)for(let gy=cy-1;gy<=cy+1;gy++){
+        const arr=g.get(gx+gy*100000); if(!arr) continue;
+        for(const b of arr){ if(b.id<=a.id) continue; collide(s,a,b,im(a),im(b)); }
+      }
+    }
+    for(let i=0;i<n;i++) walls(s,bs[i]);
+  }
+  // критерий осадки
+  let sum=0;
+  for(let i=0;i<n;i++){const b=bs[i]; sum+=Math.abs(b.vx)+Math.abs(b.vy);}
+  s.avgV=n?sum/n:0;
+  if(s.qi>=s.queue.length && s.avgV<22 && !s.drag && !s.divDrag){
+    s.settleT+=STEP; if(s.settleT>0.35) s.settled=true;
+  } else if(!s.drag && !s.divDrag){
+    s.settleT=0;
+    if(s.qi<s.queue.length) s.settled=false;
+  }
+  if(s.time>26) s.settled=true;
+}
+
+function results(s){
+  const Afil=2*(1-Math.PI/4)*s.rf*s.rf;
+  let A=s.Win*s.Hin-Afil;
+  if(s.div) A-=s.div.w*s.Hin;                       // перегородка занимает сечение
+  let Sc=0, over=0, top=Infinity;
+  for(const b of s.balls){
+    Sc+=Math.PI*b.r*b.r;
+    if(b.y-b.r<-0.35) over++;
+    if(b.y-b.r<top) top=b.y-b.r;
+  }
+  const level=isFinite(top)? s.B-top : 0;
+  return {A, Sc, K:Sc/A*100, over, level, waiting:s.queue.length-s.qi, n:s.balls.length};
+}
+
+/* ═══════════════ ГЛАВНАЯ СИМУЛЯЦИЯ И ОТРИСОВКА ═══════════════ */
+const wrap=$('#wrap'), cv=$('#cv'), ctx=cv.getContext('2d');
+let cur=null, dpr=1, view={ox:0,oy:0,sc:1};
+let mouseW=null, hoverB=null, hlG=undefined, autoToken=0, autoRunning=false, hinted=false;
+
+function fitCanvas(){
+  const r=wrap.getBoundingClientRect();
+  dpr=window.devicePixelRatio||1;
+  cv.width=Math.max(1,r.width*dpr); cv.height=Math.max(1,r.height*dpr);
+}
+new ResizeObserver(fitCanvas).observe(wrap);
+
+function buildMain(){
+  autoToken++;
+  const cables=state.cables.map((c,gi)=>({...c,gi}));
+  cur=makeSim(state.W,state.H,T,cables,state.divider,state.divX);
+  buildLegend();
+  updateTrayLabels();
+}
+
+function toWorld(e){
+  const r=cv.getBoundingClientRect();
+  return {x:(e.clientX-r.left-view.ox)/view.sc, y:(e.clientY-r.top-view.oy)/view.sc};
+}
+function pickBall(w){
+  if(!w||!cur) return null;
+  const bs=cur.balls;
+  for(let i=bs.length-1;i>=0;i--){
+    const b=bs[i], dx=w.x-b.x, dy=w.y-b.y, rr=b.r+3/view.sc;
+    if(dx*dx+dy*dy<=rr*rr) return b;
+  }
+  return null;
+}
+function divHit(w){                                 // курсор у перегородки?
+  return !!(cur && cur.div && w &&
+    Math.abs(w.x-(cur.div.x+cur.div.w/2))*view.sc<=9 &&
+    w.y>-25 && w.y<cur.B+25);
+}
+function wake(){ if(cur){ cur.settled=false; cur.settleT=0; } }
+function hideHint(){ if(!hinted){ hinted=true; el('pillHint').style.opacity=0; } }
+
+function draw(){
+  const rct=wrap.getBoundingClientRect(), cw=rct.width, ch=rct.height;
+  if(cw<10||ch<10||!cur) return;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle='#FAF7EE'; ctx.fillRect(0,0,cw,ch);
+  const s=cur, t=s.t, rf=s.rf, ro=rf+t;
+  const minX=-(30+t), maxX=s.Win+t+44, minY=-118, maxY=s.Hin+t+40;
+  const sc=Math.min(cw/(maxX-minX), ch/(maxY-minY));
+  const ox=-minX*sc+(cw-(maxX-minX)*sc)/2;
+  const oy=-minY*sc+(ch-(maxY-minY)*sc)/2;
+  view={ox,oy,sc};
+  const sx=x=>ox+x*sc, sy=y=>oy+y*sc;
+
+  /* миллиметровая сетка */
+  ctx.lineWidth=1;
+  const wx0=Math.floor(((-ox)/sc)/10)*10, wx1=(cw-ox)/sc;
+  for(let wx=wx0; wx<=wx1; wx+=10){
+    const px=Math.round(sx(wx))+0.5, major=Math.round(wx)%50===0;
+    ctx.strokeStyle=major?`rgba(${INK},.10)`:`rgba(${INK},.05)`;
+    ctx.beginPath(); ctx.moveTo(px,0); ctx.lineTo(px,ch); ctx.stroke();
+  }
+  const wy0=Math.floor(((-oy)/sc)/10)*10, wy1=(ch-oy)/sc;
+  for(let wy=wy0; wy<=wy1; wy+=10){
+    const py=Math.round(sy(wy))+0.5, major=Math.round(wy)%50===0;
+    ctx.strokeStyle=major?`rgba(${INK},.10)`:`rgba(${INK},.05)`;
+    ctx.beginPath(); ctx.moveTo(0,py); ctx.lineTo(cw,py); ctx.stroke();
+  }
+  /* осевая линия */
+  ctx.setLineDash([9,3,2,3]); ctx.strokeStyle=`rgba(${INK},.3)`; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(sx(s.Win/2),sy(minY+5)); ctx.lineTo(sx(s.Win/2),sy(s.Hin+t+9)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  /* кабели */
+  hoverB = s.drag ? s.drag.b : (s.divDrag ? null : pickBall(mouseW));
+  for(const b of s.balls){
+    const px=sx(b.x), py=sy(b.y), pr=Math.max(1.2,b.r*sc);
+    const dimmed = hlG!==undefined && hlG!==b.gi && hoverB!==b;
+    ctx.globalAlpha=dimmed?0.3:1;
+    ctx.beginPath(); ctx.arc(px,py,pr,0,TAU);
+    ctx.fillStyle=PALETTE[b.gi%PALETTE.length]; ctx.fill();
+    ctx.lineWidth=1;
+    ctx.strokeStyle=dimmed?'rgba(30,27,20,.3)':'rgba(30,27,20,.85)'; ctx.stroke();
+    if(pr>5){
+      ctx.beginPath(); ctx.arc(px,py,pr*0.62,0,TAU);
+      ctx.strokeStyle='rgba(250,247,238,.5)'; ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    if(hoverB===b || (s.drag&&s.drag.b===b)){
+      ctx.beginPath(); ctx.arc(px,py,pr+1.6,0,TAU);
+      ctx.strokeStyle=ACCENT; ctx.lineWidth=1.6; ctx.stroke();
+    }
+  }
+
+  /* металл лотка: П-профиль со скруглениями гиба */
+  const P=new Path2D();
+  P.moveTo(sx(-t),sy(0));
+  P.lineTo(sx(-t),sy(s.B+t-ro));
+  P.arc(sx(-t+ro),sy(s.B+t-ro),ro*sc,Math.PI,Math.PI/2,true);
+  P.lineTo(sx(s.R+t-ro),sy(s.B+t));
+  P.arc(sx(s.R+t-ro),sy(s.B+t-ro),ro*sc,Math.PI/2,0,true);
+  P.lineTo(sx(s.R+t),sy(0));
+  P.lineTo(sx(s.R),sy(0));
+  P.lineTo(sx(s.R),sy(s.B-rf));
+  P.arc(sx(s.R-rf),sy(s.B-rf),rf*sc,0,Math.PI/2,false);
+  P.lineTo(sx(s.L+rf),sy(s.B));
+  P.arc(sx(s.L+rf),sy(s.B-rf),rf*sc,Math.PI/2,Math.PI,false);
+  P.lineTo(sx(s.L),sy(0));
+  P.closePath();
+  ctx.fillStyle='#EDE7D6'; ctx.fill(P);
+  ctx.save(); ctx.clip(P);
+  ctx.strokeStyle=`rgba(${INK},.5)`; ctx.lineWidth=0.7;
+  const bx0=sx(-t), bx1=sx(s.R+t), by0=sy(0), by1=sy(s.B+t), hh=by1-by0;
+  ctx.beginPath();
+  for(let x=bx0-hh; x<bx1; x+=6){ ctx.moveTo(x,by1); ctx.lineTo(x+hh,by0); }
+  ctx.stroke(); ctx.restore();
+  ctx.lineWidth=1.4; ctx.strokeStyle='#262319'; ctx.stroke(P);
+
+  /* перегородка: металл, поверх кабелей */
+  const hotDiv = s.div && !s.drag && (s.divDrag || divHit(mouseW));
+  if(s.div){
+    const d=s.div;
+    const px0=sx(d.x), px1=sx(d.x+d.w), py0=sy(0), py1=sy(s.B);
+    const pw=Math.max(1.25,px1-px0);
+    ctx.fillStyle='#EDE7D6'; ctx.fillRect(px0,py0,pw,py1-py0);
+    ctx.strokeStyle=hotDiv?ACCENT:'#262319';
+    ctx.lineWidth=hotDiv?1.7:1.2;
+    ctx.strokeRect(px0+0.5,py0+0.5,pw-1,py1-py0-1);
+    if(hotDiv){                                     // захват «влево-вправо»
+      const gx=px0+pw/2, gy=(py0+py1)/2;
+      ctx.lineWidth=1.4; ctx.beginPath();
+      ctx.moveTo(gx-8,gy); ctx.lineTo(gx+8,gy);
+      ctx.moveTo(gx-8,gy); ctx.lineTo(gx-4,gy-3); ctx.moveTo(gx-8,gy); ctx.lineTo(gx-4,gy+3);
+      ctx.moveTo(gx+8,gy); ctx.lineTo(gx+4,gy-3); ctx.moveTo(gx+8,gy); ctx.lineTo(gx+4,gy+3);
+      ctx.stroke();
+      ctx.font='10.5px "IBM Plex Mono", monospace';
+      ctx.fillStyle=ACCENT; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+      ctx.fillText('X = '+Math.round(d.x), gx, py0-6);
+    }
+  }
+
+  /* размерные линии */
+  dimH(sx(s.L), sx(s.R), sy(s.B), sy(s.B+t+16), fmtmm(s.Win));
+  dimV(sy(s.T), sy(s.B), sx(s.R), sx(s.R+18), fmtmm(s.Hin));
+
+  /* выход за кромку */
+  const overs=s.balls.filter(b=>b.y-b.r<-0.35);
+  if(overs.length){
+    ctx.save(); ctx.beginPath(); ctx.rect(0,0,cw,sy(0)); ctx.clip();
+    ctx.strokeStyle=ACCENT; ctx.lineWidth=1.1;
+    for(const b of overs){
+      const px=sx(b.x), py=sy(b.y), pr=b.r*sc;
+      ctx.beginPath(); ctx.arc(px,py,pr,0,TAU); ctx.stroke();
+      ctx.save(); ctx.beginPath(); ctx.arc(px,py,pr,0,TAU); ctx.clip();
+      ctx.beginPath();
+      for(let x=-pr;x<pr;x+=4){ ctx.moveTo(px+x,py-pr); ctx.lineTo(px+x+2*pr,py+pr); }
+      ctx.stroke(); ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  /* выноска с диаметром */
+  if(hoverB && !s.drag){
+    const b=hoverB, px=sx(b.x), py=sy(b.y), pr=b.r*sc;
+    const x1=px+pr*0.72, y1=py-pr*0.72, x2=x1+13, y2=y1-13, x3=x2+44;
+    ctx.strokeStyle=`rgba(${INK},.8)`; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.lineTo(x3,y2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x1,y1,1.8,0,TAU); ctx.fillStyle=`rgba(${INK},.8)`; ctx.fill();
+    ctx.font='10.5px "IBM Plex Mono", monospace'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillStyle='#262319';
+    ctx.fillText('∅ '+fmtmm(b.r*2), x2+4, y2-4);
+  }
+
+  /* курсор */
+  const c = s.divDrag||hotDiv ? 'ew-resize' : s.drag ? 'grabbing' : hoverB ? 'grab' : 'crosshair';
+  if(cv.dataset.cur!==c){ cv.style.cursor=c; cv.dataset.cur=c; }
+
+  function dimH(x1,x2,yRef,yLine,label){
+    ctx.strokeStyle=`rgba(${INK},.65)`; ctx.lineWidth=1;
+    ln(x1,yRef+2,x1,yLine+4); ln(x2,yRef+2,x2,yLine+4);
+    ln(x1,yLine+0.5,x2,yLine+0.5);
+    arrow(x1,yLine,Math.PI); arrow(x2,yLine,0);
+    const cx=(x1+x2)/2;
+    ctx.font='11px "IBM Plex Mono", monospace'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    const w=ctx.measureText(label).width;
+    ctx.fillStyle='#FAF7EE'; ctx.fillRect(cx-w/2-3,yLine-14,w+6,12);
+    ctx.fillStyle='#262319'; ctx.fillText(label,cx,yLine-4.5);
+  }
+  function dimV(y1,y2,xRef,xLine,label){
+    ctx.strokeStyle=`rgba(${INK},.65)`; ctx.lineWidth=1;
+    ln(xRef+2,y1,xLine+4,y1); ln(xRef+2,y2,xLine+4,y2);
+    ln(xLine+0.5,y1,xLine+0.5,y2);
+    arrow(xLine,y1,-Math.PI/2); arrow(xLine,y2,Math.PI/2);
+    const cy=(y1+y2)/2;
+    ctx.save(); ctx.translate(xLine-5,cy); ctx.rotate(-Math.PI/2);
+    ctx.font='11px "IBM Plex Mono", monospace'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    const w=ctx.measureText(label).width;
+    ctx.fillStyle='#FAF7EE'; ctx.fillRect(-w/2-3,-13,w+6,12);
+    ctx.fillStyle='#262319'; ctx.fillText(label,0,-3);
+    ctx.restore();
+  }
+  function arrow(x,y,ang){
+    ctx.beginPath(); ctx.moveTo(x,y);
+    ctx.lineTo(x+Math.cos(ang)*9-Math.sin(ang)*3, y+Math.sin(ang)*9+Math.cos(ang)*3);
+    ctx.lineTo(x+Math.cos(ang)*9+Math.sin(ang)*3, y+Math.sin(ang)*9-Math.cos(ang)*3);
+    ctx.closePath(); ctx.fillStyle=`rgba(${INK},.75)`; ctx.fill();
+  }
+  function ln(a,b,c2,d){ ctx.beginPath(); ctx.moveTo(a,b); ctx.lineTo(c2,d); ctx.stroke(); }
+}
+
+/* ═══════════════ ШТАМП И СТАТУСЫ ═══════════════ */
+function pill(msg,done,bad){
+  el('pillText').textContent=msg;
+  const p=el('pillStatus');
+  p.classList.toggle('done',!!done);
+  p.style.borderColor=bad?ACCENT:'';
+  p.style.color=bad?ACCENT:'';
+}
+function updateLive(){
+  if(!cur) return;
+  const r=results(cur), spawned=cur.balls.length;
+  if(cur.trunc){ pill('ЛИМИТ 500 КАБЕЛЕЙ · ПОКАЗАНЫ ПЕРВЫЕ 500',true,true); }
+  else if(cur.total===0){ pill('НЕТ КАБЕЛЕЙ',true); }
+  else if(!cur.settled){ pill(`УКЛАДКА · ${spawned}/${cur.total}`); }
+  else { pill('УЛОЖЕНО · УСТОЙЧИВО',true); }
+  const po=el('pillOver');
+  if(r.over>0){ po.style.display='flex'; po.textContent=`ВЫШЕ КРОМКИ · ${r.over} ШТ`; }
+  else po.style.display='none';
+  el('stTray').textContent=`ДКС ${cur.W}×${cur.H}`;
+  el('stTraySub').textContent=`вн. ${fmtmm(cur.Win)} × ${fmtmm(cur.Hin)} мм · t 1,0`+
+    (cur.div?` · П=${Math.round(cur.div.x)} мм`:'');
+  const groups=state.cables.length;
+  let dmin=Infinity,dmax=0;
+  for(const c of state.cables){ if(c.d<dmin)dmin=c.d; if(c.d>dmax)dmax=c.d; }
+  el('stCount').textContent=cur.total? `${spawned}/${cur.total} шт` : '0 шт';
+  el('stCountSub').textContent=groups?
+    `${groups} ${plural(groups,'тип','типа','типов')} · ∅ ${fmtmm(dmin)}–${fmtmm(dmax)} мм` : '—';
+  el('stScab').textContent=fmtI(r.Sc)+' мм²';
+  el('sStray').textContent=fmtI(r.A)+' мм²';
+  el('stK').textContent=fmt(r.K,1)+' %';
+  el('kMark').style.left=Math.min(100,r.K)+'%';
+  el('stLevel').textContent=`${fmtmm(r.level)} / ${fmtmm(cur.Hin)} мм`;
+  el('stLevelSub').textContent=cur.total? `${fmt(Math.min(999,r.level/cur.Hin*100),0)} % высоты лотка` : '—';
+  const v=el('verdict');
+  let cls='v-idle', txt='НЕТ ДАННЫХ';
+  if(cur.trunc){cls='v-bad';txt='ЛИМИТ 500 КАБ.';}
+  else if(cur.blocked>0){cls='v-bad';txt='∅ > ШИРИНЫ ЛОТКА';}
+  else if(cur.total>0){
+    if(!cur.settled){txt='ИДЁТ РАСЧЁТ';}
+    else if(r.over>0||r.waiting>0){cls='v-bad';txt=`ПЕРЕПОЛНЕНИЕ · ${r.over+r.waiting} ШТ`;}
+    else if(r.K>state.norm){cls='v-warn';txt=`${fmt(r.K,1)} % > ${state.norm} %`;}
+    else {cls='v-ok';txt=`СООТВЕТСТВУЕТ ≤ ${state.norm} %`;}
+  }
+  v.className='stamp-verdict '+cls; v.textContent=txt;
+}
+
+function updateTrayLabels(){
+  const Win=state.W-2*T, Hin=state.H-T;
+  el('trayLabel').textContent=`ДКС ${state.W}×${state.H}`;
+  el('trayInLabel').textContent=`${fmtmm(Win)} × ${fmtmm(Hin)} мм`;
+}
+
+/* ═══════════════ ЛЕГЕНДА ═══════════════ */
+function buildLegend(){
+  const lg=el('legend'); lg.innerHTML=''; hlG=undefined;
+  state.cables.forEach((c,gi)=>{
+    const d=document.createElement('div'); d.className='lg';
+    d.innerHTML=`<span class="sw" style="background:${PALETTE[gi%PALETTE.length]}"></span>
+      <span>∅ ${fmtmm(c.d)} мм × ${c.n}</span>${c.name?`<span class="nm">${c.name}</span>`:''}`;
+    d.addEventListener('mouseenter',()=>hlG=gi);
+    d.addEventListener('mouseleave',()=>hlG=undefined);
+    lg.appendChild(d);
+  });
+}
+
+/* ═══════════════ АВТОПОДБОР ТИПОРАЗМЕРА ═══════════════ */
+async function quickSim(W,H,myToken){
+  const s=makeSim(W,H,T,state.cables.map((c,gi)=>({...c,gi})),state.divider,null); // перегородка — по центру
+  s.quick=true;
+  let steps=0;
+  while(!s.settled && steps<6500){
+    for(let i=0;i<450 && !s.settled;i++){ stepSim(s); steps++; }
+    await new Promise(r=>setTimeout(r,0));
+    if(autoToken!==myToken) return null;
+  }
+  const r=results(s); r.blocked=s.blocked;
+  return r;
+}
+async function autoPick(){
+  if(autoRunning || !state.cables.length) return;
+  const myToken=++autoToken;
+  autoRunning=true; el('btnAuto').disabled=true;
+  try{
+    const cand=[];
+    for(const h of DKS_H)for(const w of DKS_W) cand.push({w,h,A:(w-2*T)*(h-T)});
+    cand.sort((a,b)=>a.A-b.A);
+    let fb=null, chosen=null, chosenR=null, overNorm=false;
+    for(const c of cand){
+      pill(`ПОДБОР ЛОТКА: ДКС ${c.w}×${c.h}…`);
+      const r=await quickSim(c.w,c.h,myToken);
+      if(autoToken!==myToken) return;
+      if(!r || r.trunc) continue;
+      if(r.over===0 && r.blocked===0){
+        if(r.K<=state.norm+1e-9){ chosen=c; chosenR=r; break; }
+        if(!fb){ fb={c,r}; }
+      }
+    }
+    if(!chosen && fb){ chosen=fb.c; chosenR=fb.r; overNorm=true; }
+    if(autoToken!==myToken) return;
+    if(chosen){
+      state.W=chosen.w; state.H=chosen.h; markMatrix();
+      buildMain();
+      pill(`ПОДОБРАН: ДКС ${chosen.w}×${chosen.h} · K = ${fmt(chosenR.K,1)} %`+(overNorm?' · СВЕРХ НОРМЫ':''),true,overNorm);
+    } else {
+      buildMain();
+      pill('НЕ ПОМЕЩАЕТСЯ НИ В ОДИН ТИПОРАЗМЕР ДО 600×100',true,true);
+    }
+  } finally { autoRunning=false; el('btnAuto').disabled=false; }
+}
+
+/* ═══════════════ UI ═══════════════ */
+function buildMatrix(){
+  const mx=$('#matrix'); mx.innerHTML='';
+  const c0=document.createElement('div'); c0.className='mx-h'; c0.textContent='мм'; mx.appendChild(c0);
+  for(const w of DKS_W){ const d=document.createElement('div'); d.className='mx-h'; d.textContent=w; mx.appendChild(d); }
+  for(const h of DKS_H){
+    const l=document.createElement('div'); l.className='mx-l'; l.textContent=h; mx.appendChild(l);
+    for(const w of DKS_W){
+      const b=document.createElement('button');
+      b.className='mx-c'; b.title=`ДКС ${w}×${h}`; b.dataset.w=w; b.dataset.h=h;
+      b.addEventListener('click',()=>{ state.W=w; state.H=h; markMatrix(); buildMain(); });
+      mx.appendChild(b);
+    }
+  }
+  markMatrix();
+}
+function markMatrix(){
+  document.querySelectorAll('.mx-c').forEach(b=>
+    b.classList.toggle('on', +b.dataset.w===state.W && +b.dataset.h===state.H));
+}
+function buildSeg(container,opts,get,set){
+  container.innerHTML='';
+  opts.forEach(o=>{
+    const b=document.createElement('button'); b.textContent=o.label;
+    b.addEventListener('click',()=>{ set(o.v); [...container.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); });
+    if(o.v===get()) b.classList.add('on');
+    container.appendChild(b);
+  });
+}
+function setNorm(v){
+  state.norm=v;
+  el('z1').style.width=v+'%';
+  el('z2').style.left=v+'%'; el('z2').style.width=(50-v)+'%';
+  el('tickNorm').textContent=v; el('tickNorm').style.left=v+'%';
+}
+
+/* строки кабелей */
+let rebuildTimer=null;
+function readRows(){
+  const rows=[...document.querySelectorAll('#cableRows .crow')];
+  state.cables=rows.map(rw=>({
+    n:Math.min(999,Math.max(0,Math.round(+rw.querySelector('.n').value||0))),
+    d:Math.min(120,Math.max(0,+rw.querySelector('.d').value||0)),
+    name:rw.dataset.name||null
+  })).filter(c=>c.n>=1 && c.d>=0.5);
+}
+function scheduleRebuild(){
+  clearTimeout(rebuildTimer);
+  rebuildTimer=setTimeout(()=>{ readRows(); buildMain(); },280);
+}
+function addRow(n=1,d=9.9,name=null){               // по умолчанию: 1 шт, ∅ 9,9 мм
+  const row=document.createElement('div'); row.className='crow';
+  if(name) row.dataset.name=name;
+  row.innerHTML=`
+    <input type="number" class="n" min="1" max="999" step="1" value="${n}">
+    <span class="sp">шт × ∅</span>
+    <input type="number" class="d" min="0.5" max="120" step="0.1" value="${d}" list="diaList">
+    <span class="sp">мм</span>
+    <button class="del" title="Удалить"><i data-lucide="x"></i></button>`;
+  const dInp=row.querySelector('.d');
+  row.querySelector('.n').addEventListener('input',scheduleRebuild);
+  dInp.addEventListener('input',()=>{ row.dataset.name=''; scheduleRebuild(); }); // диаметр правится вручную → имя сбрасываем
+  row.querySelector('.del').addEventListener('click',()=>{ row.remove(); readRows(); buildMain(); });
+  $('#cableRows').appendChild(row);
+  try{ lucide.createIcons(); }catch(e){}
+}
+
+/* ═══════════════ СПРАВОЧНИК + ПОИСК (панель слева) ═══════════════ */
+let refRows=[];
+const normStr=s=>s.toLowerCase().replace(/[хx×]/g,'x').replace(/,/g,'.').replace(/\s+/g,' ');
+function buildRef(){
+  const tb=$('#refTable'); tb.innerHTML=''; refRows=[];
+  REFERENCE.forEach(([name,d])=>{
+    const tr=document.createElement('tr');
+    tr.title='Добавить в расчёт: '+name;
+    tr.innerHTML=`<td>${name}</td><td class="d">${fmtmm(d)}</td>`;
+    tr.addEventListener('click',()=>{
+      readRows();
+      const ex=[...document.querySelectorAll('#cableRows .crow')]
+        .find(rw=>Math.abs((+rw.querySelector('.d').value||0)-d)<0.06);
+      if(ex){
+        ex.querySelector('.n').value=(+ex.querySelector('.n').value||0)+1;
+        if(!ex.dataset.name) ex.dataset.name=name;
+      }
+      else addRow(1,d,name);
+      readRows(); buildMain();
+    });
+    tb.appendChild(tr);
+    refRows.push({tr,name});
+  });
+  el('refCount').textContent=REFERENCE.length;
+  el('refBtnCount').textContent=REFERENCE.length;
+  const dl=$('#diaList'); dl.innerHTML='';
+  [...new Set(REFERENCE.map(r=>r[1]))].sort((a,b)=>a-b).forEach(d=>{
+    const o=document.createElement('option'); o.value=d; dl.appendChild(o);
+  });
+}
+function filterRef(qRaw){
+  const q=normStr((qRaw||'').trim());
+  let shown=0;
+  for(const r of refRows){
+    const ok=!q||normStr(r.name).includes(q);
+    r.tr.style.display=ok?'':'none';
+    if(ok)shown++;
+  }
+  el('refEmpty').style.display=shown?'none':'block';
+}
+function openRef(){
+  el('refPanel').classList.add('open');
+  el('refScrim').classList.add('on');
+  filterRef(el('refSearch').value);
+  setTimeout(()=>el('refSearch').focus({preventScroll:true}),120);
+}
+function closeRef(){
+  el('refPanel').classList.remove('open');
+  el('refScrim').classList.remove('on');
+}
+el('btnRef').addEventListener('click',()=>{
+  el('refPanel').classList.contains('open') ? closeRef() : openRef();
+});
+el('refClose').addEventListener('click',closeRef);
+el('refScrim').addEventListener('click',closeRef);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeRef(); });
+el('refSearch').addEventListener('input',e=>filterRef(e.target.value));
+el('refSearch').addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ e.stopPropagation(); e.target.value=''; filterRef(''); }
+});
+
+/* ═══════════════ СОБЫТИЯ CANVAS ═══════════════ */
+cv.addEventListener('pointerdown',e=>{
+  e.preventDefault();
+  mouseW=toWorld(e);
+  if(cur && cur.div && divHit(mouseW)){             // сначала — захват перегородки
+    cur.divDrag=true;
+    cv.setPointerCapture(e.pointerId);
+    wake(); hideHint();
+    return;
+  }
+  const b=pickBall(mouseW);
+  if(b){
+    cur.drag={b, tx:b.x, ty:b.y};
+    cv.setPointerCapture(e.pointerId);
+    wake(); hideHint();
+  }
+});
+cv.addEventListener('pointermove',e=>{
+  mouseW=toWorld(e);
+  if(cur && cur.divDrag){                           // перетаскивание перегородки
+    cur.div.x=clampN(mouseW.x-cur.div.w/2, cur.L, cur.R-cur.div.w);
+    state.divX=cur.div.x;
+    wake();
+    return;
+  }
+  if(cur && cur.drag){
+    const b=cur.drag.b;
+    cur.drag.tx=clampN(mouseW.x, cur.L+b.r, cur.R-b.r);
+    cur.drag.ty=clampN(mouseW.y, -240, cur.B-b.r);
+    if(cur.settled) wake();
+  }
+});
+const release=()=>{ if(cur){ cur.drag=null; cur.divDrag=null; } };
+cv.addEventListener('pointerup',release);
+cv.addEventListener('pointercancel',release);
+cv.addEventListener('pointerleave',()=>{ mouseW=null; });
+
+/* ═══════════════ ГЛАВНЫЙ ЦИКЛ ═══════════════ */
+let last=performance.now(), acc=0;
+function loop(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  if(cur && !cur.settled){
+    acc+=dt; let guard=0;
+    while(acc>=STEP && guard<40){ stepSim(cur); acc-=STEP; guard++; }
+    if(guard>=40) acc=0;
+  } else acc=0;
+  draw(); updateLive();
+  requestAnimationFrame(loop);
+}
+
+/* ═══════════════ ИНИЦИАЛИЗАЦИЯ ═══════════════ */
+buildMatrix();
+buildSeg($('#segNorm'),
+  [{v:40,label:'СИЛОВЫЕ ≤ 40 %'},{v:50,label:'СЛАБОТОЧНЫЕ ≤ 50 %'}],
+  ()=>state.norm, v=>setNorm(v));
+setNorm(40);
+buildRef();
+addRow(12,14,'ВВГнг(А)-LS 4х2,5');
+addRow(20,6,'КПСВЭВнг(А)-LS 1х2х1');
+readRows();
+buildMain();
+fitCanvas();
+el('addRow').addEventListener('click',()=>addRow());     // ← исправлено: обработчик был пропущен
+el('chkDiv').addEventListener('change',e=>{ state.divider=e.target.checked; buildMain(); });
+el('btnRe').addEventListener('click',()=>{ if(state.cables.length) buildMain(); });
+el('btnAuto').addEventListener('click',autoPick);
+try{ lucide.createIcons(); }catch(e){}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
