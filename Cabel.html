@@ -112,7 +112,6 @@ body{
 .fgroup h3{font:600 11px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
 .fnum{color:var(--copper);font-size:10px}
 .fsel{margin-left:auto;font:600 9px var(--mono);color:var(--copper-deep);border:1px solid var(--copper);padding:2.5px 6px;letter-spacing:.06em}
-.fhint{display:block;font:400 10px var(--mono);color:var(--ink-soft);margin:6px 0 8px}
 .fgroup ul{list-style:none}
 .fgroup li{margin:1px 0}
 .cb{display:flex;align-items:center;gap:10px;padding:6px 8px;cursor:pointer;border:1px solid transparent;transition:background .1s}
@@ -156,9 +155,7 @@ th.asc .arr,th.desc .arr{opacity:1}
 th.asc .arr{border-bottom:5px solid var(--copper)}
 th.desc .arr{border-top:5px solid var(--copper)}
 tbody td{border-bottom:1px solid var(--line);padding:10px 13px;vertical-align:top}
-tbody tr.row{cursor:pointer;transition:background .08s}
 tbody tr.row:hover{background:#F3F0E2}
-tbody tr.row.open{background:#EFEADC;box-shadow:inset 3px 0 0 var(--copper)}
 .c-pos{font:500 11px var(--mono);color:var(--ink-soft);width:1%;white-space:nowrap}
 .c-part{white-space:nowrap}
 .copy-btn{font:500 12.5px var(--mono);background:none;border:none;padding:0;color:var(--ink);cursor:copy;display:inline-flex;align-items:center;gap:7px}
@@ -168,18 +165,8 @@ tbody tr.row.open{background:#EFEADC;box-shadow:inset 3px 0 0 var(--copper)}
 .c-name{min-width:230px;line-height:1.45}
 .muted{color:#B4AF9C}
 .tag-yes{display:inline-block;font:700 9px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;background:var(--ink);color:var(--panel);padding:3.5px 7px}
-.tag-no{color:#B4AF9C;font:400 12px var(--mono)}
+.tag-no{color:#B4AF9C;font:400 11.5px var(--mono)}
 mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow:inset 0 -1.5px 0 var(--copper)}
-/* ============ ПАСПОРТ СТРОКИ ============ */
-tr.detail>td{padding:0;border-bottom:1px solid var(--line);background:#F7F5EA}
-.detail-card{padding:14px 16px 12px;animation:fadeIn .18s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-3px)}}
-.detail-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.detail-art{font:600 13px var(--mono);letter-spacing:.02em;word-break:break-all}
-.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0 28px}
-.d-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed var(--line)}
-.d-row dt{font:500 10px var(--mono);text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft)}
-.d-row dd{font-size:12.5px;text-align:right;word-break:break-word}
 /* ============ СООБЩЕНИЯ ============ */
 .table-msg{display:flex;gap:16px;align-items:flex-start;padding:36px 24px}
 .tm-warn{color:var(--copper);flex:none;margin-top:2px}
@@ -216,7 +203,7 @@ tr.detail>td{padding:0;border-bottom:1px solid var(--line);background:#F7F5EA}
   #filterGroups{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));column-gap:18px}
   .fgroup{border-bottom:none;padding-right:6px}
   .table-scroll{overflow-x:auto}
-  table{min-width:920px}
+  table{min-width:860px}
 }
 @media (max-width:760px){
   body{padding:12px 8px 40px}
@@ -324,7 +311,6 @@ tr.detail>td{padding:0;border-bottom:1px solid var(--line);background:#F7F5EA}
               <th class="c-pos">Поз.</th>
               <th data-sort="part" title="PartNumber">Артикул<span class="arr"></span></th>
               <th data-sort="name" title="ProjectName">Наименование<span class="arr"></span></th>
-              <th data-sort="type" title="Type">Вид<span class="arr"></span></th>
               <th data-sort="naz" title="Naznachenie">Назначение<span class="arr"></span></th>
               <th data-sort="br" title="Bronya">Броня<span class="arr"></span></th>
               <th data-sort="ek" title="Ekran">Экран<span class="arr"></span></th>
@@ -370,8 +356,11 @@ const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSzAETiIKfUBv
 const BASE_LIMIT = 120, STEP = 120;
 const MARKS = ['-LS','-HF','-FRLS','-FRHF'];
 const COLLATOR = new Intl.Collator('ru',{numeric:true,sensitivity:'base'});
-const TRUE_V  = new Set(['true','да','yes','1','+','y','д']);
-const FALSE_V = new Set(['false','нет','no','0','-','n','н']);
+const TRUE_V     = new Set(['true','да','yes','1','+','y','д']);   // для столбца Status
+const FALSE_V    = new Set(['false','нет','no','0','-','n','н']);  // для столбца Status
+/* Броня/Экран/Гибкость: пусто → Нет, любой текст → Да.
+   Явные отрицания оставлены как Нет на случай их наличия в данных. */
+const FLAG_NEG   = new Set(['нет','no','false','ложь','0','-']);
 
 const ICON_X    = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 const ICON_COPY = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
@@ -383,7 +372,8 @@ const norm  = v => String(v == null ? '' : v).trim();
 const nkey  = s => norm(s).toLowerCase().replace(/[^a-zа-яё0-9]/g,''); // «Type 2» → «type2», «Part Number» → «partnumber»
 const esc   = s => norm(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-const toBool = v => { const s = norm(v).toLowerCase(); if(TRUE_V.has(s)) return true; if(FALSE_V.has(s)) return false; return null; };
+const toBool = v => { const s = norm(v).toLowerCase(); if(TRUE_V.has(s)) return true; if(FALSE_V.has(s)) return false; return null; }; // только для Status
+const flagOf = v => { const s = norm(v); return s !== '' && !FLAG_NEG.has(s.toLowerCase()); }; // пусто → Нет, текст → Да
 const plural = (n,a,b,c) => { n = Math.abs(n)%100; const d = n%10; if(n>10 && n<20) return c; if(d>1 && d<5) return b; if(d===1) return a; return c; };
 const short  = (s,n) => s.length > n ? s.slice(0,n-1)+'…' : s;
 
@@ -411,7 +401,7 @@ function parseCSV(text){
 
 /* ═══════════ СОСТОЯНИЕ ═══════════ */
 let DB = [], RAW_HEADERS = [], GROUPS = [], READY = false;
-const state = { q:'', tokens:[], sel:{}, sort:{key:'part',dir:1}, limit:BASE_LIMIT, result:[], openId:null };
+const state = { q:'', tokens:[], sel:{}, sort:{key:'part',dir:1}, limit:BASE_LIMIT, result:[] };
 
 /* ═══════════ DOM ═══════════ */
 const qInput = $('#q'), qClear = $('#qClear'), chipsEl = $('#chips'), foundEl = $('#foundLine'),
@@ -460,7 +450,7 @@ function build(text){
       id: DB.length,
       part: at(iP), name,
       type: at(iT), naz: at(iNaz),
-      br: toBool(at(iBr)), ek: toBool(at(iEk)), gb: toBool(at(iGb)),
+      br: flagOf(at(iBr)), ek: flagOf(at(iEk)), gb: flagOf(at(iGb)),
       t2: at(iT2),
       marks: MARKS.filter(m => name.toUpperCase().includes(m)),
       raw: RAW_HEADERS.map((h,i) => ({h, v: norm(row[i])}))
@@ -474,7 +464,6 @@ function build(text){
   setStamp('СИНХРОНИЗИРОВАНО','ok');
   showMsg(null);
   zone.classList.add('ready');
-  state.openId = null;
   state.limit = BASE_LIMIT;
   render();
 }
@@ -500,20 +489,20 @@ function uniqVals(fn){ const s = new Set(); for(const r of DB){ const v = fn(r);
 
 function buildFilterGroups(){
   const defs = [
-    {key:'type', num:'01', title:'Категория',   hint:'столбец «Type»',            options: uniqVals(r => r.type)},
-    {key:'mark', num:'02', title:'Исполнение',  hint:'маркеры в «ProjectName»',   options: MARKS.slice()},
-    {key:'naz',  num:'03', title:'Назначение',  hint:'столбец «Naznachenie»',     options: uniqVals(r => r.naz)},
-    {key:'br',   num:'04', title:'Броня',       hint:'столбец «Bronya»',          options: ['Да','Нет']},
-    {key:'ek',   num:'05', title:'Экран',       hint:'столбец «Ekran»',           options: ['Да','Нет']},
-    {key:'gb',   num:'06', title:'Гибкость',    hint:'столбец «Gibkost»',         options: ['Да','Нет']},
-    {key:'t2',   num:'07', title:'Особенности', hint:'столбец «Type 2»',          options: uniqVals(r => r.t2)},
+    {key:'type', num:'01', title:'Категория',  options: uniqVals(r => r.type)},
+    {key:'mark', num:'02', title:'Исполнение', options: MARKS.slice()},
+    {key:'naz',  num:'03', title:'Назначение', options: uniqVals(r => r.naz)},
+    {key:'br',   num:'04', title:'Броня',      options: ['Да','Нет']},
+    {key:'ek',   num:'05', title:'Экран',      options: ['Да','Нет']},
+    {key:'gb',   num:'06', title:'Гибкость',   options: ['Да','Нет']},
+    {key:'t2',   num:'07', title:'Особенности',options: uniqVals(r => r.t2)},
   ];
   GROUPS = defs.map(d => {
     const match =
+      d.key === 'br'   ? (r,v) => r.br === (v === 'Да') :
+      d.key === 'ek'   ? (r,v) => r.ek === (v === 'Да') :
+      d.key === 'gb'   ? (r,v) => r.gb === (v === 'Да') :
       d.key === 'mark' ? (r,v) => r.marks.includes(v) :
-      d.key === 'br'   ? (r,v) => v === 'Да' ? r.br === true : r.br !== true :
-      d.key === 'ek'   ? (r,v) => v === 'Да' ? r.ek === true : r.ek !== true :
-      d.key === 'gb'   ? (r,v) => v === 'Да' ? r.gb === true : r.gb !== true :
       (r,v) => r[d.key] === v;
     return {...d, match};
   });
@@ -527,7 +516,6 @@ function buildFilterGroups(){
     sec.className = 'fgroup';
     sec.innerHTML =
       '<h3><span class="fnum">' + g.num + '</span>' + esc(g.title) + '<span class="fsel" hidden></span></h3>' +
-      '<span class="fhint">' + esc(g.hint) + '</span>' +
       '<ul>' + g.options.map(o =>
         '<li><label class="cb"><input type="checkbox" data-g="' + g.key + '" value="' + esc(o) + '">' +
         '<span class="box">' + ICON_CHECK + '</span>' +
@@ -567,7 +555,7 @@ function sortRows(list){
   const {key, dir} = state.sort;
   const boolKey = (key === 'br' || key === 'ek' || key === 'gb');
   list.sort((a,b) => {
-    if(boolKey) return ((a[key] === true ? 1 : 0) - (b[key] === true ? 1 : 0)) * dir;
+    if(boolKey) return ((a[key] ? 1 : 0) - (b[key] ? 1 : 0)) * dir;
     const va = a[key], vb = b[key];
     if(!va && !vb) return 0;
     if(!va) return 1;      // пустые — всегда вниз
@@ -637,28 +625,19 @@ function hl(s){
   return out || '<span class="muted">—</span>';
 }
 
+const yn = b => b ? '<span class="tag-yes">Да</span>' : '<span class="tag-no">нет</span>';
+
 function rowHtml(r,i){
-  const open = state.openId === r.id;
-  return '<tr class="row' + (open ? ' open' : '') + '" data-id="' + r.id + '">' +
+  return '<tr class="row">' +
     '<td class="c-pos">' + (i+1) + '</td>' +
     '<td class="c-part"><button class="copy-btn" data-copy="' + esc(r.part) + '" title="Скопировать артикул"><span>' + hl(r.part) + '</span>' + ICON_COPY + '</button></td>' +
     '<td class="c-name">' + hl(r.name) + '</td>' +
-    '<td>' + (r.type ? esc(r.type) : '<span class="muted">—</span>') + '</td>' +
-    '<td>' + (r.naz  ? esc(r.naz)  : '<span class="muted">—</span>') + '</td>' +
-    '<td>' + (r.br === true ? '<span class="tag-yes">Да</span>' : '<span class="tag-no">—</span>') + '</td>' +
-    '<td>' + (r.ek === true ? '<span class="tag-yes">Да</span>' : '<span class="tag-no">—</span>') + '</td>' +
-    '<td>' + (r.gb === true ? '<span class="tag-yes">Да</span>' : '<span class="tag-no">—</span>') + '</td>' +
+    '<td>' + (r.naz ? esc(r.naz) : '<span class="muted">—</span>') + '</td>' +
+    '<td>' + yn(r.br) + '</td>' +
+    '<td>' + yn(r.ek) + '</td>' +
+    '<td>' + yn(r.gb) + '</td>' +
     '<td>' + (r.t2 ? esc(r.t2) : '<span class="muted">—</span>') + '</td>' +
-  '</tr>' + (open ? detailHtml(r) : '');
-}
-
-function detailHtml(r){
-  const cells = r.raw.filter(c => c.h).map(c =>
-    '<div class="d-row"><dt>' + esc(c.h) + '</dt><dd>' + (c.v ? esc(c.v) : '—') + '</dd></div>').join('');
-  return '<tr class="detail"><td colspan="9"><div class="detail-card">' +
-    '<div class="detail-head"><span class="detail-art">' + hl(r.part) + '</span>' +
-    '<button class="btn btn-sm" data-copy="' + esc(r.part) + '">' + ICON_COPY + ' Скопировать артикул</button></div>' +
-    '<dl class="detail-grid">' + cells + '</dl></div></td></tr>';
+  '</tr>';
 }
 
 function renderTable(){
@@ -701,33 +680,9 @@ function resetAll(){
   state.q = ''; state.tokens = [];
   qInput.value = ''; qClear.hidden = true;
   state.sort = {key:'part', dir:1};
-  state.openId = null; closeOpenRow();
   state.limit = BASE_LIMIT;
   render();
   toast('Все условия сброшены');
-}
-
-function closeOpenRow(){
-  const open = document.querySelector('tr.row.open');
-  if(open){
-    const d = open.nextElementSibling;
-    if(d && d.classList.contains('detail')) d.remove();
-    open.classList.remove('open');
-  }
-}
-function toggleRow(tr){
-  const id = +tr.dataset.id;
-  if(state.openId === id){
-    const d = tr.nextElementSibling;
-    if(d && d.classList.contains('detail')) d.remove();
-    tr.classList.remove('open');
-    state.openId = null;
-    return;
-  }
-  closeOpenRow();
-  state.openId = id;
-  tr.insertAdjacentHTML('afterend', detailHtml(DB[id]));
-  tr.classList.add('open');
 }
 
 function copyText(t){
@@ -803,9 +758,7 @@ document.querySelector('#tbl thead').addEventListener('click', e => {
 
 tbody.addEventListener('click', e => {
   const cp = e.target.closest('[data-copy]');
-  if(cp){ copyText(cp.dataset.copy); return; }
-  const tr = e.target.closest('tr.row');
-  if(tr) toggleRow(tr);
+  if(cp) copyText(cp.dataset.copy);
 });
 
  $('#tableFooter').addEventListener('click', e => {
