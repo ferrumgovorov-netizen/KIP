@@ -122,6 +122,22 @@
     background: rgba(255, 255, 255, 0.32);
   }
 
+  /* Блок с иконкой и текстом */
+  .btn-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  /* Иконка кнопки */
+  .btn-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+  }
+
   .btn-content {
     display: flex;
     flex-direction: column;
@@ -199,6 +215,7 @@
   @media (max-height: 500px) {
     .title { margin-bottom: 20px; }
     .btn { padding: 16px 22px; }
+    .btn-icon { width: 32px; height: 32px; }
   }
 
   /* Уменьшаем размытие на слабых устройствах */
@@ -219,9 +236,12 @@
 
     <div class="buttons">
       <a href="KIP.html" class="btn">
-        <div class="btn-content">
-          <span class="btn-title">Подбор КИПиА</span>
-          <span class="btn-subtitle">Контрольно-измерительные приборы</span>
+        <div class="btn-left">
+          <img src="KIP.png" alt="" class="btn-icon">
+          <div class="btn-content">
+            <span class="btn-title">Подбор КИПиА</span>
+            <span class="btn-subtitle">Контрольно-измерительные приборы</span>
+          </div>
         </div>
         <div class="btn-arrow">
           <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
@@ -229,19 +249,25 @@
       </a>
 
       <a href="KB.html" class="btn">
-        <div class="btn-content">
-          <span class="btn-title">Подбор кабельных вводов</span>
-          <span class="btn-subtitle">Заглушки, переходники, муфты и пр.</span>
+        <div class="btn-left">
+          <img src="KB.png" alt="" class="btn-icon">
+          <div class="btn-content">
+            <span class="btn-title">Подбор кабельных вводов</span>
+            <span class="btn-subtitle">Заглушки, переходники, муфты и пр.</span>
+          </div>
         </div>
         <div class="btn-arrow">
           <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
         </div>
       </a>
 
-      <a href="https://skyrillchanel2000-source.github.io/YPPEMEPXXFPDKEXFPMXFPDKE/" class="btn">
-        <div class="btn-content">
-          <span class="btn-title">Поиск по ВЦК</span>
-          <span class="btn-subtitle"></span>
+      <a href="https://skyrillchanel2000-source.github.io/YPPEMERE XFPDKEXFPMXFPDKE/" class="btn">
+        <div class="btn-left">
+          <img src="FindVCK.png" alt="" class="btn-icon">
+          <div class="btn-content">
+            <span class="btn-title">Поиск по ВЦК</span>
+            <span class="btn-subtitle"></span>
+          </div>
         </div>
         <div class="btn-arrow">
           <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
@@ -249,9 +275,12 @@
       </a>
 
       <a href="Lotok.html" class="btn">
-        <div class="btn-content">
-          <span class="btn-title">Заполняемость лотка</span>
-          <span class="btn-subtitle">Расчёт заполнения кабельного лотка</span>
+        <div class="btn-left">
+          <img src="Lotok.png" alt="" class="btn-icon">
+          <div class="btn-content">
+            <span class="btn-title">Заполняемость лотка</span>
+            <span class="btn-subtitle">Расчёт заполнения кабельного лотка</span>
+          </div>
         </div>
         <div class="btn-arrow">
           <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
@@ -259,9 +288,12 @@
       </a>
 
       <a href="Cabel.html" class="btn">
-        <div class="btn-content">
-          <span class="btn-title">Подбор кабеля</span>
-          <span class="btn-subtitle">Расчёт сечения и выбор марки кабеля</span>
+        <div class="btn-left">
+          <img src="Kabel.png" alt="" class="btn-icon">
+          <div class="btn-content">
+            <span class="btn-title">Подбор кабеля</span>
+            <span class="btn-subtitle">Расчёт сечения и выбор марки кабеля</span>
+          </div>
         </div>
         <div class="btn-arrow">
           <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
