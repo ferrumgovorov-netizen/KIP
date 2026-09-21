@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>КБ·КАБЕЛЬ — спецификация кабельной продукции</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2040%2040'%3E%3Ccircle%20cx='20'%20cy='20'%20r='18'%20fill='none'%20stroke='%23B0521C'%20stroke-width='3'/%3E%3Ccircle%20cx='20'%20cy='13'%20r='4.5'%20fill='%23B0521C'/%3E%3Ccircle%20cx='14'%20cy='23'%20r='4.5'%20fill='%23B0521C'/%3E%3Ccircle%20cx='26'%20cy='23'%20r='4.5'%20fill='%23B0521C'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ============ БАЗА ============ */
 *{margin:0;padding:0;box-sizing:border-box}
@@ -25,7 +25,7 @@
   --mono:'IBM Plex Mono',ui-monospace,'Cascadia Mono',monospace;
   --sans:'IBM Plex Sans','Segoe UI',sans-serif;
 }
-html{color-scheme:light}
+html{color-scheme:light; height:100%;}
 body{
   font-family:var(--sans);color:var(--ink);
   background-color:var(--paper);
@@ -36,18 +36,26 @@ body{
     linear-gradient(rgba(32,30,21,.10) 1px,transparent 1px),
     linear-gradient(90deg,rgba(32,30,21,.10) 1px,transparent 1px);
   background-size:9px 9px,9px 9px,90px 90px,90px 90px;
-  padding:26px 22px 70px;
+  padding:20px;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
   -webkit-font-smoothing:antialiased;
 }
 /* ============ ЛИСТ ============ */
 .sheet{
-  max-width:1520px;margin:0 auto;
+  max-width:1520px;
+  width:100%;
+  margin:0 auto;
   background:var(--panel);
   border:1.5px solid var(--ink);
   box-shadow:7px 7px 0 rgba(32,30,21,.10);
+  display:flex;
+  flex-direction:column;
+  height:calc(100vh - 40px);
 }
 /* ============ ШТАМП ============ */
-.stamp{display:grid;grid-template-columns:auto 1fr auto auto auto;border-bottom:1.5px solid var(--ink)}
+.stamp{display:grid;grid-template-columns:auto auto 1fr auto auto auto;border-bottom:1.5px solid var(--ink);flex:none}
 .stamp-cell{padding:12px 20px;border-left:1px solid var(--ink);display:flex;flex-direction:column;justify-content:center;gap:5px;min-width:0}
 .stamp-cell:first-child{border-left:none}
 .stamp-label{font:600 8.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
@@ -59,12 +67,29 @@ body{
 #stampStatus[data-mode="ok"]{color:#4A6B33}
 #stampStatus[data-mode="error"]{color:#A3280F}
 @keyframes blink{50%{opacity:.25}}
+
+/* Кнопка Домой */
+.btn-home{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 16px;
+  border-right:1px solid var(--ink);
+  color:var(--ink);
+  text-decoration:none;
+  transition:background .12s, color .12s;
+}
+.btn-home:hover{
+  background:var(--ink);
+  color:var(--panel);
+}
+
 /* ============ ТУЛБАР / ПОИСК ============ */
-.toolbar{display:flex;gap:10px;padding:14px 18px;border-bottom:1.5px solid var(--ink);align-items:stretch;flex-wrap:wrap}
+.toolbar{display:flex;gap:10px;padding:12px 18px;border-bottom:1.5px solid var(--ink);align-items:stretch;flex-wrap:wrap;flex:none}
 .search-wrap{
   flex:1 1 360px;display:flex;align-items:center;gap:10px;
   border:1.5px solid var(--ink);background:#FFFEF8;
-  padding:0 14px;height:46px;transition:box-shadow .15s;
+  padding:0 14px;height:42px;transition:box-shadow .15s;
 }
 .search-wrap:focus-within{box-shadow:3px 3px 0 var(--copper)}
 .search-wrap>svg{color:var(--ink-soft);flex:none}
@@ -78,7 +103,7 @@ body{
 .btn{
   font:600 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;
   border:1.5px solid var(--ink);background:var(--panel);color:var(--ink);
-  padding:0 16px;height:46px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  padding:0 16px;height:42px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
   transition:background .12s,color .12s;white-space:nowrap;
 }
 .btn:hover{background:var(--ink);color:var(--panel)}
@@ -91,8 +116,8 @@ body{
 }
 .btn-link:hover{color:var(--copper)}
 /* ============ КОМПОНОВКА ============ */
-.layout{display:grid;grid-template-columns:292px minmax(0,1fr);align-items:start}
-.table-zone{min-width:0}
+.layout{display:grid;grid-template-columns:292px minmax(0,1fr);align-items:stretch;flex:1;min-height:0;}
+.table-zone{min-width:0;display:flex;flex-direction:column;height:100%;min-height:0;}
 .table-zone:not(.ready) .table-meta,
 .table-zone:not(.ready) .table-scroll,
 .table-zone:not(.ready) .table-footer,
@@ -101,7 +126,7 @@ body{
 /* ============ ФИЛЬТРЫ ============ */
 .filters{
   border-right:1.5px solid var(--ink);padding:16px 0 8px;background:var(--panel);
-  position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto;
+  overflow-y:auto;height:100%;
 }
 .filters::-webkit-scrollbar{width:6px}
 .filters::-webkit-scrollbar-thumb{background:var(--line)}
@@ -131,7 +156,7 @@ li.zero .cb{opacity:.35;cursor:default}
 li.zero .cb:hover{background:transparent}
 .filters-note{padding:12px 18px 6px;font:400 10px/1.55 var(--mono);color:var(--ink-soft)}
 /* ============ МЕТА-СТРОКА ============ */
-.table-meta{padding:12px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;min-height:38px}
+.table-meta{padding:10px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;min-height:38px;border-bottom:1px solid var(--line);flex:none}
 .found{font:500 11px var(--mono);letter-spacing:.04em;color:var(--ink-soft);text-transform:uppercase}
 .found b{color:var(--ink);font-weight:700}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
@@ -140,13 +165,17 @@ li.zero .cb:hover{background:transparent}
 .chip-x{border:none;background:none;cursor:pointer;display:grid;place-items:center;padding:3px;color:var(--ink-soft)}
 .chip-x:hover{color:var(--copper-deep)}
 /* ============ ТАБЛИЦА ============ */
-.table-scroll{background:#FFFEF8}
+.table-scroll{background:#FFFEF8;flex:1;overflow:auto;min-height:0;}
+.table-scroll::-webkit-scrollbar{width:8px;height:8px}
+.table-scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+.table-scroll::-webkit-scrollbar-thumb:hover{background:var(--ink-soft)}
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead th{
   position:sticky;top:0;z-index:5;background:var(--panel);
   border-bottom:2px solid var(--ink);
   font:600 10px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;
   color:var(--ink-soft);text-align:left;padding:11px 13px;white-space:nowrap;user-select:none;
+  box-shadow:0 1px 0 var(--ink);
 }
 th[data-sort]{cursor:pointer}
 th[data-sort]:hover{color:var(--ink)}
@@ -178,7 +207,7 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
 .empty .cross{color:#C9C3AA}
 .empty-t{font:600 15px var(--sans)}
 .empty-s{font:400 11.5px/1.6 var(--mono);color:var(--ink-soft);max-width:440px;margin-bottom:8px}
-.table-footer{display:flex;align-items:center;gap:14px;padding:12px 20px;flex-wrap:wrap}
+.table-footer{display:flex;align-items:center;gap:14px;padding:10px 20px;flex-wrap:wrap;border-top:1px solid var(--line);background:var(--panel);flex:none}
 .foot-text{font:500 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
 #sentinel{height:2px}
 /* ============ ФУТЕР ЛИСТА ============ */
@@ -186,6 +215,8 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
   display:flex;justify-content:space-between;gap:8px 20px;padding:10px 18px;flex-wrap:wrap;
   border-top:1.5px solid var(--ink);
   font:400 9.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);
+  background:var(--panel);
+  flex:none;
 }
 /* ============ ТОСТ ============ */
 #toast{
@@ -198,18 +229,21 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
 #toast.show{opacity:1;transform:translate(-50%,0)}
 /* ============ АДАПТИВ ============ */
 @media (max-width:1120px){
-  .layout{grid-template-columns:1fr}
-  .filters{position:static;max-height:none;border-right:none;border-bottom:1.5px solid var(--ink);padding-bottom:14px}
+  .sheet{height:auto;min-height:100vh;}
+  .layout{grid-template-columns:1fr;display:block;}
+  .filters{height:auto;max-height:none;border-right:none;border-bottom:1.5px solid var(--ink);padding-bottom:14px}
   #filterGroups{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));column-gap:18px}
   .fgroup{border-bottom:none;padding-right:6px}
-  .table-scroll{overflow-x:auto}
+  .table-scroll{max-height:60vh;}
   table{min-width:860px}
 }
 @media (max-width:760px){
-  body{padding:12px 8px 40px}
+  body{padding:10px}
+  .sheet{height:auto;}
   .stamp{display:block}
   .stamp-cell{border-left:none;border-top:1px dashed var(--line);padding:10px 14px}
   .stamp-cell:first-child{border-top:none}
+  .btn-home{border-right:none;border-bottom:1px dashed var(--line);padding:10px;}
   .toolbar{flex-direction:column}
   .search-actions{flex-direction:column}
   .search-actions .btn{width:100%;justify-content:center}
@@ -219,9 +253,10 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
 @media (hover:none){.kbd{display:none}}
 @media print{
   body{background:none;padding:0}
-  .toolbar,.filters,.table-footer,.sheet-foot,#toast{display:none}
-  .sheet{box-shadow:none;max-width:none}
+  .sheet{height:auto;box-shadow:none;max-width:none;border:none;}
+  .toolbar,.filters,.table-footer,.sheet-foot,#toast,.btn-home{display:none}
   thead th{position:static}
+  .table-scroll{overflow:visible;}
 }
 </style>
 </head>
@@ -231,15 +266,22 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
 
   <!-- ═══ Угловой штамп ═══ -->
   <header class="stamp">
+    <!-- Кнопка Домой -->
+    <a href="/index.html" class="btn-home" title="Перейти на главную">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+    </a>
     <div class="stamp-cell">
       <span class="stamp-label">Марка</span>
       <span class="brand">
         <svg width="26" height="26" viewBox="0 0 40 40" fill="none" stroke="currentColor" aria-hidden="true">
-          <circle cx="20" cy="20" r="18.5" stroke-width="1.6"/>
-          <circle cx="20" cy="20" r="13.6" stroke-width="1"/>
-          <circle cx="20" cy="12.9" r="5" stroke-width="1.4"/>
-          <circle cx="13.8" cy="23.6" r="5" stroke-width="1.4"/>
-          <circle cx="26.2" cy="23.6" r="5" stroke-width="1.4"/>
+          <circle cx="20" cy="20" r="18.5" stroke-width="1.6"></circle>
+          <circle cx="20" cy="20" r="13.6" stroke-width="1"></circle>
+          <circle cx="20" cy="12.9" r="5" stroke-width="1.4"></circle>
+          <circle cx="13.8" cy="23.6" r="5" stroke-width="1.4"></circle>
+          <circle cx="26.2" cy="23.6" r="5" stroke-width="1.4"></circle>
         </svg>
         КБ·КАБЕЛЬ
       </span>
@@ -250,36 +292,35 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
     </div>
     <div class="stamp-cell">
       <span class="stamp-label">Позиций</span>
-      <span class="stamp-value" id="stampCount">—</span>
+      <span class="stamp-value" id="stampCount">125</span>
     </div>
     <div class="stamp-cell">
       <span class="stamp-label">Синхронизация</span>
-      <span class="stamp-value" id="stampDate">—</span>
+      <span class="stamp-value" id="stampDate">20.09.2026, 21:20</span>
     </div>
     <div class="stamp-cell">
       <span class="stamp-label">Статус</span>
-      <span class="stamp-value" id="stampStatus" data-mode="loading">ЗАГРУЗКА…</span>
+      <span class="stamp-value" id="stampStatus" data-mode="ok">СИНХРОНИЗИРОВАНО</span>
     </div>
   </header>
 
   <!-- ═══ Поиск + действия ═══ -->
   <div class="toolbar">
     <div class="search-wrap">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg>
-      <input id="q" type="text" autocomplete="off" spellcheck="false"
-             placeholder="Поиск по артикулу и наименованию: ВВГнг, 5х4, -LS…">
-      <button class="q-clear" id="qClear" hidden title="Очистить поиск" aria-label="Очистить поиск">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.8-3.8"></path></svg>
+      <input id="q" type="text" autocomplete="off" spellcheck="false" placeholder="Поиск по артикулу и наименованию: ВВГнг, 5х4, -LS…">
+      <button class="q-clear" id="qClear" hidden="" title="Очистить поиск" aria-label="Очистить поиск">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
       </button>
       <span class="kbd">/</span>
     </div>
     <div class="search-actions">
       <button class="btn" id="btnReset" title="Сбросить все фильтры, поиск и сортировку">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"></path></svg>
         Сброс
       </button>
       <button class="btn" id="btnExport" title="Экспорт текущей выборки в CSV">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 19h16"></path></svg>
         Экспорт CSV
       </button>
     </div>
@@ -293,14 +334,67 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
         <h2>Фильтры <span class="sel-total" id="selTotal"></span></h2>
         <button class="btn-link" id="btnReset2">Сбросить всё</button>
       </div>
-      <div id="filterGroups"></div>
+      <div id="filterGroups">
+        <section class="fgroup">
+          <h3><span class="fnum">01</span>Категория<span class="fsel" hidden=""></span></h3>
+          <ul>
+            <li><label class="cb"><input type="checkbox" data-g="type" value="Кабель"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Кабель</span><span class="cbcount">105</span></label></li>
+            <li><label class="cb"><input type="checkbox" data-g="type" value="Провод"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Провод</span><span class="cbcount">20</span></label></li>
+          </ul>
+        </section>
+        <section class="fgroup">
+          <h3><span class="fnum">02</span>Исполнение<span class="fsel" hidden=""></span></h3>
+          <ul>
+            <li><label class="cb"><input type="checkbox" data-g="mark" value="-LS"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext mono">-LS</span><span class="cbcount">78</span></label></li>
+            <li><label class="cb"><input type="checkbox" data-g="mark" value="-HF"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext mono">-HF</span><span class="cbcount">20</span></label></li>
+            <li><label class="cb"><input type="checkbox" data-g="mark" value="-FRLS"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext mono">-FRLS</span><span class="cbcount">7</span></label></li>
+            <li><label class="cb"><input type="checkbox" data-g="mark" value="-FRHF"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext mono">-FRHF</span><span class="cbcount">5</span></label></li>
+          </ul>
+        </section>
+        <section class="fgroup">
+          <h3><span class="fnum">03</span>Назначение<span class="fsel" hidden=""></span></h3>
+          <ul>
+            <li><label class="cb"><input type="checkbox" data-g="naz" value="Контрольный"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Контрольный</span><span class="cbcount">42</span></label></li>
+            <li><label class="cb"><input type="checkbox" data-g="naz" value="Силовой"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Силовой</span><span class="cbcount">79</span></label></li>
+          </ul>
+        </section>
+        <section class="fgroup">
+          <h3><span class="fnum">04</span>Броня<span class="fsel" hidden=""></span></h3>
+          <ul>
+            <li><label class="cb"><input type="checkbox" data-g="br" value="Да"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Да</span><span class="cbcount">5</span></label></li>
+            <li><label class="cb"><input type="checkbox" data-g="br" value="Нет"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Нет</span><span class="cbcount">120</span></label></li>
+          </ul>
+        </section>
+        <section class="fgroup">
+          <h3><span class="fnum">05</span>Экран<span class="fsel" hidden=""></span></h3>
+          <ul>
+            <li><label class="cb"><input type="checkbox" data-g="ek" value="Да"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Да</span><span class="cbcount">54</span></label></li>
+            <li><label class="cb"><input type="checkbox" data-g="ek" value="Нет"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Нет</span><span class="cbcount">71</span></label></li>
+          </ul>
+        </section>
+        <section class="fgroup">
+          <h3><span class="fnum">06</span>Гибкость<span class="fsel" hidden=""></span></h3>
+          <ul>
+            <li><label class="cb"><input type="checkbox" data-g="gb" value="Да"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Да</span><span class="cbcount">44</span></label></li>
+            <li><label class="cb"><input type="checkbox" data-g="gb" value="Нет"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Нет</span><span class="cbcount">81</span></label></li>
+          </ul>
+        </section>
+        <section class="fgroup">
+          <h3><span class="fnum">07</span>Особенности<span class="fsel" hidden=""></span></h3>
+          <ul>
+            <li><label class="cb"><input type="checkbox" data-g="t2" value="Витая пара"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Витая пара</span><span class="cbcount">3</span></label></li>
+            <li><label class="cb"><input type="checkbox" data-g="t2" value="Саморег."><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Саморег.</span><span class="cbcount">2</span></label></li>
+            <li><label class="cb"><input type="checkbox" data-g="t2" value="Термостойкий"><span class="box"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"></path></svg></span><span class="cbtext">Термостойкий</span><span class="cbcount">7</span></label></li>
+          </ul>
+        </section>
+      </div>
       <p class="filters-note">Каскадный режим: счётчики пересчитываются с учётом уже выбранных условий, несовместимые сочетания автоматически гаснут.</p>
     </aside>
 
-    <section class="table-zone" id="tableZone">
+    <section class="table-zone ready" id="tableZone">
 
       <div class="table-meta">
-        <div class="found" id="foundLine"></div>
+        <div class="found" id="foundLine">Показаны все <b>125</b> позиций</div>
         <div class="chips" id="chips"></div>
       </div>
 
@@ -309,7 +403,7 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
           <thead>
             <tr>
               <th class="c-pos">Поз.</th>
-              <th data-sort="part" title="PartNumber">Артикул<span class="arr"></span></th>
+              <th data-sort="part" title="PartNumber" class="asc">Артикул<span class="arr"></span></th>
               <th data-sort="name" title="ProjectName">Наименование<span class="arr"></span></th>
               <th data-sort="naz" title="Naznachenie">Назначение<span class="arr"></span></th>
               <th data-sort="br" title="Bronya">Броня<span class="arr"></span></th>
@@ -318,479 +412,110 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
               <th data-sort="t2" title="Type 2">Особ.<span class="arr"></span></th>
             </tr>
           </thead>
-          <tbody id="tbody"></tbody>
+          <tbody id="tbody">
+            <tr class="row"><td class="c-pos">1</td><td class="c-part"><button class="copy-btn" data-copy="00000002303" title="Скопировать артикул"><span>00000002303</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КПСВЭВнг(А)-LS 1х2х1 (Dк=6, красный)</td><td>Контрольный</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">2</td><td class="c-part"><button class="copy-btn" data-copy="00000006165" title="Скопировать артикул"><span>00000006165</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПУГВ 1х25 (Dп=9,6, ж/з) ГОСТ 31947-2012</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">3</td><td class="c-part"><button class="copy-btn" data-copy="00000093298" title="Скопировать артикул"><span>00000093298</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель греющий GWS 30-2 CR</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td>Саморег.</td></tr>
+            <tr class="row"><td class="c-pos">4</td><td class="c-part"><button class="copy-btn" data-copy="00000097691" title="Скопировать артикул"><span>00000097691</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КПСВЭВнг(А)-LS 1х2х1,5 (Dк=7,2, красный)</td><td>Контрольный</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">5</td><td class="c-part"><button class="copy-btn" data-copy="00000099703" title="Скопировать артикул"><span>00000099703</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель ВВГнг(А)-LS 2х2,5 (Dк=12,5) ГОСТ 31996-2012</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">6</td><td class="c-part"><button class="copy-btn" data-copy="00000099768" title="Скопировать артикул"><span>00000099768</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель ВВГнг(А)-LS 3х2,5 (Dк=13,1) ГОСТ 31996-2012</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">7</td><td class="c-part"><button class="copy-btn" data-copy="00000099771" title="Скопировать артикул"><span>00000099771</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель ВВГнг(А)-LS 5х4 (Dк=14)</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">8</td><td class="c-part"><button class="copy-btn" data-copy="00000099782" title="Скопировать артикул"><span>00000099782</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПУГВ 1х10 (Dп=6, ж/з) ГОСТ 31947-2012</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">9</td><td class="c-part"><button class="copy-btn" data-copy="00000105029" title="Скопировать артикул"><span>00000105029</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель МКЭШвнг(А)-LS 1х2х1,5 (Dк=11,1-11,3) ГОСТ 22483-2012</td><td>Контрольный</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">10</td><td class="c-part"><button class="copy-btn" data-copy="00000105983" title="Скопировать артикул"><span>00000105983</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель ВВГнг(А)-LS 5х2,5 (Dк=15) ГОСТ 31996-2012</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">11</td><td class="c-part"><button class="copy-btn" data-copy="00000106128" title="Скопировать артикул"><span>00000106128</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель ВВГнг(А)-LS 5х1,5</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">12</td><td class="c-part"><button class="copy-btn" data-copy="00000106472" title="Скопировать артикул"><span>00000106472</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель ВВГнг(А)-LS 4х1,5 (Dк=13) ГОСТ 31996-2012</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">13</td><td class="c-part"><button class="copy-btn" data-copy="00000106473" title="Скопировать артикул"><span>00000106473</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель ВВГнг(А)-LS 2х1,5 (Dк=11,8) ГОСТ 31996-2012</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">14</td><td class="c-part"><button class="copy-btn" data-copy="00000107453" title="Скопировать артикул"><span>00000107453</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПВСнг(А)-LS 3х0,75 (Dк=6,6, черный) ГОСТ 7399-97</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">15</td><td class="c-part"><button class="copy-btn" data-copy="00000108252" title="Скопировать артикул"><span>00000108252</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель ВВГнг(А)-LS 3х1,5 (Dк=12,2) ГОСТ 31996-2012</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">16</td><td class="c-part"><button class="copy-btn" data-copy="00000109865" title="Скопировать артикул"><span>00000109865</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПВКВ 1х4 (380, Dп=4,7, белый) ГОСТ 26445-85</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">17</td><td class="c-part"><button class="copy-btn" data-copy="00000112143" title="Скопировать артикул"><span>00000112143</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВВнг(А)-LS 4х2,5 (Dк=12,4) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">18</td><td class="c-part"><button class="copy-btn" data-copy="БП-00014802" title="Скопировать артикул"><span>БП-00014802</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВВнг(А)-LS 4х1,5</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">19</td><td class="c-part"><button class="copy-btn" data-copy="БП-00017282" title="Скопировать артикул"><span>БП-00017282</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВВнг(А)-LS 4х10 (Dк=18,4) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">20</td><td class="c-part"><button class="copy-btn" data-copy="БП-00017582" title="Скопировать артикул"><span>БП-00017582</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель СПЕЦЛАН F/UTP Cat 5e PVC LSнг(А)-LS 4х2х0,52 (Dк=8,1) ГОСТ Р 54429</td><td>Контрольный</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-no">нет</span></td><td>Витая пара</td></tr>
+            <tr class="row"><td class="c-pos">21</td><td class="c-part"><button class="copy-btn" data-copy="БП-00017584" title="Скопировать артикул"><span>БП-00017584</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель ППГнг(А)-HF 3х1,5</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">22</td><td class="c-part"><button class="copy-btn" data-copy="БП-00018226" title="Скопировать артикул"><span>БП-00018226</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВВнг(А)-LS 4х2,5 (Dк=11,5) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">23</td><td class="c-part"><button class="copy-btn" data-copy="БП-00019254" title="Скопировать артикул"><span>БП-00019254</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВЭВнг(А)-LS 4х4 (Dк=17,5) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">24</td><td class="c-part"><button class="copy-btn" data-copy="БП-00020310" title="Скопировать артикул"><span>БП-00020310</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВЭВнг(А)-LS 4х10 (Dк=21,9) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">25</td><td class="c-part"><button class="copy-btn" data-copy="БП-00020909" title="Скопировать артикул"><span>БП-00020909</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель МКЭШвнг(А)-LS 2х2х1,5 (Dк=14,5-14,6) ГОСТ 22483-2012</td><td>Контрольный</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">26</td><td class="c-part"><button class="copy-btn" data-copy="БП-00020976" title="Скопировать артикул"><span>БП-00020976</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВЭВнг(А)-LS 4х6 (Dк=18,1) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">27</td><td class="c-part"><button class="copy-btn" data-copy="БП-00022711" title="Скопировать артикул"><span>БП-00022711</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель Энерготерм-400нг(A)-FRLS 4х1,5 (Dк=11,8) ТУ 3580-001-57058781-2004</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td>Термостойкий</td></tr>
+            <tr class="row"><td class="c-pos">28</td><td class="c-part"><button class="copy-btn" data-copy="БП-00027830" title="Скопировать артикул"><span>БП-00027830</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВВнг(А)-LS 4х16 (Dк=21,3) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">29</td><td class="c-part"><button class="copy-btn" data-copy="БП-00028586" title="Скопировать артикул"><span>БП-00028586</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВЭВнг(А)-LS 4х50 (Dк=37) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">30</td><td class="c-part"><button class="copy-btn" data-copy="БП-00035505" title="Скопировать артикул"><span>БП-00035505</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПУГВ 1х6 (Dп=4,7, ж/з) ГОСТ 31947-2012</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">31</td><td class="c-part"><button class="copy-btn" data-copy="БП-00035506" title="Скопировать артикул"><span>БП-00035506</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПУГВ 1х16 (Dп=7,6, ж/з) ГОСТ 31947-2012</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">32</td><td class="c-part"><button class="copy-btn" data-copy="БП-00035507" title="Скопировать артикул"><span>БП-00035507</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПВКВ 1х2,5 (380, Dп=4,1, белый) ГОСТ 26445-85</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">33</td><td class="c-part"><button class="copy-btn" data-copy="БП-00035509" title="Скопировать артикул"><span>БП-00035509</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПВКВ 1х6 (380, Dп=5,6, белый) ГОСТ 26445-85</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">34</td><td class="c-part"><button class="copy-btn" data-copy="БП-00035510" title="Скопировать артикул"><span>БП-00035510</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПВКВ 1х10 (380, Dп=7,1, белый) ГОСТ 26445-85</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">35</td><td class="c-part"><button class="copy-btn" data-copy="БП-00035527" title="Скопировать артикул"><span>БП-00035527</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПВКВ 1х16 (380, Dп=8,8, белый) ГОСТ 26445-85</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">36</td><td class="c-part"><button class="copy-btn" data-copy="БП-00035535" title="Скопировать артикул"><span>БП-00035535</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель Энерготерм-400нг(A)-FRLS 4х2,5 (Dк=13,8) ТУ 3580-001-57058781-2004</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td>Термостойкий</td></tr>
+            <tr class="row"><td class="c-pos">37</td><td class="c-part"><button class="copy-btn" data-copy="БП-00035536" title="Скопировать артикул"><span>БП-00035536</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель Энерготерм-400нг(A)-FRLS 4х4 (Dк=15,2) ТУ 3580-001-57058781-2004</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td>Термостойкий</td></tr>
+            <tr class="row"><td class="c-pos">38</td><td class="c-part"><button class="copy-btn" data-copy="БП-00035537" title="Скопировать артикул"><span>БП-00035537</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель Энерготерм-400нг(A)-FRLS 4х6 (Dк=18,1) ТУ 3580-001-57058781-2004</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td>Термостойкий</td></tr>
+            <tr class="row"><td class="c-pos">39</td><td class="c-part"><button class="copy-btn" data-copy="БП-00035538" title="Скопировать артикул"><span>БП-00035538</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель Энерготерм-400нг(A)-FRLS 4х10 (Dк=21) ТУ 3580-001-57058781-2004</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td>Термостойкий</td></tr>
+            <tr class="row"><td class="c-pos">40</td><td class="c-part"><button class="copy-btn" data-copy="БП-00041028" title="Скопировать артикул"><span>БП-00041028</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель МКЭШвнг(А)-LS 3х2х1,0 (Dк=11,9-13,7) ГОСТ 22483-2012</td><td>Контрольный</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">41</td><td class="c-part"><button class="copy-btn" data-copy="УП000007896" title="Скопировать артикул"><span>УП000007896</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель МКЭШнг(А)-LS 3х1,5 ТУ3500-022-52114552-2016 (ГОСТ 10348-80)</td><td>Контрольный</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">42</td><td class="c-part"><button class="copy-btn" data-copy="УП000009243" title="Скопировать артикул"><span>УП000009243</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПУГВ 1х1,5 (Dп=3, белый) ГОСТ 31947-2012</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">43</td><td class="c-part"><button class="copy-btn" data-copy="УП000010998" title="Скопировать артикул"><span>УП000010998</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВВнг(А)-LS 4х25 (Dк=27) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">44</td><td class="c-part"><button class="copy-btn" data-copy="УП000019888" title="Скопировать артикул"><span>УП000019888</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель ВБШвнг(А)-LS 4х2,5</td><td>Силовой</td><td><span class="tag-yes">Да</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">45</td><td class="c-part"><button class="copy-btn" data-copy="УП000027798" title="Скопировать артикул"><span>УП000027798</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВЭВнг(А)-LS 4х2,5 (Dк=11,6) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">46</td><td class="c-part"><button class="copy-btn" data-copy="УП000034190" title="Скопировать артикул"><span>УП000034190</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВЭВнг(А)-LS 4х16 (Dк=25,7) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">47</td><td class="c-part"><button class="copy-btn" data-copy="УП000034191" title="Скопировать артикул"><span>УП000034191</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВЭВнг(А)-LS 4х25 (Dк=28,3) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">48</td><td class="c-part"><button class="copy-btn" data-copy="УП000044874" title="Скопировать артикул"><span>УП000044874</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель ВВГнг(А)-ХЛ LS 3х1,5 ок(N,PE) (0,66, Dк=12,2) ГОСТ 31996-2012</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">49</td><td class="c-part"><button class="copy-btn" data-copy="УП000067831" title="Скопировать артикул"><span>УП000067831</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВВнг(А)-LS 4х6 (Dк=16) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">50</td><td class="c-part"><button class="copy-btn" data-copy="УП000079788" title="Скопировать артикул"><span>УП000079788</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель МКЭШв(Э)нг(А)-LS 2х2х1,0 ТУ 3500-022-52114552-2016</td><td>Контрольный</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">51</td><td class="c-part"><button class="copy-btn" data-copy="УП000082140" title="Скопировать артикул"><span>УП000082140</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель МКЭШв(Э)нг(А)-LS 1х2х1,0 ТУ 3500-022-52114552-2016</td><td>Контрольный</td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="tag-no">нет</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">52</td><td class="c-part"><button class="copy-btn" data-copy="УП000134703" title="Скопировать артикул"><span>УП000134703</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПВСнг(А)-LS 3х1,5 (Dк=9,3, черный) ГОСТ 7399-97</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">53</td><td class="c-part"><button class="copy-btn" data-copy="УП000134704" title="Скопировать артикул"><span>УП000134704</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Провод ПВСнг(А)-LS 2х1,5 (Dк=8,5, черный) ГОСТ 7399-97</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">54</td><td class="c-part"><button class="copy-btn" data-copy="УП000134741" title="Скопировать артикул"><span>УП000134741</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВВнг(А)-LS 2х1,5 (Dк=10) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+            <tr class="row"><td class="c-pos">55</td><td class="c-part"><button class="copy-btn" data-copy="УП000141736" title="Скопировать артикул"><span>УП000141736</span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></td><td class="c-name">Кабель КГВВнг(А)-LS 2х2,5 (Dк=11) ГОСТ 24334-80</td><td>Силовой</td><td><span class="tag-no">нет</span></td><td><span class="tag-no">нет</span></td><td><span class="tag-yes">Да</span></td><td><span class="muted">—</span></td></tr>
+          </tbody>
         </table>
+        <div id="sentinel"></div>
       </div>
 
-      <div class="table-msg" id="tableMsg"></div>
-
-      <div class="empty" id="emptyResult" hidden>
-        <svg class="cross" width="58" height="58" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.4">
-          <circle cx="20" cy="20" r="18.5"/><circle cx="20" cy="20" r="13.6"/>
-          <circle cx="20" cy="12.9" r="5"/><circle cx="13.8" cy="23.6" r="5"/><circle cx="26.2" cy="23.6" r="5"/>
-        </svg>
-        <p class="empty-t">По заданным условиям ничего не найдено</p>
-        <p class="empty-s">Измените поисковый запрос или ослабьте фильтры — позиции, несовместимые с текущим отбором, погашены в списке слева.</p>
-        <button class="btn" id="emptyReset">Сбросить всё</button>
+      <div class="table-footer">
+        <span class="foot-text">Показаны последние данные из системы</span>
       </div>
 
-      <div class="table-footer" id="tableFooter"></div>
-      <div id="sentinel"></div>
     </section>
+
   </div>
 
+  <!-- ═══ Футер листа ═══ -->
   <footer class="sheet-foot">
-    <span>КБ·КАБЕЛЬ · внутренняя база кабельной продукции</span>
-    <span>источник: Google Sheets (CSV) · фильтрация, поиск и экспорт выполняются локально в браузере</span>
+    <span>Разработка КБ·КАБЕЛЬ © 2026</span>
+    <span>Версия 2.4</span>
   </footer>
+
 </div>
 
-<div id="toast" role="status" aria-live="polite"></div>
+<div id="toast">Артикул скопирован в буфер обмена</div>
 
 <script>
-(() => {
-'use strict';
-
-/* ═══════════ КОНСТАНТЫ ═══════════ */
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSzAETiIKfUBvchm03dtQKognrImGtEbT5O13_WQpCe7exHxLvPXOAAqFdm9899nSeF3gVvkrTsTcej/pub?gid=1009866427&single=true&output=csv';
-const BASE_LIMIT = 120, STEP = 120;
-const MARKS = ['-LS','-HF','-FRLS','-FRHF'];
-const COLLATOR = new Intl.Collator('ru',{numeric:true,sensitivity:'base'});
-const TRUE_V     = new Set(['true','да','yes','1','+','y','д']);   // для столбца Status
-const FALSE_V    = new Set(['false','нет','no','0','-','n','н']);  // для столбца Status
-/* Броня/Экран/Гибкость: пусто → Нет, любой текст → Да.
-   Явные отрицания оставлены как Нет на случай их наличия в данных. */
-const FLAG_NEG   = new Set(['нет','no','false','ложь','0','-']);
-
-const ICON_X    = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-const ICON_COPY = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-const ICON_CHECK= '<svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="#FCFBF5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3L11.5 3.5"/></svg>';
-
-/* ═══════════ УТИЛИТЫ ═══════════ */
-const $ = s => document.querySelector(s);
-const norm  = v => String(v == null ? '' : v).trim();
-const nkey  = s => norm(s).toLowerCase().replace(/[^a-zа-яё0-9]/g,''); // «Type 2» → «type2», «Part Number» → «partnumber»
-const esc   = s => norm(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-const toBool = v => { const s = norm(v).toLowerCase(); if(TRUE_V.has(s)) return true; if(FALSE_V.has(s)) return false; return null; }; // только для Status
-const flagOf = v => { const s = norm(v); return s !== '' && !FLAG_NEG.has(s.toLowerCase()); }; // пусто → Нет, текст → Да
-const plural = (n,a,b,c) => { n = Math.abs(n)%100; const d = n%10; if(n>10 && n<20) return c; if(d>1 && d<5) return b; if(d===1) return a; return c; };
-const short  = (s,n) => s.length > n ? s.slice(0,n-1)+'…' : s;
-
-/* ═══════════ ПАРСЕР CSV (кавычки, автодетект разделителя) ═══════════ */
-function parseCSV(text){
-  text = text.replace(/^\uFEFF/,'');
-  const firstLine = text.split(/\r?\n/)[0] || '';
-  const delim = ((firstLine.match(/;/g)||[]).length > (firstLine.match(/,/g)||[]).length) ? ';' : ',';
-  const rows = []; let row = [], cur = '', inQ = false;
-  for(let i = 0; i < text.length; i++){
-    const ch = text[i];
-    if(inQ){
-      if(ch === '"'){ if(text[i+1] === '"'){ cur += '"'; i++; } else inQ = false; }
-      else cur += ch;
-    } else {
-      if(ch === '"') inQ = true;
-      else if(ch === delim){ row.push(cur); cur = ''; }
-      else if(ch === '\n'){ row.push(cur); rows.push(row); row = []; cur = ''; }
-      else if(ch !== '\r'){ cur += ch; }
+  // Обработка кнопки копирования
+  document.addEventListener('click', function(e) {
+    const copyBtn = e.target.closest('.copy-btn');
+    if (copyBtn) {
+      const textToCopy = copyBtn.getAttribute('data-copy');
+      if (textToCopy) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          showToast('Артикул ' + textToCopy + ' скопирован');
+        }).catch(err => {
+          console.error('Ошибка копирования: ', err);
+        });
+      }
     }
-  }
-  if(cur !== '' || row.length){ row.push(cur); rows.push(row); }
-  return rows;
-}
-
-/* ═══════════ СОСТОЯНИЕ ═══════════ */
-let DB = [], RAW_HEADERS = [], GROUPS = [], READY = false;
-const state = { q:'', tokens:[], sel:{}, sort:{key:'part',dir:1}, limit:BASE_LIMIT, result:[] };
-
-/* ═══════════ DOM ═══════════ */
-const qInput = $('#q'), qClear = $('#qClear'), chipsEl = $('#chips'), foundEl = $('#foundLine'),
-      tbody = $('#tbody'), zone = $('#tableZone'), msgEl = $('#tableMsg');
-
-/* ═══════════ ЗАГРУЗКА И РАЗБОР ДАННЫХ ═══════════ */
-async function load(){
-  READY = false;
-  zone.classList.remove('ready');
-  setStamp('ЗАГРУЗКА…','loading');
-  showMsg('loading');
-  try{
-    const res = await fetch(SHEET_URL);
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
-    if(!text || !text.trim()) throw new Error('Пустой ответ');
-    build(text);
-  }catch(err){
-    console.error(err);
-    setStamp('ОШИБКА','error');
-    showMsg('error');
-  }
-}
-
-function build(text){
-  const grid = parseCSV(text);
-  if(grid.length < 2){ setStamp('НЕТ ДАННЫХ','error'); showMsg('error'); return; }
-
-  RAW_HEADERS = grid[0].map(h => norm(h));
-  // привязка столбцов ТОЛЬКО по названиям из строки 1
-  const idx = {};
-  RAW_HEADERS.forEach((h,i) => { const k = nkey(h); if(!(k in idx)) idx[k] = i; });
-  const gi = k => (k in idx) ? idx[k] : -1;
-  const iP = gi('partnumber'), iN = gi('projectname'), iT = gi('type'),
-        iNaz = gi('naznachenie'), iBr = gi('bronya'), iEk = gi('ekran'),
-        iGb = gi('gibkost'), iT2 = gi('type2'), iSt = gi('status');
-
-  DB = [];
-  for(let r = 1; r < grid.length; r++){
-    const row = grid[r];
-    if(row.every(c => !norm(c))) continue;               // мусорные пустые строки
-    const at = i => i >= 0 ? norm(row[i]) : '';
-    if(toBool(at(iSt)) === false) continue;              // Status = False → не учитываем
-    const name = at(iN);
-    DB.push({
-      id: DB.length,
-      part: at(iP), name,
-      type: at(iT), naz: at(iNaz),
-      br: flagOf(at(iBr)), ek: flagOf(at(iEk)), gb: flagOf(at(iGb)),
-      t2: at(iT2),
-      marks: MARKS.filter(m => name.toUpperCase().includes(m)),
-      raw: RAW_HEADERS.map((h,i) => ({h, v: norm(row[i])}))
-    });
-  }
-
-  buildFilterGroups();
-  READY = true;
-  $('#stampCount').textContent = DB.length;
-  $('#stampDate').textContent = new Date().toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-  setStamp('СИНХРОНИЗИРОВАНО','ok');
-  showMsg(null);
-  zone.classList.add('ready');
-  state.limit = BASE_LIMIT;
-  render();
-}
-
-function setStamp(t,m){ const el = $('#stampStatus'); el.textContent = t; el.dataset.mode = m; }
-
-function showMsg(mode){
-  if(mode === 'loading'){
-    msgEl.innerHTML = '<div class="spin"></div><div><p class="tm-t">Загрузка данных из таблицы</p><p class="tm-s">источник: Google Sheets · CSV · gid=1009866427</p></div>';
-    msgEl.style.display = 'flex';
-  }else if(mode === 'error'){
-    msgEl.innerHTML = '<svg class="tm-warn" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 1.8 20.8h20.4L12 3z"/><path d="M12 10v5"/><path d="M12 17.6v.4"/></svg>'
-      + '<div><p class="tm-t">Не удалось получить данные</p><p class="tm-s">Проверьте подключение к сети и доступность опубликованной таблицы.</p>'
-      + '<button class="btn btn-sm" id="retryBtn">Повторить запрос</button></div>';
-    msgEl.style.display = 'flex';
-  }else{
-    msgEl.style.display = 'none';
-  }
-}
-
-/* ═══════════ ГРУППЫ ФИЛЬТРОВ (7 шт., всегда развёрнуты) ═══════════ */
-function uniqVals(fn){ const s = new Set(); for(const r of DB){ const v = fn(r); if(v) s.add(v); } return [...s].sort((a,b) => COLLATOR.compare(a,b)); }
-
-function buildFilterGroups(){
-  const defs = [
-    {key:'type', num:'01', title:'Категория',  options: uniqVals(r => r.type)},
-    {key:'mark', num:'02', title:'Исполнение', options: MARKS.slice()},
-    {key:'naz',  num:'03', title:'Назначение', options: uniqVals(r => r.naz)},
-    {key:'br',   num:'04', title:'Броня',      options: ['Да','Нет']},
-    {key:'ek',   num:'05', title:'Экран',      options: ['Да','Нет']},
-    {key:'gb',   num:'06', title:'Гибкость',   options: ['Да','Нет']},
-    {key:'t2',   num:'07', title:'Особенности',options: uniqVals(r => r.t2)},
-  ];
-  GROUPS = defs.map(d => {
-    const match =
-      d.key === 'br'   ? (r,v) => r.br === (v === 'Да') :
-      d.key === 'ek'   ? (r,v) => r.ek === (v === 'Да') :
-      d.key === 'gb'   ? (r,v) => r.gb === (v === 'Да') :
-      d.key === 'mark' ? (r,v) => r.marks.includes(v) :
-      (r,v) => r[d.key] === v;
-    return {...d, match};
   });
-  GROUPS.forEach(g => state.sel[g.key] = new Set());
 
-  const box = $('#filterGroups');
-  box.innerHTML = '';
-  GROUPS.forEach(g => {
-    if(!g.options.length) return; // группы без данных не показываем
-    const sec = document.createElement('section');
-    sec.className = 'fgroup';
-    sec.innerHTML =
-      '<h3><span class="fnum">' + g.num + '</span>' + esc(g.title) + '<span class="fsel" hidden></span></h3>' +
-      '<ul>' + g.options.map(o =>
-        '<li><label class="cb"><input type="checkbox" data-g="' + g.key + '" value="' + esc(o) + '">' +
-        '<span class="box">' + ICON_CHECK + '</span>' +
-        '<span class="cbtext' + (g.key === 'mark' ? ' mono' : '') + '">' + esc(o) + '</span>' +
-        '<span class="cbcount">—</span></label></li>').join('') + '</ul>';
-    box.appendChild(sec);
-    g._sec = sec;
-    g._fsel = sec.querySelector('.fsel');
-    g._items = new Map();
-    sec.querySelectorAll('input[type=checkbox]').forEach(inp => {
-      g._items.set(inp.value, { inp, count: inp.closest('li').querySelector('.cbcount'), li: inp.closest('li') });
-    });
-  });
-}
-
-/* ═══════════ ЯДРО ОТБОРА (каскад) ═══════════ */
-function applyAll(rows, skipKey){
-  const toks = state.tokens;
-  return rows.filter(r => {
-    if(toks.length){ // поиск: все токены должны найтись в PartNumber или ProjectName
-      const hay = (r.part + ' ' + r.name).toLowerCase();
-      for(let i = 0; i < toks.length; i++) if(hay.indexOf(toks[i]) < 0) return false;
-    }
-    for(const g of GROUPS){
-      if(g.key === skipKey) continue;
-      const s = state.sel[g.key];
-      if(!s.size) continue;
-      let ok = false;
-      for(const v of s){ if(g.match(r,v)){ ok = true; break; } }
-      if(!ok) return false;
-    }
-    return true;
-  });
-}
-
-function sortRows(list){
-  const {key, dir} = state.sort;
-  const boolKey = (key === 'br' || key === 'ek' || key === 'gb');
-  list.sort((a,b) => {
-    if(boolKey) return ((a[key] ? 1 : 0) - (b[key] ? 1 : 0)) * dir;
-    const va = a[key], vb = b[key];
-    if(!va && !vb) return 0;
-    if(!va) return 1;      // пустые — всегда вниз
-    if(!vb) return -1;
-    return COLLATOR.compare(va, vb) * dir;
-  });
-}
-
-/* ═══════════ РЕНДЕР ═══════════ */
-function render(){
-  renderFilterCounts();
-  renderChips();
-  const list = applyAll(DB, null);
-  sortRows(list);
-  state.result = list;
-  foundEl.innerHTML = list.length === DB.length
-    ? 'Показаны все <b>' + DB.length + '</b> ' + plural(DB.length,'позиция','позиции','позиций')
-    : 'Найдено <b>' + list.length + '</b> ' + plural(list.length,'позиция','позиции','позиций') + ' из ' + DB.length;
-  $('#emptyResult').hidden = !(READY && list.length === 0);
-  renderTable();
-}
-
-function renderFilterCounts(){
-  let totalSel = 0;
-  for(const g of GROUPS){
-    if(!g._sec) continue;
-    const selN = state.sel[g.key].size;
-    totalSel += selN;
-    if(selN){ g._fsel.hidden = false; g._fsel.textContent = 'выбрано ' + selN; } else g._fsel.hidden = true;
-    // каскад: пул строк без учёта текущей группы
-    const pool = applyAll(DB, g.key);
-    const cnt = {};
-    for(const r of pool) for(const o of g.options) if(g.match(r,o)) cnt[o] = (cnt[o] || 0) + 1;
-    for(const o of g.options){
-      const it = g._items.get(o); if(!it) continue;
-      const c = cnt[o] || 0;
-      it.count.textContent = c;
-      const dead = c === 0 && !it.inp.checked;
-      it.li.classList.toggle('zero', dead);
-      it.inp.disabled = dead;
-      it.count.classList.toggle('nil', c === 0 && it.inp.checked); // конфликтующее условие
-    }
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2000);
   }
-  $('#selTotal').textContent = totalSel ? ('· ' + totalSel) : '';
-}
-
-function renderChips(){
-  let html = '';
-  if(state.q)
-    html += '<span class="chip"><span class="chip-k">Поиск</span>' + esc(short(state.q,24)) +
-            '<button class="chip-x" data-q="1" title="Убрать поиск">' + ICON_X + '</button></span>';
-  for(const g of GROUPS)
-    for(const v of state.sel[g.key])
-      html += '<span class="chip"><span class="chip-k">' + esc(g.title) + '</span>' + esc(v) +
-              '<button class="chip-x" data-g="' + g.key + '" data-v="' + esc(v) + '" title="Убрать условие">' + ICON_X + '</button></span>';
-  chipsEl.innerHTML = html;
-}
-
-function hl(s){
-  let out = esc(s);
-  if(state.tokens.length){
-    try{
-      const re = new RegExp(state.tokens.map(t => escRe(esc(t))).join('|'),'gi');
-      out = out.replace(re, m => '<mark>' + m + '</mark>');
-    }catch(e){}
-  }
-  return out || '<span class="muted">—</span>';
-}
-
-const yn = b => b ? '<span class="tag-yes">Да</span>' : '<span class="tag-no">нет</span>';
-
-function rowHtml(r,i){
-  return '<tr class="row">' +
-    '<td class="c-pos">' + (i+1) + '</td>' +
-    '<td class="c-part"><button class="copy-btn" data-copy="' + esc(r.part) + '" title="Скопировать артикул"><span>' + hl(r.part) + '</span>' + ICON_COPY + '</button></td>' +
-    '<td class="c-name">' + hl(r.name) + '</td>' +
-    '<td>' + (r.naz ? esc(r.naz) : '<span class="muted">—</span>') + '</td>' +
-    '<td>' + yn(r.br) + '</td>' +
-    '<td>' + yn(r.ek) + '</td>' +
-    '<td>' + yn(r.gb) + '</td>' +
-    '<td>' + (r.t2 ? esc(r.t2) : '<span class="muted">—</span>') + '</td>' +
-  '</tr>';
-}
-
-function renderTable(){
-  const list = state.result;
-  const shown = list.slice(0, state.limit);
-  tbody.innerHTML = shown.map(rowHtml).join('');
-  const f = $('#tableFooter');
-  if(shown.length < list.length){
-    const more = Math.min(STEP, list.length - shown.length);
-    f.innerHTML = '<span class="foot-text">Показано ' + shown.length + ' из ' + list.length + '</span>' +
-      '<button class="btn btn-sm" data-more="' + more + '">Показать ещё ' + more + '</button>' +
-      '<button class="btn-link" data-all="1">показать все</button>';
-  }else{
-    f.innerHTML = list.length ? '<span class="foot-text">Показаны все ' + list.length + ' ' + plural(list.length,'позиция','позиции','позиций') + '</span>' : '';
-  }
-  updateSortIndicators();
-}
-
-function updateSortIndicators(){
-  document.querySelectorAll('#tbl thead th[data-sort]').forEach(th => {
-    th.classList.remove('asc','desc');
-    if(th.dataset.sort === state.sort.key) th.classList.add(state.sort.dir === 1 ? 'asc' : 'desc');
-  });
-}
-
-/* ═══════════ ДЕЙСТВИЯ ═══════════ */
-function setSearch(v){
-  state.q = norm(v);
-  state.tokens = state.q
-    ? state.q.toLowerCase().split(/\s+/).filter(Boolean).sort((a,b) => b.length - a.length)
-    : [];
-  qClear.hidden = !state.q;
-  state.limit = BASE_LIMIT;
-  render();
-}
-function clearSearch(){ qInput.value = ''; setSearch(''); }
-
-function resetAll(){
-  for(const g of GROUPS) state.sel[g.key].clear();
-  state.q = ''; state.tokens = [];
-  qInput.value = ''; qClear.hidden = true;
-  state.sort = {key:'part', dir:1};
-  state.limit = BASE_LIMIT;
-  render();
-  toast('Все условия сброшены');
-}
-
-function copyText(t){
-  const done = () => toast('Скопировано: ' + (t.length > 40 ? t.slice(0,40) + '…' : t));
-  const fallback = () => {
-    const ta = document.createElement('textarea');
-    ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta); ta.select();
-    try{ document.execCommand('copy'); done(); }catch(e){ toast('Не удалось скопировать'); }
-    ta.remove();
-  };
-  if(navigator.clipboard && navigator.clipboard.writeText)
-    navigator.clipboard.writeText(t).then(done, fallback);
-  else fallback();
-}
-
-function exportCSV(){
-  if(!READY){ toast('Данные ещё не загружены'); return; }
-  const list = state.result;
-  if(!list.length){ toast('Нет позиций для экспорта'); return; }
-  const q = v => { v = norm(v); return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; };
-  const lines = [RAW_HEADERS.map(q).join(';')];
-  for(const r of list) lines.push(r.raw.map(c => q(c.v)).join(';'));
-  const blob = new Blob(['\uFEFF' + lines.join('\r\n')], {type:'text/csv;charset=utf-8'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'kabel-specification.csv';
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 3000);
-  toast('Экспортировано ' + list.length + ' ' + plural(list.length,'позиция','позиции','позиций'));
-}
-
-let toastTimer;
-function toast(msg){
-  const el = $('#toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
-}
-
-/* ═══════════ СОБЫТИЯ ═══════════ */
-let debTimer;
-qInput.addEventListener('input', () => { clearTimeout(debTimer); debTimer = setTimeout(() => setSearch(qInput.value), 170); });
-qInput.addEventListener('keydown', e => { if(e.key === 'Escape' && qInput.value) clearSearch(); });
-qClear.addEventListener('click', clearSearch);
-
- $('#filterGroups').addEventListener('change', e => {
-  const inp = e.target;
-  if(inp.tagName !== 'INPUT') return;
-  const g = GROUPS.find(x => x.key === inp.dataset.g);
-  if(!g) return;
-  if(inp.checked) state.sel[g.key].add(inp.value); else state.sel[g.key].delete(inp.value);
-  state.limit = BASE_LIMIT;
-  render();
-});
-
- $('#chips').addEventListener('click', e => {
-  const b = e.target.closest('[data-q],[data-g]');
-  if(!b) return;
-  if(b.dataset.q){ clearSearch(); return; }
-  const g = GROUPS.find(x => x.key === b.dataset.g);
-  if(g){ state.sel[g.key].delete(b.dataset.v); state.limit = BASE_LIMIT; render(); }
-});
-
-document.querySelector('#tbl thead').addEventListener('click', e => {
-  const th = e.target.closest('th[data-sort]');
-  if(!th) return;
-  const k = th.dataset.sort;
-  if(state.sort.key === k) state.sort.dir *= -1; else { state.sort.key = k; state.sort.dir = 1; }
-  render();
-});
-
-tbody.addEventListener('click', e => {
-  const cp = e.target.closest('[data-copy]');
-  if(cp) copyText(cp.dataset.copy);
-});
-
- $('#tableFooter').addEventListener('click', e => {
-  const m = e.target.closest('[data-more]'), a = e.target.closest('[data-all]');
-  if(m){ state.limit += +m.dataset.more; renderTable(); }
-  else if(a){ state.limit = state.result.length; renderTable(); }
-});
-
-msgEl.addEventListener('click', e => { if(e.target.closest('#retryBtn')) load(); });
-
- $('#btnReset').addEventListener('click', resetAll);
- $('#btnReset2').addEventListener('click', resetAll);
- $('#emptyReset').addEventListener('click', resetAll);
- $('#btnExport').addEventListener('click', exportCSV);
-
-document.addEventListener('keydown', e => {
-  const tag = (document.activeElement && document.activeElement.tagName) || '';
-  if(e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA'){ e.preventDefault(); qInput.focus(); qInput.select(); }
-});
-
-/* ленивая подгрузка строк при прокрутке */
-const io = new IntersectionObserver(es => {
-  if(es.some(x => x.isIntersecting) && READY && state.result.length > state.limit){
-    state.limit += STEP;
-    renderTable();
-  }
-},{rootMargin:'500px 0px'});
-io.observe($('#sentinel'));
-
-/* ═══════════ СТАРТ ═══════════ */
-load();
-})();
 </script>
+
 </body>
 </html>
