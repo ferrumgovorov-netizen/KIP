@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-<meta charset="utf-8">
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="icon" href="https://ferrumgovorov-netizen.github.io/KIP/favicon.ico" type="image/x-icon">
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Расчёт заполняемости кабельного лотка · поперечное сечение</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Unbounded:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/lucide@0.462.0/dist/umd/lucide.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./Расчёт заполняемости кабельного лотка · поперечное сечение_files/css2" rel="stylesheet">
+<script src="./Расчёт заполняемости кабельного лотка · поперечное сечение_files/lucide.min.js.Без названия"></script>
 <style>
   :root{
     --paper:#F4F0E5; --field:#FAF7EE; --page:#E6E0CF;
@@ -34,6 +33,14 @@
     display:flex; justify-content:space-between; align-items:flex-end; gap:24px;
     border-bottom:2px solid var(--ink); padding:10px 4px 16px; margin-bottom:22px;
   }
+  .header-title-box{display:flex; align-items:flex-start; gap:16px;}
+  .home-btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:38px; height:38px; border:1px solid var(--ink); color:var(--ink);
+    background:transparent; text-decoration:none; transition:.14s; flex-shrink:0;
+  }
+  .home-btn:hover{background:var(--ink); color:var(--paper)}
+  .home-btn svg{width:20px; height:20px}
   .doc-line{font:500 10px var(--mono); letter-spacing:.22em; color:var(--accent); margin-bottom:9px}
   h1{font:500 clamp(17px,2.2vw,23px)/1.18 'Unbounded'; text-transform:uppercase; letter-spacing:.015em}
   .head-meta{font:400 10px/1.8 var(--mono); letter-spacing:.12em; color:var(--soft); text-align:right; white-space:nowrap}
@@ -78,7 +85,7 @@
   .seg button:last-child{border-right:0}
   .seg button:hover{background:rgba(38,35,25,.08)}
   .seg button.on{background:var(--ink); color:var(--paper)}
-  .crow{display:grid; grid-template-columns:62px 52px 74px 24px 24px; align-items:center; gap:6px; margin-bottom:8px}
+  .crow{display:grid; grid-template-columns:74px 24px 62px 52px 24px; align-items:center; gap:6px; margin-bottom:8px}
   .crow .sp{font:400 10px var(--mono); color:var(--soft)}
   input[type=number]{
     font:500 13px var(--mono); color:var(--ink); background:transparent;
@@ -250,15 +257,15 @@
 <!-- ═══ Выдвижная панель справочника (слева) ═══ -->
 <div class="ref-panel" id="refPanel">
   <div class="ref-head">
-    <div class="ref-title">Справочник кабелей · <span id="refCount">0</span></div>
-    <button class="ref-close" id="refClose" title="Закрыть (Esc)"><i data-lucide="x"></i></button>
+    <div class="ref-title">Справочник кабелей · <span id="refCount">76</span></div>
+    <button class="ref-close" id="refClose" title="Закрыть (Esc)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="lucide lucide-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
   </div>
   <div class="ref-search">
     <input id="refSearch" type="text" placeholder="Поиск по марке…" autocomplete="off" spellcheck="false">
-    <i data-lucide="search"></i>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="search" class="lucide lucide-search"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
   </div>
   <div class="ref-scroll" id="refScroll">
-    <table id="refTable"></table>
+    <table id="refTable"><tr title="Добавить в расчёт: ВВГнг(А)-ХЛ LS 3х1,5"><td>ВВГнг(А)-ХЛ LS 3х1,5</td><td class="d">12,20</td></tr><tr title="Добавить в расчёт: ВВГнг(А)-LS 2х1,5"><td>ВВГнг(А)-LS 2х1,5</td><td class="d">11,00</td></tr><tr title="Добавить в расчёт: ВВГнг(А)-LS 2х2,5"><td>ВВГнг(А)-LS 2х2,5</td><td class="d">12,50</td></tr><tr title="Добавить в расчёт: ВВГнг(А)-LS 3х1,5"><td>ВВГнг(А)-LS 3х1,5</td><td class="d">12,20</td></tr><tr title="Добавить в расчёт: ВВГнг(А)-LS 3х2,5"><td>ВВГнг(А)-LS 3х2,5</td><td class="d">13,10</td></tr><tr title="Добавить в расчёт: ВВГнг(А)-LS 4х1,5"><td>ВВГнг(А)-LS 4х1,5</td><td class="d">13,00</td></tr><tr title="Добавить в расчёт: ВВГнг(А)-LS 4х2,5"><td>ВВГнг(А)-LS 4х2,5</td><td class="d">14,00</td></tr><tr title="Добавить в расчёт: ВВГнг(А)-LS 5х2,5"><td>ВВГнг(А)-LS 5х2,5</td><td class="d">15,00</td></tr><tr title="Добавить в расчёт: ВВГнг(А)-LS 5х4"><td>ВВГнг(А)-LS 5х4</td><td class="d">14,00</td></tr><tr title="Добавить в расчёт: КГВВнг(А)-LS 2х1,5"><td>КГВВнг(А)-LS 2х1,5</td><td class="d">10,00</td></tr><tr title="Добавить в расчёт: КГВВнг(А)-LS 2х2,5"><td>КГВВнг(А)-LS 2х2,5</td><td class="d">10,10</td></tr><tr title="Добавить в расчёт: КГВВнг(А)-LS 4х2,5"><td>КГВВнг(А)-LS 4х2,5</td><td class="d">11,50</td></tr><tr title="Добавить в расчёт: КГВВнг(А)-LS 4х2,5"><td>КГВВнг(А)-LS 4х2,5</td><td class="d">12,40</td></tr><tr title="Добавить в расчёт: КГВВнг(А)-LS 4х6"><td>КГВВнг(А)-LS 4х6</td><td class="d">16,00</td></tr><tr title="Добавить в расчёт: КГВВнг(А)-LS 4х10"><td>КГВВнг(А)-LS 4х10</td><td class="d">18,40</td></tr><tr title="Добавить в расчёт: КГВВнг(А)-LS 4х16"><td>КГВВнг(А)-LS 4х16</td><td class="d">21,30</td></tr><tr title="Добавить в расчёт: КГВВнг(А)-LS 4х25"><td>КГВВнг(А)-LS 4х25</td><td class="d">27,00</td></tr><tr title="Добавить в расчёт: КГВЭВнг(А)-LS 4х2,5"><td>КГВЭВнг(А)-LS 4х2,5</td><td class="d">14,20</td></tr><tr title="Добавить в расчёт: КГВЭВнг(А)-LS 4х2,5"><td>КГВЭВнг(А)-LS 4х2,5</td><td class="d">11,60</td></tr><tr title="Добавить в расчёт: КГВЭВнг(А)-LS 4х4"><td>КГВЭВнг(А)-LS 4х4</td><td class="d">17,50</td></tr><tr title="Добавить в расчёт: КГВЭВнг(А)-LS 4х6"><td>КГВЭВнг(А)-LS 4х6</td><td class="d">18,10</td></tr><tr title="Добавить в расчёт: КГВЭВнг(А)-LS 4х10"><td>КГВЭВнг(А)-LS 4х10</td><td class="d">21,90</td></tr><tr title="Добавить в расчёт: КГВЭВнг(А)-LS 4х16"><td>КГВЭВнг(А)-LS 4х16</td><td class="d">25,70</td></tr><tr title="Добавить в расчёт: КГВЭВнг(А)-LS 4х25"><td>КГВЭВнг(А)-LS 4х25</td><td class="d">28,30</td></tr><tr title="Добавить в расчёт: КГВЭВнг(А)-LS 4х35"><td>КГВЭВнг(А)-LS 4х35</td><td class="d">34,00</td></tr><tr title="Добавить в расчёт: КГВЭВнг(А)-LS 4х50"><td>КГВЭВнг(А)-LS 4х50</td><td class="d">37,00</td></tr><tr title="Добавить в расчёт: КПСВЭВнг(А)-LS 1х2х1,5"><td>КПСВЭВнг(А)-LS 1х2х1,5</td><td class="d">7,20</td></tr><tr title="Добавить в расчёт: КПСВЭВнг(А)-LS 1х2х1"><td>КПСВЭВнг(А)-LS 1х2х1</td><td class="d">6,00</td></tr><tr title="Добавить в расчёт: МКЭШВнг(А)-HF 1х2х1"><td>МКЭШВнг(А)-HF 1х2х1</td><td class="d">10,70</td></tr><tr title="Добавить в расчёт: МКЭШВнг(А)-HF 2х2х1"><td>МКЭШВнг(А)-HF 2х2х1</td><td class="d">13,00</td></tr><tr title="Добавить в расчёт: МКЭШВнг(А)-HF 3х2х1"><td>МКЭШВнг(А)-HF 3х2х1</td><td class="d">14,00</td></tr><tr title="Добавить в расчёт: МКЭШВнг(А)-HF 4х2х1"><td>МКЭШВнг(А)-HF 4х2х1</td><td class="d">14,50</td></tr><tr title="Добавить в расчёт: МКЭШВнг(А)-HF 5х2х1"><td>МКЭШВнг(А)-HF 5х2х1</td><td class="d">15,00</td></tr><tr title="Добавить в расчёт: МКЭШВнг(А)-HF 7х2х1"><td>МКЭШВнг(А)-HF 7х2х1</td><td class="d">16,00</td></tr><tr title="Добавить в расчёт: МКЭШвнг(А)-LS 1х2х1"><td>МКЭШвнг(А)-LS 1х2х1</td><td class="d">10,50</td></tr><tr title="Добавить в расчёт: МКЭШвнг(А)-LS 1х2х1,0"><td>МКЭШвнг(А)-LS 1х2х1,0</td><td class="d">10,30</td></tr><tr title="Добавить в расчёт: МКЭШвнг(А)-LS 1х2х1,5"><td>МКЭШвнг(А)-LS 1х2х1,5</td><td class="d">11,30</td></tr><tr title="Добавить в расчёт: МКЭШвнг(А)-LS 2х2х1,5"><td>МКЭШвнг(А)-LS 2х2х1,5</td><td class="d">14,60</td></tr><tr title="Добавить в расчёт: МКЭШвнг(А)-LS 3х2х1,0"><td>МКЭШвнг(А)-LS 3х2х1,0</td><td class="d">13,70</td></tr><tr title="Добавить в расчёт: МКЭШвнг(А)-LS 8х2х1,0"><td>МКЭШвнг(А)-LS 8х2х1,0</td><td class="d">18,00</td></tr><tr title="Добавить в расчёт: ПВКВ 1х1,5"><td>ПВКВ 1х1,5</td><td class="d">3,30</td></tr><tr title="Добавить в расчёт: ПВКВ 1х2,5"><td>ПВКВ 1х2,5</td><td class="d">4,10</td></tr><tr title="Добавить в расчёт: ПВКВ 1х4"><td>ПВКВ 1х4</td><td class="d">4,70</td></tr><tr title="Добавить в расчёт: ПВКВ 1х6"><td>ПВКВ 1х6</td><td class="d">5,60</td></tr><tr title="Добавить в расчёт: ПВКВ 1х10"><td>ПВКВ 1х10</td><td class="d">7,10</td></tr><tr title="Добавить в расчёт: ПВКВ 1х16"><td>ПВКВ 1х16</td><td class="d">8,80</td></tr><tr title="Добавить в расчёт: ПВСнг(А)-LS 2х1,5"><td>ПВСнг(А)-LS 2х1,5</td><td class="d">8,50</td></tr><tr title="Добавить в расчёт: ПВСнг(А)-LS 3х0,75"><td>ПВСнг(А)-LS 3х0,75</td><td class="d">6,60</td></tr><tr title="Добавить в расчёт: ПВСнг(А)-LS 3х1,5"><td>ПВСнг(А)-LS 3х1,5</td><td class="d">9,30</td></tr><tr title="Добавить в расчёт: ПУГВ 1х1,5"><td>ПУГВ 1х1,5</td><td class="d">3,00</td></tr><tr title="Добавить в расчёт: ПУГВ 1х6"><td>ПУГВ 1х6</td><td class="d">4,70</td></tr><tr title="Добавить в расчёт: ПУГВ 1х10"><td>ПУГВ 1х10</td><td class="d">6,00</td></tr><tr title="Добавить в расчёт: ПУГВ 1х16"><td>ПУГВ 1х16</td><td class="d">7,60</td></tr><tr title="Добавить в расчёт: ПУГВ 1х25"><td>ПУГВ 1х25</td><td class="d">9,60</td></tr><tr title="Добавить в расчёт: ПУГВнг(А)-LS 1х2,5"><td>ПУГВнг(А)-LS 1х2,5</td><td class="d">3,50</td></tr><tr title="Добавить в расчёт: ПУГВнг(А)-LS 1х6"><td>ПУГВнг(А)-LS 1х6</td><td class="d">4,70</td></tr><tr title="Добавить в расчёт: ПУГВнг(А)-LS 1х16"><td>ПУГВнг(А)-LS 1х16</td><td class="d">7,60</td></tr><tr title="Добавить в расчёт: СПЕЦЛАН F/UTP Cat 5e PVC LSнг(А)-LS 4х2х0,52"><td>СПЕЦЛАН F/UTP Cat 5e PVC LSнг(А)-LS 4х2х0,52</td><td class="d">8,10</td></tr><tr title="Добавить в расчёт: СегментЛАН F/UTP Cat5e PVCLSнг(А)-LS 4х2х0,52"><td>СегментЛАН F/UTP Cat5e PVCLSнг(А)-LS 4х2х0,52</td><td class="d">7,00</td></tr><tr title="Добавить в расчёт: Энерготерм-400нг(A)-FRLS 4х1,5"><td>Энерготерм-400нг(A)-FRLS 4х1,5</td><td class="d">11,80</td></tr><tr title="Добавить в расчёт: Энерготерм-400нг(A)-FRLS 4х2,5"><td>Энерготерм-400нг(A)-FRLS 4х2,5</td><td class="d">13,80</td></tr><tr title="Добавить в расчёт: Энерготерм-400нг(A)-FRLS 4х4"><td>Энерготерм-400нг(A)-FRLS 4х4</td><td class="d">15,20</td></tr><tr title="Добавить в расчёт: Энерготерм-400нг(A)-FRLS 4х6"><td>Энерготерм-400нг(A)-FRLS 4х6</td><td class="d">18,10</td></tr><tr title="Добавить в расчёт: Энерготерм-400нг(A)-FRLS 4х10"><td>Энерготерм-400нг(A)-FRLS 4х10</td><td class="d">21,00</td></tr><tr title="Добавить в расчёт: Энерготерм-400нг(A)-FRLS 4х16"><td>Энерготерм-400нг(A)-FRLS 4х16</td><td class="d">24,20</td></tr><tr title="Добавить в расчёт: Уралтерм-400нг(A)-FRLS 4х4"><td>Уралтерм-400нг(A)-FRLS 4х4</td><td class="d">15,00</td></tr><tr title="Добавить в расчёт: ВБШвнг(А)-LS 4х4ок(N)"><td>ВБШвнг(А)-LS 4х4ок(N)</td><td class="d">13,90</td></tr><tr title="Добавить в расчёт: МКЭКШВнг(А)-LS 1х2х1.0"><td>МКЭКШВнг(А)-LS 1х2х1.0</td><td class="d">10,50</td></tr><tr title="Добавить в расчёт: КУМП-ПсАсзнг(А)-FRHF 3х1,5"><td>КУМП-ПсАсзнг(А)-FRHF 3х1,5</td><td class="d">13,40</td></tr><tr title="Добавить в расчёт: КУМП-ПсОЭсзнг(А)-FRHF 1х2х1,0"><td>КУМП-ПсОЭсзнг(А)-FRHF 1х2х1,0</td><td class="d">12,50</td></tr><tr title="Добавить в расчёт: КУМП-ПсИЭОЭсзнг(А)-FRHF 2х2х1,0"><td>КУМП-ПсИЭОЭсзнг(А)-FRHF 2х2х1,0</td><td class="d">17,90</td></tr><tr title="Добавить в расчёт: КУМП-ПсИЭОЭсзнг(А)-FRHF 3х2х1,0"><td>КУМП-ПсИЭОЭсзнг(А)-FRHF 3х2х1,0</td><td class="d">18,50</td></tr><tr title="Добавить в расчёт: ППГнг(А)-HF 3х1,5"><td>ППГнг(А)-HF 3х1,5</td><td class="d">10,00</td></tr><tr title="Добавить в расчёт: ППГнг(А)-HF 2х1,5"><td>ППГнг(А)-HF 2х1,5</td><td class="d">9,00</td></tr><tr title="Добавить в расчёт: КГПЭПнг(А)-HF 4х2,5"><td>КГПЭПнг(А)-HF 4х2,5</td><td class="d">13,90</td></tr><tr title="Добавить в расчёт: КГПЭПнг(А)-HF 4х4"><td>КГПЭПнг(А)-HF 4х4</td><td class="d">15,80</td></tr></table>
     <div class="ref-empty" id="refEmpty">Ничего не найдено</div>
   </div>
   <div class="ref-note">Клик по строке — добавить кабель в расчёт. Диаметры ориентировочные, уточняйте по ГОСТ / ТУ изготовителя.</div>
@@ -266,9 +273,14 @@
 
 <div class="sheet">
   <header>
-    <div>
-      <div class="doc-line">ФОРМА КС-3 · ПОПЕРЕЧНЫЙ РАЗРЕЗ · ФИЗИЧЕСКАЯ МОДЕЛЬ УКЛАДКИ</div>
-      <h1>Расчёт заполняемости<br>кабельного лотка</h1>
+    <div class="header-title-box">
+      <a href="index.html" class="home-btn" title="На главную">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      </a>
+      <div>
+        <div class="doc-line">ФОРМА КС-3 · ПОПЕРЕЧНЫЙ РАЗРЕЗ · ФИЗИЧЕСКАЯ МОДЕЛЬ УКЛАДКИ</div>
+        <h1>Расчёт заполняемости<br>кабельного лотка</h1>
+      </div>
     </div>
     <div class="head-meta">
       ЛОТОК НЕПЕРФОРИРОВАННЫЙ · <b>ДКС</b><br>
@@ -282,8 +294,8 @@
     <aside class="panel">
       <section class="sec">
         <h2><span class="num">01</span>Лоток ДКС</h2>
-        <div class="matrix" id="matrix"></div>
-        <div class="tray-line">Сечение: <b id="trayLabel">—</b> · внутреннее <span id="trayInLabel">—</span></div>
+        <div class="matrix" id="matrix"><div class="mx-h">мм</div><div class="mx-h">50</div><div class="mx-h">100</div><div class="mx-h">150</div><div class="mx-h">200</div><div class="mx-h">300</div><div class="mx-h">400</div><div class="mx-h">500</div><div class="mx-h">600</div><div class="mx-l">50</div><button class="mx-c" title="ДКС 50×50" data-w="50" data-h="50"></button><button class="mx-c" title="ДКС 100×50" data-w="100" data-h="50"></button><button class="mx-c" title="ДКС 150×50" data-w="150" data-h="50"></button><button class="mx-c on" title="ДКС 200×50" data-w="200" data-h="50"></button><button class="mx-c" title="ДКС 300×50" data-w="300" data-h="50"></button><button class="mx-c" title="ДКС 400×50" data-w="400" data-h="50"></button><button class="mx-c" title="ДКС 500×50" data-w="500" data-h="50"></button><button class="mx-c" title="ДКС 600×50" data-w="600" data-h="50"></button><div class="mx-l">80</div><button class="mx-c" title="ДКС 50×80" data-w="50" data-h="80"></button><button class="mx-c" title="ДКС 100×80" data-w="100" data-h="80"></button><button class="mx-c" title="ДКС 150×80" data-w="150" data-h="80"></button><button class="mx-c" title="ДКС 200×80" data-w="200" data-h="80"></button><button class="mx-c" title="ДКС 300×80" data-w="300" data-h="80"></button><button class="mx-c" title="ДКС 400×80" data-w="400" data-h="80"></button><button class="mx-c" title="ДКС 500×80" data-w="500" data-h="80"></button><button class="mx-c" title="ДКС 600×80" data-w="600" data-h="80"></button><div class="mx-l">100</div><button class="mx-c" title="ДКС 50×100" data-w="50" data-h="100"></button><button class="mx-c" title="ДКС 100×100" data-w="100" data-h="100"></button><button class="mx-c" title="ДКС 150×100" data-w="150" data-h="100"></button><button class="mx-c" title="ДКС 200×100" data-w="200" data-h="100"></button><button class="mx-c" title="ДКС 300×100" data-w="300" data-h="100"></button><button class="mx-c" title="ДКС 400×100" data-w="400" data-h="100"></button><button class="mx-c" title="ДКС 500×100" data-w="500" data-h="100"></button><button class="mx-c" title="ДКС 600×100" data-w="600" data-h="100"></button></div>
+        <div class="tray-line">Сечение: <b id="trayLabel">ДКС 200×50</b> · внутреннее <span id="trayInLabel">198,0 × 49,00 мм</span></div>
         <label class="chk">
           <input type="checkbox" id="chkDiv">
           <span class="box"></span>
@@ -293,20 +305,30 @@
 
       <section class="sec">
         <h2><span class="num">02</span>Кабели</h2>
-        <div id="cableRows"></div>
-        <button class="ghost" id="addRow"><i data-lucide="plus"></i>ДОБАВИТЬ ТИП КАБЕЛЯ</button>
-        <button class="ghost" id="btnRef" style="margin-top:8px"><i data-lucide="book-open"></i>СПРАВОЧНИК КАБЕЛЕЙ · <span id="refBtnCount">0</span></button>
+        <div id="cableRows"><div class="crow" data-name="ВВГнг(А)-LS 4х2,5">
+    <input type="number" class="d" min="0.5" max="120" step="0.1" value="14">
+    <span class="sp">мм ×</span>
+    <input type="number" class="n" min="1" max="999" step="1" value="12">
+    <span class="sp">шт</span>
+    <button class="del" title="Удалить"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="lucide lucide-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div><div class="crow" data-name="КПСВЭВнг(А)-LS 1х2х1">
+    <input type="number" class="d" min="0.5" max="120" step="0.1" value="6">
+    <span class="sp">мм ×</span>
+    <input type="number" class="n" min="1" max="999" step="1" value="20">
+    <span class="sp">шт</span>
+    <button class="del" title="Удалить"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="lucide lucide-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div></div>
+        <button class="ghost" id="addRow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" class="lucide lucide-plus"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>ДОБАВИТЬ ТИП КАБЕЛЯ</button>
+        <button class="ghost" id="btnRef" style="margin-top:8px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="book-open" class="lucide lucide-book-open"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>СПРАВОЧНИК КАБЕЛЕЙ · <span id="refBtnCount">76</span></button>
       </section>
 
       <section class="sec">
         <h2><span class="num">03</span>Оценка результата</h2>
         <div class="fld-row" style="margin-top:0">
           <label>Норматив заполняемости (многослойная прокладка)</label>
-          <div class="seg" id="segNorm"></div>
+          <div class="seg" id="segNorm"><button class="on">СИЛОВЫЕ ≤ 40 %</button><button>СЛАБОТОЧНЫЕ ≤ 50 %</button></div>
         </div>
         <div class="btns">
-          <button class="bt" id="btnRe"><i data-lucide="refresh-ccw"></i>ПЕРЕУЛОЖИТЬ</button>
-          <button class="bt" id="btnAuto"><i data-lucide="crosshair"></i>ПОДОБРАТЬ ЛОТОК</button>
+          <button class="bt" id="btnRe"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="refresh-ccw" class="lucide lucide-refresh-ccw"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 16h5v5"></path></svg>ПЕРЕУЛОЖИТЬ</button>
+          <button class="bt" id="btnAuto"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="crosshair" class="lucide lucide-crosshair"><circle cx="12" cy="12" r="10"></circle><line x1="22" x2="18" y1="12" y2="12"></line><line x1="6" x2="2" y1="12" y2="12"></line><line x1="12" x2="12" y1="6" y2="2"></line><line x1="12" x2="12" y1="22" y2="18"></line></svg>ПОДОБРАТЬ ЛОТОК</button>
         </div>
         <details class="ref">
           <summary>Методика расчёта</summary>
@@ -324,14 +346,16 @@
     <!-- ═══ Чертёж ═══ -->
     <section class="dwg">
       <div class="dwg-head">
-        <div class="pill" id="pillStatus"><i class="dot"></i><span id="pillText">УКЛАДКА</span></div>
-        <div class="pill over" id="pillOver"></div>
+        <div class="pill done" id="pillStatus"><i class="dot"></i><span id="pillText">УЛОЖЕНО · УСТОЙЧИВО</span></div>
+        <div class="pill over" id="pillOver" style="display: none;">ВЫШЕ КРОМКИ · 1 ШТ</div>
       </div>
       <div class="canvas-wrap" id="wrap">
-        <canvas id="cv"></canvas>
+        <canvas id="cv" width="919" height="660" data-cur="crosshair" style="cursor: crosshair;"></canvas>
         <div class="pill hint" id="pillHint">Кабели и перегородку можно перетаскивать мышью</div>
       </div>
-      <div class="legend" id="legend"></div>
+      <div class="legend" id="legend"><div class="lg"><span class="sw" style="background:#A03D22"></span>
+      <span>∅ 14,00 мм × 12</span><span class="nm">ВВГнг(А)-LS 4х2,5</span></div><div class="lg"><span class="sw" style="background:#37505E"></span>
+      <span>∅ 6,00 мм × 20</span><span class="nm">КПСВЭВнг(А)-LS 1х2х1</span></div></div>
     </section>
   </main>
 
@@ -339,28 +363,28 @@
   <footer class="stamp">
     <div class="cell">
       <h3>Лоток</h3>
-      <div class="v" id="stTray">—</div>
-      <div class="s" id="stTraySub">—</div>
+      <div class="v" id="stTray">ДКС 200×50</div>
+      <div class="s" id="stTraySub">вн. 198,0 × 49,00 мм · t 1,0</div>
     </div>
     <div class="cell">
       <h3>Кабели</h3>
-      <div class="v" id="stCount">—</div>
-      <div class="s" id="stCountSub">—</div>
+      <div class="v" id="stCount">32/32 шт</div>
+      <div class="s" id="stCountSub">2 типа · ∅ 6,00–14,00 мм</div>
     </div>
     <div class="cell">
       <h3>Σ S кабелей</h3>
-      <div class="v" id="stScab">—</div>
+      <div class="v" id="stScab">2&nbsp;413 мм²</div>
       <div class="s">π·∅²/4, все сечения</div>
     </div>
     <div class="cell">
       <h3>S сечения</h3>
-      <div class="v" id="sStray">—</div>
+      <div class="v" id="sStray">9&nbsp;698 мм²</div>
       <div class="s">полезное, вн.</div>
     </div>
     <div class="cell">
       <h3>Заполняемость K</h3>
-      <div class="v big" id="stK">—</div>
-      <div class="scale"><i id="z1"></i><i id="z2"></i><i class="mark" id="kMark"></i></div>
+      <div class="v big" id="stK">24,9 %</div>
+      <div class="scale"><i id="z1" style="width: 40%;"></i><i id="z2" style="left: 40%; width: 10%;"></i><i class="mark" id="kMark" style="left: 24.8784%;"></i></div>
       <div class="ticks">
         <span style="left:5px">0</span>
         <span id="tickNorm" style="left:40%">40</span>
@@ -370,12 +394,12 @@
     </div>
     <div class="cell">
       <h3>Слой кабелей</h3>
-      <div class="v" id="stLevel">—</div>
-      <div class="s" id="stLevelSub">—</div>
+      <div class="v" id="stLevel">20,00 / 49,00 мм</div>
+      <div class="s" id="stLevelSub">41 % высоты лотка</div>
     </div>
     <div class="cell">
       <h3>Заключение</h3>
-      <div class="stamp-verdict v-idle" id="verdict">РАСЧЁТ</div>
+      <div class="stamp-verdict v-ok" id="verdict">СООТВЕТСТВУЕТ ≤ 40 %</div>
     </div>
   </footer>
   <div class="footnote">
@@ -383,8 +407,6 @@
     <div class="f">K = Σ(π∅²/4) / [(W−2t)(H−t)]</div>
   </div>
 </div>
-
-<datalist id="diaList"></datalist>
 
 <script>
 'use strict';
@@ -484,10 +506,7 @@ const fmtmm = x=>fmt(x, x>=100?1:2);
 const fmtI = x=>Math.round(x).toLocaleString('ru-RU');
 function plural(n,a,b,c){const m=n%100;if(m>=11&&m<=14)return c;switch(n%10){case 1:return a;case 2:case 3:case 4:return b;default:return c;}}
 
-/* ═══════════════ ФИЗИЧЕСКАЯ МОДЕЛЬ УКЛАДКИ ═══════════════
-   Круглые сечения свободно оседают в лоток: гравитация, точечные
-   контакты круг-круг и круг-стенка, трение. Зазоры между кругами
-   возникают естественно и остаются незаполненными.            */
+/* ═══════════════ ФИЗИЧЕСКАЯ МОДЕЛЬ УКЛАДКИ ═══════════════ */
 const STEP=1/240, GRAV=15000, DAMP=0.995, REST=0.03, FRIC=0.12, VCAP=650, MAXB=500;
 
 function makeSim(W,H,t,cables,divOn,divX){
@@ -872,299 +891,312 @@ function updateLive(){
   const r=results(cur), spawned=cur.balls.length;
   if(cur.trunc){ pill('ЛИМИТ 500 КАБЕЛЕЙ · ПОКАЗАНЫ ПЕРВЫЕ 500',true,true); }
   else if(cur.total===0){ pill('НЕТ КАБЕЛЕЙ',true); }
-  else if(!cur.settled){ pill(`УКЛАДКА · ${spawned}/${cur.total}`); }
+  else if(!cur.settled){ pill(`УКЛАДКА… ${spawned}/${cur.total}`,false); }
   else { pill('УЛОЖЕНО · УСТОЙЧИВО',true); }
+
   const po=el('pillOver');
   if(r.over>0){ po.style.display='flex'; po.textContent=`ВЫШЕ КРОМКИ · ${r.over} ШТ`; }
   else po.style.display='none';
-  el('stTray').textContent=`ДКС ${cur.W}×${cur.H}`;
-  el('stTraySub').textContent=`вн. ${fmtmm(cur.Win)} × ${fmtmm(cur.Hin)} мм · t 1,0`+
-    (cur.div?` · П=${Math.round(cur.div.x)} мм`:'');
-  const groups=state.cables.length;
-  let dmin=Infinity,dmax=0;
-  for(const c of state.cables){ if(c.d<dmin)dmin=c.d; if(c.d>dmax)dmax=c.d; }
-  el('stCount').textContent=cur.total? `${spawned}/${cur.total} шт` : '0 шт';
-  el('stCountSub').textContent=groups?
-    `${groups} ${plural(groups,'тип','типа','типов')} · ∅ ${fmtmm(dmin)}–${fmtmm(dmax)} мм` : '—';
-  el('stScab').textContent=fmtI(r.Sc)+' мм²';
-  el('sStray').textContent=fmtI(r.A)+' мм²';
-  el('stK').textContent=fmt(r.K,1)+' %';
-  el('kMark').style.left=Math.min(100,r.K)+'%';
-  el('stLevel').textContent=`${fmtmm(r.level)} / ${fmtmm(cur.Hin)} мм`;
-  el('stLevelSub').textContent=cur.total? `${fmt(Math.min(999,r.level/cur.Hin*100),0)} % высоты лотка` : '—';
+
+  el('stTray').textContent=`ДКС ${state.W}×${state.H}`;
+  el('stTraySub').textContent=`вн. ${fmtmm(state.W-2*T)} × ${fmtmm(state.H-T)} мм · t ${T.toFixed(1)}`;
+  el('stCount').textContent=`${spawned}/${cur.total} шт`;
+
+  const minD=state.cables.length?Math.min(...state.cables.map(c=>c.d)):0;
+  const maxD=state.cables.length?Math.max(...state.cables.map(c=>c.d)):0;
+  el('stCountSub').textContent=`${state.cables.length} ${plural(state.cables.length,'тип','типа','типов')} · ∅ ${fmtmm(minD)}–${fmtmm(maxD)} мм`;
+
+  el('stScab').innerHTML=`${fmtI(r.Sc)}&nbsp;мм²`;
+  el('sStray').innerHTML=`${fmtI(r.A)}&nbsp;мм²`;
+  el('stK').textContent=`${fmt(r.K,1)} %`;
+  el('kMark').style.left=`${Math.min(100,r.K)}%`;
+
+  el('stLevel').textContent=`${fmtmm(r.level)} / ${fmtmm(state.H-T)} мм`;
+  el('stLevelSub').textContent=`${Math.round(r.level/(state.H-T)*100)} % высоты лотка`;
+
   const v=el('verdict');
-  let cls='v-idle', txt='НЕТ ДАННЫХ';
-  if(cur.trunc){cls='v-bad';txt='ЛИМИТ 500 КАБ.';}
-  else if(cur.blocked>0){cls='v-bad';txt='∅ > ШИРИНЫ ЛОТКА';}
-  else if(cur.total>0){
-    if(!cur.settled){txt='ИДЁТ РАСЧЁТ';}
-    else if(r.over>0||r.waiting>0){cls='v-bad';txt=`ПЕРЕПОЛНЕНИЕ · ${r.over+r.waiting} ШТ`;}
-    else if(r.K>state.norm){cls='v-warn';txt=`${fmt(r.K,1)} % > ${state.norm} %`;}
-    else {cls='v-ok';txt=`СООТВЕТСТВУЕТ ≤ ${state.norm} %`;}
+  v.className='stamp-verdict';
+  if(cur.total===0){
+    v.textContent='НЕТ ДАННЫХ'; v.classList.add('v-idle');
+  } else if(r.over>0){
+    v.textContent='НЕ ВЛЕЗАЕТ В БОРТ'; v.classList.add('v-bad');
+  } else if(r.K<=state.norm){
+    v.textContent=`СООТВЕТСТВУЕТ ≤ ${state.norm} %`; v.classList.add('v-ok');
+  } else if(r.K<=state.norm*1.15){
+    v.textContent=`ПРЕВЫШЕНИЕ ≤ ${state.norm} %`; v.classList.add('v-warn');
+  } else {
+    v.textContent=`ПЕРЕПОЛНЕН > ${state.norm} %`; v.classList.add('v-bad');
   }
-  v.className='stamp-verdict '+cls; v.textContent=txt;
 }
 
 function updateTrayLabels(){
-  const Win=state.W-2*T, Hin=state.H-T;
   el('trayLabel').textContent=`ДКС ${state.W}×${state.H}`;
-  el('trayInLabel').textContent=`${fmtmm(Win)} × ${fmtmm(Hin)} мм`;
+  el('trayInLabel').textContent=`${fmtmm(state.W-2*T)} × ${fmtmm(state.H-T)} мм`;
 }
 
-/* ═══════════════ ЛЕГЕНДА ═══════════════ */
+function syncCablesFromUI(){
+  const rows=document.querySelectorAll('#cableRows .crow');
+  const arr=[];
+  rows.forEach(r=>{
+    const d=parseFloat(r.querySelector('.d').value)||0;
+    const n=parseInt(r.querySelector('.n').value,10)||0;
+    const name=r.dataset.name||'Кабель';
+    if(d>0 && n>0) arr.push({d,n,name});
+  });
+  state.cables=arr;
+}
+
 function buildLegend(){
-  const lg=el('legend'); lg.innerHTML=''; hlG=undefined;
-  state.cables.forEach((c,gi)=>{
-    const d=document.createElement('div'); d.className='lg';
-    d.innerHTML=`<span class="sw" style="background:${PALETTE[gi%PALETTE.length]}"></span>
-      <span>∅ ${fmtmm(c.d)} мм × ${c.n}</span>${c.name?`<span class="nm">${c.name}</span>`:''}`;
-    d.addEventListener('mouseenter',()=>hlG=gi);
-    d.addEventListener('mouseleave',()=>hlG=undefined);
-    lg.appendChild(d);
+  const leg=el('legend'); leg.innerHTML='';
+  state.cables.forEach((c,i)=>{
+    const d=document.createElement('div');
+    d.className='lg';
+    d.innerHTML=`<span class="sw" style="background:${PALETTE[i%PALETTE.length]}"></span>
+      <span>∅ ${fmtmm(c.d)} мм × ${c.n}</span><span class="nm">${c.name}</span>`;
+    d.onmouseenter=()=>{ hlG=i; };
+    d.onmouseleave=()=>{ hlG=undefined; };
+    leg.appendChild(d);
   });
 }
 
-/* ═══════════════ АВТОПОДБОР ТИПОРАЗМЕРА ═══════════════ */
-async function quickSim(W,H,myToken){
-  const s=makeSim(W,H,T,state.cables.map((c,gi)=>({...c,gi})),state.divider,null); // перегородка — по центру
-  s.quick=true;
-  let steps=0;
-  while(!s.settled && steps<6500){
-    for(let i=0;i<450 && !s.settled;i++){ stepSim(s); steps++; }
-    await new Promise(r=>setTimeout(r,0));
-    if(autoToken!==myToken) return null;
-  }
-  const r=results(s); r.blocked=s.blocked;
-  return r;
-}
-async function autoPick(){
-  if(autoRunning || !state.cables.length) return;
-  const myToken=++autoToken;
-  autoRunning=true; el('btnAuto').disabled=true;
-  try{
-    const cand=[];
-    for(const h of DKS_H)for(const w of DKS_W) cand.push({w,h,A:(w-2*T)*(h-T)});
-    cand.sort((a,b)=>a.A-b.A);
-    let fb=null, chosen=null, chosenR=null, overNorm=false;
-    for(const c of cand){
-      pill(`ПОДБОР ЛОТКА: ДКС ${c.w}×${c.h}…`);
-      const r=await quickSim(c.w,c.h,myToken);
-      if(autoToken!==myToken) return;
-      if(!r || r.trunc) continue;
-      if(r.over===0 && r.blocked===0){
-        if(r.K<=state.norm+1e-9){ chosen=c; chosenR=r; break; }
-        if(!fb){ fb={c,r}; }
-      }
-    }
-    if(!chosen && fb){ chosen=fb.c; chosenR=fb.r; overNorm=true; }
-    if(autoToken!==myToken) return;
-    if(chosen){
-      state.W=chosen.w; state.H=chosen.h; markMatrix();
+function createCableRow(dVal=10, nVal=10, nameVal='Пользовательский'){
+  const div=document.createElement('div');
+  div.className='crow';
+  div.dataset.name=nameVal;
+  div.innerHTML=`
+    <input type="number" class="d" min="0.5" max="120" step="0.1" value="${dVal}">
+    <span class="sp">мм ×</span>
+    <input type="number" class="n" min="1" max="999" step="1" value="${nVal}">
+    <span class="sp">шт</span>
+    <button class="del" title="Удалить"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="lucide lucide-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>`;
+  
+  div.querySelector('.del').onclick=()=>{
+    div.remove();
+    syncCablesFromUI();
+    buildMain();
+  };
+  div.querySelectorAll('input').forEach(inp=>{
+    inp.oninput=()=>{
+      syncCablesFromUI();
       buildMain();
-      pill(`ПОДОБРАН: ДКС ${chosen.w}×${chosen.h} · K = ${fmt(chosenR.K,1)} %`+(overNorm?' · СВЕРХ НОРМЫ':''),true,overNorm);
-    } else {
-      buildMain();
-      pill('НЕ ПОМЕЩАЕТСЯ НИ В ОДИН ТИПОРАЗМЕР ДО 600×100',true,true);
-    }
-  } finally { autoRunning=false; el('btnAuto').disabled=false; }
+    };
+  });
+  return div;
 }
 
-/* ═══════════════ UI ═══════════════ */
-function buildMatrix(){
-  const mx=$('#matrix'); mx.innerHTML='';
-  const c0=document.createElement('div'); c0.className='mx-h'; c0.textContent='мм'; mx.appendChild(c0);
-  for(const w of DKS_W){ const d=document.createElement('div'); d.className='mx-h'; d.textContent=w; mx.appendChild(d); }
-  for(const h of DKS_H){
-    const l=document.createElement('div'); l.className='mx-l'; l.textContent=h; mx.appendChild(l);
-    for(const w of DKS_W){
-      const b=document.createElement('button');
-      b.className='mx-c'; b.title=`ДКС ${w}×${h}`; b.dataset.w=w; b.dataset.h=h;
-      b.addEventListener('click',()=>{ state.W=w; state.H=h; markMatrix(); buildMain(); });
-      mx.appendChild(b);
-    }
-  }
-  markMatrix();
-}
-function markMatrix(){
-  document.querySelectorAll('.mx-c').forEach(b=>
-    b.classList.toggle('on', +b.dataset.w===state.W && +b.dataset.h===state.H));
-}
-function buildSeg(container,opts,get,set){
-  container.innerHTML='';
-  opts.forEach(o=>{
-    const b=document.createElement('button'); b.textContent=o.label;
-    b.addEventListener('click',()=>{ set(o.v); [...container.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); });
-    if(o.v===get()) b.classList.add('on');
-    container.appendChild(b);
+/* ═══════════════ ИНИЦИАЛИЗАЦИЯ И СОБЫТИЯ ═══════════════ */
+function initMatrix(){
+  const mx=el('matrix');
+  mx.querySelectorAll('.mx-c').forEach(btn=>{
+    btn.onclick=()=>{
+      mx.querySelectorAll('.mx-c').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      state.W=parseInt(btn.dataset.w,10);
+      state.H=parseInt(btn.dataset.h,10);
+      state.divX=null;
+      buildMain();
+    };
   });
 }
-function setNorm(v){
-  state.norm=v;
-  el('z1').style.width=v+'%';
-  el('z2').style.left=v+'%'; el('z2').style.width=(50-v)+'%';
-  el('tickNorm').textContent=v; el('tickNorm').style.left=v+'%';
-}
 
-/* строки кабелей */
-let rebuildTimer=null;
-function readRows(){
-  const rows=[...document.querySelectorAll('#cableRows .crow')];
-  state.cables=rows.map(rw=>({
-    n:Math.min(999,Math.max(0,Math.round(+rw.querySelector('.n').value||0))),
-    d:Math.min(120,Math.max(0,+rw.querySelector('.d').value||0)),
-    name:rw.dataset.name||null
-  })).filter(c=>c.n>=1 && c.d>=0.5);
-}
-function scheduleRebuild(){
-  clearTimeout(rebuildTimer);
-  rebuildTimer=setTimeout(()=>{ readRows(); buildMain(); },280);
-}
-function addRow(n=1,d=9.9,name=null){               // по умолчанию: 1 шт, ∅ 9,9 мм
-  const row=document.createElement('div'); row.className='crow';
-  if(name) row.dataset.name=name;
-  row.innerHTML=`
-    <input type="number" class="n" min="1" max="999" step="1" value="${n}">
-    <span class="sp">шт × ∅</span>
-    <input type="number" class="d" min="0.5" max="120" step="0.1" value="${d}" list="diaList">
-    <span class="sp">мм</span>
-    <button class="del" title="Удалить"><i data-lucide="x"></i></button>`;
-  const dInp=row.querySelector('.d');
-  row.querySelector('.n').addEventListener('input',scheduleRebuild);
-  dInp.addEventListener('input',()=>{ row.dataset.name=''; scheduleRebuild(); }); // диаметр правится вручную → имя сбрасываем
-  row.querySelector('.del').addEventListener('click',()=>{ row.remove(); readRows(); buildMain(); });
-  $('#cableRows').appendChild(row);
-  try{ lucide.createIcons(); }catch(e){}
-}
+function initRefPanel(){
+  const panel=el('refPanel'), scrim=el('refScrim'), btnOpen=el('btnRef'), btnClose=el('refClose');
+  const search=el('refSearch'), table=el('refTable'), count=el('refCount'), btnCount=el('refBtnCount'), empty=el('refEmpty');
 
-/* ═══════════════ СПРАВОЧНИК + ПОИСК (панель слева) ═══════════════ */
-let refRows=[];
-const normStr=s=>s.toLowerCase().replace(/[хx×]/g,'x').replace(/,/g,'.').replace(/\s+/g,' ');
-function buildRef(){
-  const tb=$('#refTable'); tb.innerHTML=''; refRows=[];
-  REFERENCE.forEach(([name,d])=>{
-    const tr=document.createElement('tr');
-    tr.title='Добавить в расчёт: '+name;
-    tr.innerHTML=`<td>${name}</td><td class="d">${fmtmm(d)}</td>`;
-    tr.addEventListener('click',()=>{
-      readRows();
-      const ex=[...document.querySelectorAll('#cableRows .crow')]
-        .find(rw=>Math.abs((+rw.querySelector('.d').value||0)-d)<0.06);
-      if(ex){
-        ex.querySelector('.n').value=(+ex.querySelector('.n').value||0)+1;
-        if(!ex.dataset.name) ex.dataset.name=name;
+  count.textContent=REFERENCE.length;
+  btnCount.textContent=REFERENCE.length;
+
+  function renderTable(filter=''){
+    table.innerHTML='';
+    let c=0;
+    const f=filter.toLowerCase().trim();
+    REFERENCE.forEach(item=>{
+      if(!f || item[0].toLowerCase().includes(f)){
+        c++;
+        const tr=document.createElement('tr');
+        tr.title=`Добавить в расчёт: ${item[0]}`;
+        tr.innerHTML=`<td>${item[0]}</td><td class="d">${fmtmm(item[1])}</td>`;
+        tr.onclick=()=>{
+          const container=el('cableRows');
+          const row=createCableRow(item[1], 10, item[0]);
+          container.appendChild(row);
+          syncCablesFromUI();
+          buildMain();
+          closePanel();
+        };
+        table.appendChild(tr);
       }
-      else addRow(1,d,name);
-      readRows(); buildMain();
     });
-    tb.appendChild(tr);
-    refRows.push({tr,name});
-  });
-  el('refCount').textContent=REFERENCE.length;
-  el('refBtnCount').textContent=REFERENCE.length;
-  const dl=$('#diaList'); dl.innerHTML='';
-  [...new Set(REFERENCE.map(r=>r[1]))].sort((a,b)=>a-b).forEach(d=>{
-    const o=document.createElement('option'); o.value=d; dl.appendChild(o);
-  });
-}
-function filterRef(qRaw){
-  const q=normStr((qRaw||'').trim());
-  let shown=0;
-  for(const r of refRows){
-    const ok=!q||normStr(r.name).includes(q);
-    r.tr.style.display=ok?'':'none';
-    if(ok)shown++;
+    empty.style.display=c===0?'block':'none';
   }
-  el('refEmpty').style.display=shown?'none':'block';
-}
-function openRef(){
-  el('refPanel').classList.add('open');
-  el('refScrim').classList.add('on');
-  filterRef(el('refSearch').value);
-  setTimeout(()=>el('refSearch').focus({preventScroll:true}),120);
-}
-function closeRef(){
-  el('refPanel').classList.remove('open');
-  el('refScrim').classList.remove('on');
-}
-el('btnRef').addEventListener('click',()=>{
-  el('refPanel').classList.contains('open') ? closeRef() : openRef();
-});
-el('refClose').addEventListener('click',closeRef);
-el('refScrim').addEventListener('click',closeRef);
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeRef(); });
-el('refSearch').addEventListener('input',e=>filterRef(e.target.value));
-el('refSearch').addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ e.stopPropagation(); e.target.value=''; filterRef(''); }
-});
 
-/* ═══════════════ СОБЫТИЯ CANVAS ═══════════════ */
-cv.addEventListener('pointerdown',e=>{
-  e.preventDefault();
-  mouseW=toWorld(e);
-  if(cur && cur.div && divHit(mouseW)){             // сначала — захват перегородки
-    cur.divDrag=true;
-    cv.setPointerCapture(e.pointerId);
-    wake(); hideHint();
-    return;
-  }
-  const b=pickBall(mouseW);
-  if(b){
-    cur.drag={b, tx:b.x, ty:b.y};
-    cv.setPointerCapture(e.pointerId);
-    wake(); hideHint();
-  }
-});
-cv.addEventListener('pointermove',e=>{
-  mouseW=toWorld(e);
-  if(cur && cur.divDrag){                           // перетаскивание перегородки
-    cur.div.x=clampN(mouseW.x-cur.div.w/2, cur.L, cur.R-cur.div.w);
-    state.divX=cur.div.x;
-    wake();
-    return;
-  }
-  if(cur && cur.drag){
-    const b=cur.drag.b;
-    cur.drag.tx=clampN(mouseW.x, cur.L+b.r, cur.R-b.r);
-    cur.drag.ty=clampN(mouseW.y, -240, cur.B-b.r);
-    if(cur.settled) wake();
-  }
-});
-const release=()=>{ if(cur){ cur.drag=null; cur.divDrag=null; } };
-cv.addEventListener('pointerup',release);
-cv.addEventListener('pointercancel',release);
-cv.addEventListener('pointerleave',()=>{ mouseW=null; });
+  function openPanel(){ panel.classList.add('open'); scrim.classList.add('on'); search.focus(); }
+  function closePanel(){ panel.classList.remove('open'); scrim.classList.remove('on'); }
 
-/* ═══════════════ ГЛАВНЫЙ ЦИКЛ ═══════════════ */
-let last=performance.now(), acc=0;
-function loop(now){
-  const dt=Math.min(0.05,(now-last)/1000); last=now;
-  if(cur && !cur.settled){
-    acc+=dt; let guard=0;
-    while(acc>=STEP && guard<40){ stepSim(cur); acc-=STEP; guard++; }
-    if(guard>=40) acc=0;
-  } else acc=0;
-  draw(); updateLive();
+  btnOpen.onclick=openPanel;
+  btnClose.onclick=closePanel;
+  scrim.onclick=closePanel;
+  search.oninput=e=>renderTable(e.target.value);
+  window.addEventListener('keydown',e=>{ if(e.key==='Escape') closePanel(); });
+
+  renderTable();
+}
+
+function initUI(){
+  initMatrix();
+  initRefPanel();
+
+  el('chkDiv').onchange=e=>{
+    state.divider=e.target.checked;
+    state.divX=null;
+    buildMain();
+  };
+
+  const segNorm=el('segNorm');
+  const btnsNorm=segNorm.querySelectorAll('button');
+  btnsNorm[0].onclick=()=>{
+    btnsNorm[0].classList.add('on'); btnsNorm[1].classList.remove('on');
+    state.norm=40;
+    el('z1').style.width='40%'; el('z2').style.left='40%'; el('z2').style.width='10%';
+    el('tickNorm').style.left='40%'; el('tickNorm').textContent='40';
+    updateLive();
+  };
+  btnsNorm[1].onclick=()=>{
+    btnsNorm[1].classList.add('on'); btnsNorm[0].classList.remove('on');
+    state.norm=50;
+    el('z1').style.width='50%'; el('z2').style.left='50%'; el('z2').style.width='0%';
+    el('tickNorm').style.left='50%'; el('tickNorm').textContent='50';
+    updateLive();
+  };
+
+  el('addRow').onclick=()=>{
+    const container=el('cableRows');
+    const row=createCableRow(10, 10, 'Кабель');
+    container.appendChild(row);
+    syncCablesFromUI();
+    buildMain();
+  };
+
+  el('btnRe').onclick=()=>{ buildMain(); };
+
+  el('btnAuto').onclick=()=>{
+    if(autoRunning) return;
+    autoRunning=true;
+    syncCablesFromUI();
+    const curW=state.W, curH=state.H;
+    let best=null;
+    
+    // Ищем минимальное сечение W*H, где всё влезает
+    for(const h of DKS_H){
+      for(const w of DKS_W){
+        const sim=makeSim(w,h,T,state.cables,state.divider,null);
+        // прогоняем быструю симуляцию
+        sim.quick=true;
+        for(let i=0;i<1200;i++) stepSim(sim);
+        const res=results(sim);
+        if(res.over===0 && res.K<=state.norm){
+          best={w,h};
+          break;
+        }
+      }
+      if(best) break;
+    }
+
+    if(best){
+      state.W=best.w; state.H=best.h;
+      const mx=el('matrix');
+      mx.querySelectorAll('.mx-c').forEach(b=>{
+        const match=parseInt(b.dataset.w,10)===best.w && parseInt(b.dataset.h,10)===best.h;
+        b.classList.toggle('on',match);
+      });
+      buildMain();
+    } else {
+      alert('Подходящий лоток ДКС не найден! Слишком много кабелей.');
+    }
+    autoRunning=false;
+  };
+
+  // Первоначальное навешивание событий на существующие строки кабелей
+  document.querySelectorAll('#cableRows .crow').forEach(r=>{
+    r.querySelector('.del').onclick=()=>{
+      r.remove();
+      syncCablesFromUI();
+      buildMain();
+    };
+    r.querySelectorAll('input').forEach(inp=>{
+      inp.oninput=()=>{
+        syncCablesFromUI();
+        buildMain();
+      };
+    });
+  });
+
+  /* Обработка перетаскивания (Mouse / Touch) */
+  cv.onpointerdown=e=>{
+    if(!cur) return;
+    hideHint();
+    const w=toWorld(e);
+    mouseW=w;
+    if(divHit(w)){
+      cur.divDrag=true;
+      cv.setPointerCapture(e.pointerId);
+      wake();
+      return;
+    }
+    const b=pickBall(w);
+    if(b){
+      cur.drag={b, tx:w.x, ty:w.y};
+      cv.setPointerCapture(e.pointerId);
+      wake();
+    }
+  };
+
+  cv.onpointermove=e=>{
+    if(!cur) return;
+    const w=toWorld(e);
+    mouseW=w;
+    if(cur.divDrag && cur.div){
+      cur.div.x=clampN(w.x-cur.div.w/2, 0, cur.Win-cur.div.w);
+      state.divX=cur.div.x;
+      wake();
+    } else if(cur.drag){
+      cur.drag.tx=w.x; cur.drag.ty=w.y;
+      wake();
+    }
+  };
+
+  const endDrag=e=>{
+    if(!cur) return;
+    if(cur.divDrag){ cur.divDrag=false; wake(); }
+    if(cur.drag){ cur.drag=null; wake(); }
+    try{ cv.releasePointerCapture(e.pointerId); }catch(_){}
+  };
+
+  cv.onpointerup=endDrag;
+  cv.onpointercancel=endDrag;
+
+  fitCanvas();
+  syncCablesFromUI();
+  buildMain();
+
+  /* Главный физический цикл */
+  let lastT=performance.now();
+  function loop(now){
+    const dt=Math.min(0.05, (now-lastT)/1000);
+    lastT=now;
+    if(cur && !cur.settled){
+      const steps=Math.ceil(dt/STEP);
+      for(let i=0;i<steps;i++) stepSim(cur);
+    }
+    draw();
+    updateLive();
+    requestAnimationFrame(loop);
+  }
   requestAnimationFrame(loop);
 }
 
-/* ═══════════════ ИНИЦИАЛИЗАЦИЯ ═══════════════ */
-buildMatrix();
-buildSeg($('#segNorm'),
-  [{v:40,label:'СИЛОВЫЕ ≤ 40 %'},{v:50,label:'СЛАБОТОЧНЫЕ ≤ 50 %'}],
-  ()=>state.norm, v=>setNorm(v));
-setNorm(40);
-buildRef();
-addRow(12,14,'ВВГнг(А)-LS 4х2,5');
-addRow(20,6,'КПСВЭВнг(А)-LS 1х2х1');
-readRows();
-buildMain();
-fitCanvas();
-el('addRow').addEventListener('click',()=>addRow());     // ← исправлено: обработчик был пропущен
-el('chkDiv').addEventListener('change',e=>{ state.divider=e.target.checked; buildMain(); });
-el('btnRe').addEventListener('click',()=>{ if(state.cables.length) buildMain(); });
-el('btnAuto').addEventListener('click',autoPick);
-try{ lucide.createIcons(); }catch(e){}
-requestAnimationFrame(loop);
+window.onload=initUI;
 </script>
-</body>
-</html>
+
+
+</body></html>
