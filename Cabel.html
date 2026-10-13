@@ -47,13 +47,23 @@ body{
   box-shadow:7px 7px 0 rgba(32,30,21,.10);
 }
 /* ============ ШТАМП ============ */
-.stamp{display:grid;grid-template-columns:auto 1fr auto auto auto;border-bottom:1.5px solid var(--ink)}
+.stamp{display:grid;grid-template-columns:auto auto 1fr auto auto auto;border-bottom:1.5px solid var(--ink)}
 .stamp-cell{padding:12px 20px;border-left:1px solid var(--ink);display:flex;flex-direction:column;justify-content:center;gap:5px;min-width:0}
 .stamp-cell:first-child{border-left:none}
 .stamp-label{font:600 8.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
 .stamp-value{font:600 13px/1 var(--mono);white-space:nowrap}
 .brand{display:flex;align-items:center;gap:10px;color:var(--copper-deep);font-weight:700;font-size:14px;letter-spacing:.06em}
 .brand svg{flex:none}
+/* кнопка «На главную» */
+.home-cell{
+  flex-direction:row;align-items:center;justify-content:center;gap:9px;
+  background:var(--mark-bg);color:var(--copper-deep);text-decoration:none;
+  font:600 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+  transition:background .12s,color .12s;
+}
+.home-cell:hover{background:var(--ink);color:var(--panel)}
+.home-cell:focus-visible{outline:2px solid var(--copper);outline-offset:-3px}
+.home-cell svg{flex:none}
 .stamp h1{font:600 clamp(13px,1.5vw,19px)/1.15 var(--mono);text-transform:uppercase;letter-spacing:.03em}
 #stampStatus[data-mode="loading"]{color:var(--copper-deep);animation:blink 1s ease infinite}
 #stampStatus[data-mode="ok"]{color:#4A6B33}
@@ -101,7 +111,7 @@ body{
 /* ============ ФИЛЬТРЫ ============ */
 .filters{
   border-right:1.5px solid var(--ink);padding:16px 0 8px;background:var(--panel);
-  position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto;
+  position:sticky;top:14px;max-height:calc(100vh - 28px);max-height:calc(100dvh - 28px);overflow-y:auto;
 }
 .filters::-webkit-scrollbar{width:6px}
 .filters::-webkit-scrollbar-thumb{background:var(--line)}
@@ -123,7 +133,7 @@ body{
 .cb input:checked~.box svg{opacity:1}
 .cb input:disabled~.box{border-color:var(--line);background:var(--panel-2)}
 .cb input:focus-visible~.box{outline:2px solid var(--copper);outline-offset:2px}
-.cbtext{flex:1;font-size:13px;line-height:1.25;min-width:0}
+.cbtext{flex:1;font-size:13px;line-height:1.25;min-width:0;overflow-wrap:anywhere}
 .cbtext.mono{font:600 12.5px var(--mono)}
 .cbcount{font:500 10.5px var(--mono);color:var(--ink-soft);flex:none}
 .cbcount.nil{color:var(--copper-deep);font-weight:700}
@@ -141,7 +151,7 @@ li.zero .cb:hover{background:transparent}
 .chip-x:hover{color:var(--copper-deep)}
 /* ============ ТАБЛИЦА ============ */
 .table-scroll{background:#FFFEF8}
-table{width:100%;border-collapse:collapse;font-size:13px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
 thead th{
   position:sticky;top:0;z-index:5;background:var(--panel);
   border-bottom:2px solid var(--ink);
@@ -154,11 +164,11 @@ th .arr{display:inline-block;width:0;height:0;border-left:4px solid transparent;
 th.asc .arr,th.desc .arr{opacity:1}
 th.asc .arr{border-bottom:5px solid var(--copper)}
 th.desc .arr{border-top:5px solid var(--copper)}
-tbody td{border-bottom:1px solid var(--line);padding:10px 13px;vertical-align:top}
+tbody td{border-bottom:1px solid var(--line);padding:10px 13px;vertical-align:top;overflow-wrap:anywhere}
 tbody tr.row:hover{background:#F3F0E2}
 .c-pos{font:500 11px var(--mono);color:var(--ink-soft);width:1%;white-space:nowrap}
-.c-part{white-space:nowrap}
-.copy-btn{font:500 12.5px var(--mono);background:none;border:none;padding:0;color:var(--ink);cursor:copy;display:inline-flex;align-items:center;gap:7px}
+.c-part{min-width:0}
+.copy-btn{font:500 12.5px var(--mono);background:none;border:none;padding:0;color:var(--ink);cursor:copy;display:inline-flex;align-items:center;gap:7px;text-align:left}
 .copy-btn svg{opacity:0;transition:opacity .12s;color:var(--ink-soft);flex:none}
 .copy-btn:hover{color:var(--copper-deep)}
 .copy-btn:hover svg{opacity:1}
@@ -197,6 +207,17 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
 }
 #toast.show{opacity:1;transform:translate(-50%,0)}
 /* ============ АДАПТИВ ============ */
+/* узкий десктоп: штамп из 6 ячеек перестраиваем в 2 ряда по 3 */
+@media (min-width:761px) and (max-width:1120px){
+  .stamp{grid-template-columns:repeat(3,1fr)}
+  .stamp-cell:nth-child(3n+1){border-left:none}
+  .stamp-cell:nth-child(n+4){border-top:1px solid var(--ink)}
+}
+/* средний десктоп: плотнее ячейки таблицы, чтобы шапка влезала */
+@media (min-width:1121px) and (max-width:1360px){
+  thead th{padding:11px 9px}
+  tbody td{padding:10px 9px}
+}
 @media (max-width:1120px){
   .layout{grid-template-columns:1fr}
   .filters{position:static;max-height:none;border-right:none;border-bottom:1.5px solid var(--ink);padding-bottom:14px}
@@ -210,6 +231,7 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
   .stamp{display:block}
   .stamp-cell{border-left:none;border-top:1px dashed var(--line);padding:10px 14px}
   .stamp-cell:first-child{border-top:none}
+  .home-cell{justify-content:flex-start}
   .toolbar{flex-direction:column}
   .search-actions{flex-direction:column}
   .search-actions .btn{width:100%;justify-content:center}
@@ -219,7 +241,7 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
 @media (hover:none){.kbd{display:none}}
 @media print{
   body{background:none;padding:0}
-  .toolbar,.filters,.table-footer,.sheet-foot,#toast{display:none}
+  .toolbar,.filters,.table-footer,.sheet-foot,#toast,.home-cell{display:none}
   .sheet{box-shadow:none;max-width:none}
   thead th{position:static}
 }
@@ -231,6 +253,14 @@ mark{background:var(--mark-bg);color:var(--copper-deep);padding:0 2px;box-shadow
 
   <!-- ═══ Угловой штамп ═══ -->
   <header class="stamp">
+    <a class="stamp-cell home-cell" href="https://ferrumgovorov-netizen.github.io/KIP/"
+       title="На главную — индекс КИП" aria-label="На главную">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span>На главную</span>
+    </a>
     <div class="stamp-cell">
       <span class="stamp-label">Марка</span>
       <span class="brand">
