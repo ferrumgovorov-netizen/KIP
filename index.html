@@ -248,6 +248,14 @@
     .btn:nth-child(3) { animation: fadeInUp 0.6s ease 0.3s both; }
     .btn:nth-child(4) { animation: fadeInUp 0.6s ease 0.4s both; }
     .btn:nth-child(5) { animation: fadeInUp 0.6s ease 0.5s both; }
+    .btn:nth-child(6) { animation: fadeInUp 0.6s ease 0.6s both; }
+
+    /* Для экранов с малой высотой */
+    @media (max-height: 700px) {
+      .btn-icon { width: 60px; height: 60px; }
+      .buttons { gap: 10px; }
+      .btn { padding: 8px 16px 8px 8px; }
+    }
 
     /* Для очень маленьких экранов */
     @media (max-height: 500px) {
@@ -327,6 +335,22 @@
           <div class="btn-content">
             <span class="btn-title">Подбор кабеля</span>
             <span class="btn-subtitle">Расчёт сечения и выбор марки кабеля</span>
+          </div>
+        </div>
+        <div class="btn-arrow">
+          <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+        </div>
+      </a>
+
+      <a href="https://skyrillchanel2000-source.github.io/equipment_labeling/" class="btn">
+        <div class="btn-left">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="#70d6ff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.83z"/>
+            <line x1="7" y1="7" x2="7.01" y2="7"/>
+          </svg>
+          <div class="btn-content">
+            <span class="btn-title">Расшифровка оборудования</span>
+            <span class="btn-subtitle">Маркировка и обозначения КИПиА</span>
           </div>
         </div>
         <div class="btn-arrow">
