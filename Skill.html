@@ -856,9 +856,23 @@
       }
     ];
 
-    const CATS = ["Все"].concat(Array.from(new Set(SKILLS.map(s => s.cat))));
+    const OWNERS = [
+      {
+        label: "Говоров",
+        ids: ["popolnenie_BD", "postanovka-zadach", "proverka-mk", "proverka-zadach",
+              "soglasovanie", "sozdanie-pki", "tech-solution"]
+      },
+      {
+        label: "Арестов",
+        ids: ["autocad", "google-sheet", "mk-tags"]
+      }
+    ];
 
-    let activeCat = "Все";
+    const FILTERS = [{ label: "Все", type: "all" }]
+      .concat(OWNERS.map(o => ({ label: o.label, type: "owner", ids: o.ids })))
+      .concat(Array.from(new Set(SKILLS.map(s => s.cat))).map(c => ({ label: c, type: "cat" })));
+
+    let activeFilter = "Все";
     let query = "";
 
     const grid = document.getElementById("grid");
@@ -873,13 +887,15 @@
     }
 
     function buildChips() {
-      chips.innerHTML = CATS.map(c =>
-        '<button type="button" class="chip' + (c === activeCat ? " on" : "") + '" data-cat="' + esc(c) + '">' + esc(c) + "</button>"
+      chips.innerHTML = FILTERS.map(f =>
+        '<button type="button" class="chip' + (f.label === activeFilter ? " on" : "") + '" data-filter="' + esc(f.label) + '">' + esc(f.label) + "</button>"
       ).join("");
     }
 
     function matches(skill) {
-      if (activeCat !== "Все" && skill.cat !== activeCat) return false;
+      const filter = FILTERS.find(f => f.label === activeFilter) || FILTERS[0];
+      if (filter.type === "cat" && skill.cat !== filter.label) return false;
+      if (filter.type === "owner" && filter.ids.indexOf(skill.id) === -1) return false;
       if (!query) return true;
       const hay = [skill.id, skill.cat, skill.short, skill.purpose]
         .concat(skill.bullets, skill.triggers, skill.limits)
@@ -901,7 +917,7 @@
               (s.triggers.length ? '<span class="card-trigger">' + esc(s.triggers[0]) + "</span>" : "") +
             "</button>"
           ).join("")
-        : '<div class="card-empty">Ничего не найдено. Попробуйте другое слово или снимите фильтр категории.</div>';
+        : '<div class="card-empty">Ничего не найдено. Попробуйте другое слово или снимите фильтр.</div>';
 
       counter.textContent = "Показано " + list.length + " из " + SKILLS.length;
     }
@@ -939,7 +955,7 @@
     chips.addEventListener("click", e => {
       const btn = e.target.closest(".chip");
       if (!btn) return;
-      activeCat = btn.dataset.cat;
+      activeFilter = btn.dataset.filter;
       buildChips();
       render();
     });
