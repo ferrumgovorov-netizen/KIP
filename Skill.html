@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Навыки ИИ — каталог</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      background: #010409;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #010409;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #eaf6ff;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        circle at 50% 40%,
+        transparent 30%,
+        rgba(0, 5, 15, 0.3) 65%,
+        rgba(0, 2, 8, 0.9) 100%
+      );
+      z-index: 1;
+    }
+
+    #glow {
+      position: fixed;
+      width: 450px;
+      height: 450px;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(
+        circle,
+        rgba(0, 195, 255, 0.08) 0%,
+        rgba(0, 110, 255, 0.04) 25%,
+        transparent 70%
+      );
+      filter: blur(20px);
+      opacity: 0;
+      transition: opacity .25s ease;
+      z-index: 1;
+    }
+
+    .page {
+      position: relative;
+      z-index: 2;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+      padding-top: max(28px, env(safe-area-inset-top));
+    }
+
+    /* --- Шапка --- */
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 7px 14px 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 180, 255, 0.28);
+      background: rgba(10, 22, 40, 0.55);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: #9fdcff;
+      font-size: 13px;
+      text-decoration: none;
+      transition: background .25s ease, border-color .25s ease, color .25s ease;
+    }
+
+    .back:hover {
+      background: rgba(15, 35, 65, 0.75);
+      border-color: rgba(0, 210, 255, 0.6);
+      color: #fff;
+    }
+
+    .back svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 2.4;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .head h1 {
+      font-size: clamp(26px, 4.4vw, 38px);
+      font-weight: 700;
+      letter-spacing: -0.6px;
+      background: linear-gradient(135deg, #ffffff 30%, #70d6ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 18px rgba(0, 140, 255, 0.18);
+    }
+
+    .head p {
+      margin-top: 8px;
+      max-width: 760px;
+      font-size: clamp(13px, 2.2vw, 15px);
+      line-height: 1.55;
+      color: rgba(196, 232, 255, 0.78);
+    }
+
+    /* --- Панель фильтров --- */
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      margin: 22px 0 18px;
+      padding: 14px;
+      border-radius: 20px;
+      background: rgba(6, 16, 30, 0.82);
+      backdrop-filter: blur(22px) saturate(1.4);
+      -webkit-backdrop-filter: blur(22px) saturate(1.4);
+      border: 1px solid rgba(0, 180, 255, 0.22);
+      box-shadow: 0 10px 34px rgba(0, 6, 18, 0.55);
+    }
+
+    .search {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search svg {
+      position: absolute;
+      left: 14px;
+      width: 17px;
+      height: 17px;
+      stroke: rgba(120, 200, 255, 0.7);
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      pointer-events: none;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 11px 42px 11px 40px;
+      border-radius: 14px;
+      border: 1px solid rgba(0, 180, 255, 0.22);
+      background: rgba(2, 10, 20, 0.85);
+      color: #eaf6ff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .search input::placeholder {
+      color: rgba(150, 195, 230, 0.5);
+    }
+
+    .search input:focus {
+      border-color: rgba(0, 210, 255, 0.6);
+      box-shadow: 0 0 0 3px rgba(0, 170, 255, 0.12);
+    }
+
+    .search .kbd {
+      position: absolute;
+      right: 12px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 180, 255, 0.25);
+      font-size: 11px;
+      color: rgba(150, 200, 235, 0.6);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 180, 255, 0.22);
+      background: rgba(10, 24, 44, 0.6);
+      color: rgba(205, 238, 255, 0.85);
+      font-family: inherit;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: background .2s ease, border-color .2s ease, color .2s ease;
+    }
+
+    .chip:hover {
+      background: rgba(20, 45, 80, 0.8);
+      border-color: rgba(0, 200, 255, 0.45);
+    }
+
+    .chip.on {
+      background: linear-gradient(135deg, rgba(0, 150, 255, 0.35), rgba(0, 210, 255, 0.22));
+      border-color: rgba(0, 210, 255, 0.7);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(0, 180, 255, 0.25);
+    }
+
+    .counter {
+      margin-top: 10px;
+      font-size: 12px;
+      color: rgba(140, 195, 235, 0.7);
+    }
+
+    /* --- Сетка карточек --- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      padding: 16px;
+      text-align: left;
+      border-radius: 18px;
+      background: rgba(10, 22, 40, 0.62);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      border: 1px solid rgba(0, 180, 255, 0.22);
+      box-shadow: 0 8px 28px rgba(0, 8, 20, 0.45), inset 0 1px 1px rgba(180, 230, 255, 0.14);
+      color: inherit;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform .2s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      background: rgba(15, 35, 65, 0.75);
+      border-color: rgba(0, 210, 255, 0.55);
+      box-shadow: 0 12px 34px rgba(0, 12, 30, 0.6), 0 0 18px rgba(0, 180, 255, 0.2), inset 0 1px 1px rgba(200, 245, 255, 0.28);
+    }
+
+    .card:active {
+      transform: scale(0.99);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .card-name {
+      font-family: Consolas, "SFMono-Regular", "Courier New", monospace;
+      font-size: 15px;
+      font-weight: 600;
+      color: #f0f8ff;
+      word-break: break-word;
+    }
+
+    .card-cat {
+      flex-shrink: 0;
+      font-size: 10.5px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: rgba(120, 205, 250, 0.85);
+      border: 1px solid rgba(0, 180, 255, 0.25);
+      border-radius: 8px;
+      padding: 2px 7px;
+      background: rgba(0, 140, 255, 0.08);
+    }
+
+    .card-text {
+      font-size: 13px;
+      line-height: 1.5;
+      color: rgba(200, 232, 255, 0.82);
+    }
+
+    .card-trigger {
+      margin-top: 2px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: rgba(130, 195, 240, 0.72);
+      font-style: italic;
+    }
+
+    .card-empty {
+      grid-column: 1 / -1;
+      padding: 40px 20px;
+      text-align: center;
+      color: rgba(150, 200, 235, 0.65);
+      font-size: 14px;
+    }
+
+    /* --- Модальное окно --- */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(1, 4, 9, 0.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .overlay.on {
+      display: flex;
+    }
+
+    .modal {
+      position: relative;
+      width: 100%;
+      max-width: 720px;
+      max-height: 86vh;
+      overflow-y: auto;
+      padding: 24px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(12, 28, 50, 0.98), rgba(6, 16, 30, 0.98));
+      border: 1px solid rgba(0, 190, 255, 0.35);
+      box-shadow: 0 24px 70px rgba(0, 6, 18, 0.8), 0 0 30px rgba(0, 150, 255, 0.12);
+    }
+
+    .modal h2 {
+      font-family: Consolas, "SFMono-Regular", "Courier New", monospace;
+      font-size: 20px;
+      font-weight: 600;
+      color: #ffffff;
+      padding-right: 40px;
+      word-break: break-word;
+    }
+
+    .modal .m-cat {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: rgba(125, 205, 250, 0.9);
+      border: 1px solid rgba(0, 180, 255, 0.3);
+      border-radius: 8px;
+      padding: 2px 8px;
+    }
+
+    .modal h3 {
+      margin-top: 18px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgba(120, 190, 235, 0.75);
+    }
+
+    .modal p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(214, 240, 255, 0.9);
+    }
+
+    .modal ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .modal li {
+      position: relative;
+      padding-left: 18px;
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: rgba(210, 238, 255, 0.88);
+    }
+
+    .modal li::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 8px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(0, 200, 255, 0.8);
+      box-shadow: 0 0 8px rgba(0, 190, 255, 0.8);
+    }
+
+    .modal .trig li {
+      font-style: italic;
+      color: rgba(190, 228, 255, 0.8);
+    }
+
+    .modal .trig li::before {
+      border-radius: 2px;
+      background: rgba(120, 200, 255, 0.55);
+      box-shadow: none;
+      width: 4px;
+      height: 4px;
+      top: 9px;
+    }
+
+    .modal .limits li::before {
+      background: rgba(255, 190, 90, 0.85);
+      box-shadow: 0 0 8px rgba(255, 180, 60, 0.55);
+    }
+
+    .close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 180, 255, 0.3);
+      background: rgba(0, 180, 255, 0.1);
+      color: #9fdcff;
+      font-size: 17px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background .2s ease, border-color .2s ease;
+    }
+
+    .close:hover {
+      background: rgba(0, 195, 255, 0.25);
+      border-color: rgba(0, 210, 255, 0.6);
+    }
+
+    .footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(0, 150, 255, 0.14);
+      text-align: center;
+      font-size: 12px;
+      color: rgba(120, 200, 255, 0.55);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .head { animation: fadeInUp 0.5s ease both; }
+    .toolbar { animation: fadeInUp 0.5s ease 0.08s both; }
+
+    @media (max-width: 640px) {
+      .page { padding: 20px 14px 48px; }
+      .toolbar { padding: 12px; border-radius: 16px; }
+      .grid { grid-template-columns: 1fr; }
+      .modal { padding: 20px; }
+      .search .kbd { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="canvas"></canvas>
+  <div id="glow"></div>
+
+  <div class="page">
+    <a class="back" href="index.html">
+      <svg viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"></polyline></svg>
+      В меню
+    </a>
+
+    <div class="head">
+      <h1>Навыки ИИ</h1>
+      <p>Каталог навыков ассистента ИИ-Трансформера. Навык не нужно включать вручную: достаточно
+      сформулировать задачу так, как сказал бы коллеге, — ассистент сам подберёт подходящий.</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+        <input id="q" type="search" autocomplete="off" spellcheck="false"
+               placeholder="Поиск: Teamcenter, счёт, R15, расшифровка, DWG…">
+        <span class="kbd">/</span>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="counter" id="counter"></div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="footer">Каталог навыков ИИ-Трансформера · 27 навыков · обновлено 28.10.2026</div>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle"></div>
+  </div>
+
+  <script>
+    const SKILLS = [
+      {
+        id: "teamcenter",
+        cat: "Teamcenter",
+        short: "Выдача файлов и пакетов из Teamcenter: БЗ, ПСИ, акты, протоколы, РКД, КЖ.",
+        purpose: "Получение файлов и пакетов одной командой. Номер бланк-заказа разбирается в любом виде, вся работа с ревизиями, псевдопапками и SOAP скрыта внутри скриптов навыка.",
+        bullets: [
+          "Один бланк-заказ по номеру: «пришли БЗ 24104» — номер понимается в любой записи.",
+          "Сопроводительные документы: ПСИ, акт, протокол, УВС — с уточнением, какой именно нужен.",
+          "Список файлов ревизии без скачивания.",
+          "Пакетная выгрузка по проекту и титулу с описью состава пакета.",
+          "Скачивание PDF или DOCX по номеру элемента, включая кабельный журнал."
+        ],
+        triggers: ["«Пришли бланк-заказ 24104»", "«Пришли ПСИ на БЗ 19159»", "«Выгрузи пакет бланк-заказов проекта»", "«Скачай КЖ по БЗ 24108»"],
+        limits: ["Работает только на чтение Teamcenter; результаты — локальные файлы.", "Нужен доступ к корпоративной сети и MCP-сервису Teamcenter."]
+      },
+      {
+        id: "teamcenter-structure",
+        cat: "Teamcenter",
+        short: "Чтение состава изделия (BOM): количества, ревизии, разворот под-сборок.",
+        purpose: "Состав изделия и структура объектов Teamcenter через MCP: строки состава с количеством и фактически применёнными ревизиями, рекурсивный разворот под-сборок, выгрузка структурированных данных в файл.",
+        bullets: [
+          "Строки состава с количеством и применённой ревизией.",
+          "Рекурсивный разворот под-сборок по уровням.",
+          "Выгрузка структуры в файл для дальнейшей обработки."
+        ],
+        triggers: ["«Что входит в ВКР-24077»", "«Выгрузи состав из Teamcenter»", "«Из каких позиций состоит обозначение»", "«Сколько чего входит»"],
+        limits: ["Только чтение: состав, атрибуты и файлы объектов не изменяются.", "Количество и ревизия доступны лишь через сессионное BOM-окно — в базу ничего не пишется."]
+      },
+      {
+        id: "teamcenter-bom-compare",
+        cat: "Teamcenter",
+        short: "Сверка двух и более составов: что изменилось, где и на что.",
+        purpose: "Сравнение ревизий одного изделия, исполнений или разных изделий. Результат — книга Excel: замены исполнений, вероятные замены, новые ревизии, количество, материал и заготовка, единицы измерения.",
+        bullets: [
+          "Сравнение двух, трёх и более составов в одном отчёте.",
+          "Отдельно выделены замены исполнений и вероятные замены.",
+          "Работает по CSV-выгрузке — при наличии файлов Teamcenter не нужен."
+        ],
+        triggers: ["«Сравни составы ВКР-24077 ревизий 01 и 02»", "«Что изменилось между ревизиями»", "«Чем отличаются исполнения»"],
+        limits: ["Ничего не создаёт и не изменяет в Teamcenter.", "Исходные составы при необходимости выгружает навык teamcenter-structure."]
+      },
+      {
+        id: "r12",
+        cat: "Отчёты R07 / R12 / R15",
+        short: "R12 по R07, VDR и последним ревизиям PDF: связи TAG — документ.",
+        purpose: "Формирование R12 из R07, VDR и последних ревизий PDF. Текст читает библиотека, сканы — модель с поддержкой изображений. Используется для построения и обновления связей TAG–документ.",
+        bullets: [
+          "Разбор R07 и VDR, поиск последних ревизий документации.",
+          "Текстовый слой читается библиотекой, сканы — визуально.",
+          "Результат — связи TAG–документ в структуре R12."
+        ],
+        triggers: ["«Построй R12 по R07»", "«Обнови связи TAG–документ»"],
+        limits: ["Работает только с приложенными или указанными файлами и кэшем навыка — посторонние папки не просматривает."]
+      },
+      {
+        id: "r15",
+        cat: "Отчёты R07 / R12 / R15",
+        short: "Vendor R15 с нуля: лист Data из 10 столбцов, Action=CREATE, доказательства.",
+        purpose: "Создание Vendor R15 по R07, карте классов, VDR и последним PDF. Лист Data строго из 10 столбцов, Action=CREATE в каждой строке, доказательство для каждого значения и обязательный вопрос по неизвестным классам.",
+        bullets: [
+          "Инвентарь TAG берётся только из текущего R07.",
+          "Для каждого значения сохраняется ссылка на документ, ревизию и страницу.",
+          "Неизвестный класс — блокирующий вопрос пользователю, а не молчаливый пропуск.",
+          "Статус выпуска честный: без прохождения валидатора файл остаётся промежуточным."
+        ],
+        triggers: ["«Создай R15 по R07»", "«Заполни R15 по документации поставщика»"],
+        limits: ["Готовый R15 другого здания не является шаблоном или источником значений.", "Пока валидатор возвращает FAIL, файл не сдаётся."]
+      },
+      {
+        id: "r15-4",
+        cat: "Отчёты R07 / R12 / R15",
+        short: "Версия 4.0 навыка R15: создание, дозаполнение, проверка, паспорта.",
+        purpose: "Отдельный навык версии 4.0: создаёт R15 с нуля, дозаполняет и проверяет существующие книги, сегментирует паспорта. Тот же контракт данных: 10 столбцов, Action=CREATE, доказательство каждого значения.",
+        bullets: [
+          "Дозаполнение существующей книги порциями до 30 тегов с контролем состояния.",
+          "Форматная проверка без записи: шапка, дубли, пробелы, единицы, значения вне списков.",
+          "Восстановление после перезапуска по файлам состояния, без повторных проходов."
+        ],
+        triggers: ["«Дозаполни существующую R15»", "«Проверь R15 на ошибки формата»", "«Раздели паспорта»"],
+        limits: ["Изменение структуры книги — это пересборка, а не дозаполнение.", "Запись в книгу начинается только после явного подтверждения."]
+      },
+      {
+        id: "outlook-com",
+        cat: "Почта",
+        short: "Письма в классическом Outlook: поиск, разбор, черновики, вложения.",
+        purpose: "Работа с локальным Outlook через прямой COM-доступ: чтение и поиск писем, разбор всех непрочитанных, поиск важных запросов, подготовка ответов, работа с цепочками и вложениями.",
+        bullets: [
+          "Поиск писем по отправителю, теме, дате и телу.",
+          "Разбор непрочитанных с выделением того, что требует ответа.",
+          "Подготовка черновиков и работа с вложениями."
+        ],
+        triggers: ["«Разбери непрочитанные»", "«Найди письмо от поставщика за неделю»", "«Подготовь ответ на это письмо»"]
+      },
+      {
+        id: "soglasovanie",
+        cat: "Почта",
+        short: "Счёт из папки «Согласование» → синий штамп → черновик ответа.",
+        purpose: "Берёт самое свежее письмо с PDF-счётом из папки Outlook «Согласование», находит синий штамп согласования, вписывает фамилию, сегодняшнюю дату и подпись, готовит черновик ответа и сохраняет копию в папку «Счета».",
+        bullets: [
+          "Штамп ищется на каждой странице заново — он может быть сдвинут, повёрнут или перекрыт печатью поставщика.",
+          "Поддерживаются три формы бланка, определяются автоматически.",
+          "Копия сохраняется с именем «тема письма ДД.ММ.ГГГГ.pdf»."
+        ],
+        triggers: ["«Согласуй счёт»", "«Поставь штамп согласования»", "«Положи копию в Счета»"],
+        limits: ["Письмо не отправляется — готовится только черновик ответа."]
+      },
+      {
+        id: "sozdanie-pki",
+        cat: "Документы и проекты",
+        short: "Новое ПКИ в «Шаблон ПКИ.xlsx» по номеру бланк-заказа.",
+        purpose: "Создание записи ПКИ в общем шаблоне по номеру бланк-заказа: из PDF БЗ берётся тег установки, в шаблон добавляется столбец с тегом и номером БЗ, занятые ячейки обходятся вставкой нового столбца.",
+        bullets: [
+          "Тег установки извлекается из опросного листа PDF.",
+          "Варианты A/B склеиваются в одну запись вида 1003A/B.",
+          "Занятые ячейки не перезаписываются."
+        ],
+        triggers: ["«Создай ПКИ»", "«ПКИ на ВКР 24473»", "«Впиши тег в ПКИ»"],
+        limits: ["Шаблон нельзя удалять и переименовывать — только править.", "Если PDF по номеру БЗ не один или не найден — навык останавливается и спрашивает."]
+      },
+      {
+        id: "tech-solution",
+        cat: "Документы и проекты",
+        short: "Технические решения: номер, DOCX по шаблону, ПКИ, отправка.",
+        purpose: "Полный цикл технического решения: определить и зарезервировать номер, создать папку проекта, найти БЗ и тег в Teamcenter, запросить КЖ, собрать DOCX из корпоративного шаблона и ПКИ, после подписей отправить решение и положить финальные файлы в общую базу.",
+        bullets: [
+          "Номер, тег и состав ревизии находятся автоматически.",
+          "DOCX и ПКИ формируются скриптом, а не вручную.",
+          "Отправка письма — только после подтверждения.",
+          "Финальные DOCX и PDF складываются в общую папку проекта."
+        ],
+        triggers: ["«Сформируй тех решение по БЗ 24108»", "«Новое техрешение на замену оборудования»", "«Собери ПКИ по решению»"]
+      },
+      {
+        id: "google-sheet",
+        cat: "Таблицы и данные",
+        short: "Google-таблица «Агент ИИ»: чтение и запись через веб-мост.",
+        purpose: "Чтение и запись листов таблицы через мост Apps Script — без пароля и без входа в браузер. Понимает ссылки на docs.google.com/spreadsheets, листы по gid и связанные книги по id.",
+        bullets: [
+          "Чтение листов, поиск по таблице, количество строк.",
+          "Запись: добавить строку, обновить ячейку, очистить диапазон.",
+          "Запуск скриптов таблицы, включая выгрузку ПКИ.",
+          "Связанные книги открываются только на чтение, нужный лист можно скопировать к себе."
+        ],
+        triggers: ["«Прочитай лист KIP_2»", "«Добавь строку в таблицу»", "«Запусти exportPKI»"],
+        limits: ["Запись выполняется только после подтверждения.", "В связанные книги запись запрещена."]
+      },
+      {
+        id: "translate",
+        cat: "Таблицы и данные",
+        short: "Технический перевод RU↔EN по своему словарю «Автоперевод».",
+        purpose: "Перевод технического текста словами, а не побуквенной транслитерацией: «Кабель» → Cable, а не Kabel. Слова вне словаря прогоняются через переводчик и предлагаются к добавлению в лист «Автоперевод».",
+        bullets: [
+          "Опора на живой словарь пользователя в Google-таблице.",
+          "Новые пары предлагаются к добавлению, существующие не переписываются.",
+          "Массовый перевод номенклатуры базы tf в лист «Перевод»."
+        ],
+        triggers: ["«Переведи на английский»", "«Пополни автоперевод»", "«Переведи номенклатуру базы tf»"]
+      },
+      {
+        id: "popolnenie_BD",
+        cat: "Таблицы и данные",
+        short: "Пополнение базы номенклатуры tf через шаблон импорта.",
+        purpose: "Строка из Google-таблицы «КИП и МК» переносится в шаблон импорта номенклатуры сайта tf: шаблон скачивается в интерфейсе, файл с нужной строкой кладётся на рабочий стол.",
+        bullets: [
+          "Нужный лист таблицы определяется по gid из ссылки.",
+          "Строка попадает во вторую строку шаблона — как ждёт импорт."
+        ],
+        triggers: ["«Добавь в БД кабель»", "«Пополни БД позицией»", "«Подготовь шаблон импорта»"]
+      },
+      {
+        id: "1c-dispatch-report",
+        cat: "Таблицы и данные",
+        short: "Выгрузка ДС из 1С:УПП в Excel с суммами и итогами.",
+        purpose: "Собирает файл отгрузок по договору-счёту: номенклатура, код, единица измерения, количество, номера УЛ и УПД, суммы без НДС, НДС и с НДС, отдельный лист «Итоги по отгрузкам». Учитывает корректировки реализации.",
+        bullets: [
+          "Числа не округляются, пробелы в значениях сохраняются как есть.",
+          "Корректировки реализации учитываются в сумме.",
+          "Данные берутся только из 1С через OData — без догадок."
+        ],
+        triggers: ["«Выгрузи ДС 170 из 1С»", "«Что отгружено по ДС»", "«Список номенклатуры по ДС с суммами»"]
+      },
+      {
+        id: "mk-tags",
+        cat: "Таблицы и данные",
+        short: "Теги КИП и ЧРП в монтажных комплектах: проверка и простановка.",
+        purpose: "Монтажные комплекты НКНХ А1500: теги и маркировки сверяются с бланк-заказом в Teamcenter и Google-таблицей «Агент ИИ», правка файлов вида БЗ-23863.МК.docx идёт в фоне.",
+        bullets: [
+          "Нужный лист таблицы ищется по номеру БЗ или по тегу прибора.",
+          "Теги проставляются в Примечание и сверяются с документацией.",
+          "Правка DOCX выполняется без ручного открытия файла."
+        ],
+        triggers: ["«Проверь МК»", "«Проставь теги в МК»", "«Сверь МК с БЗ»"]
+      },
+      {
+        id: "proverka-mk",
+        cat: "Таблицы и данные",
+        short: "Заготовка навыка: папка создана, инструкция пока не добавлена.",
+        purpose: "В текущей установке навык пуст: есть только папка со служебным каталогом скриптов, файла SKILL.md нет. Навык появится в работе, когда его наполнят инструкцией и скриптами.",
+        bullets: [],
+        triggers: [],
+        limits: ["Сейчас не запускается: нет SKILL.md и скриптов."]
+      },
+      {
+        id: "bitrix",
+        cat: "Задачи и поручения",
+        short: "Битрикс24: задачи, поручения, диалоги — чтение и запись.",
+        purpose: "Чтение профиля сотрудника, поиск людей, свои и чужие задачи, просроченные, диалоги и сообщения. Запись только после подтверждения: создать, изменить, закрыть задачу, наблюдатели, соисполнители, подзадачи, фиксация результата, сообщение в чат.",
+        bullets: [
+          "Свои задачи, задачи коллег, сроки и просрочки.",
+          "Переписка и профиль сотрудника.",
+          "Создание и изменение задач с превью перед записью."
+        ],
+        triggers: ["«Мои задачи»", "«Что в переписке с поставщиком»", "«Поставь задачу Антону»"]
+      },
+      {
+        id: "postanovka-zadach",
+        cat: "Задачи и поручения",
+        short: "Постановка задач в Битрикс24 по номерам строк таблицы плана.",
+        purpose: "Разбирает строки таблицы «План задач КТО» по номерам: исполнители, сроки, наблюдатели и родительские объекты. Показывает превью и создаёт задачи с подзадачами после подтверждения.",
+        bullets: [
+          "Номера строк берутся из столбца A таблицы плана.",
+          "Исполнители, сроки и наблюдатели разбираются из строк.",
+          "Перед созданием показывается превью всех задач."
+        ],
+        triggers: ["«Поставь задачи 3869, 3870»", "«Создай подзадачи по плану КТО»"]
+      },
+      {
+        id: "proverka-zadach",
+        cat: "Задачи и поручения",
+        short: "Сверка плана задач с Битрикс24 и отчёт Excel о выполнении.",
+        purpose: "Спрашивает диапазон номеров, скачивает свежий CSV таблицы плана, сверяет каждый номер с задачами Битрикс24 и сохраняет на рабочий стол файл «Результат проверки задач» с листом «Выполненные».",
+        bullets: [
+          "Сохраняются все столбцы исходной таблицы плюс ID задачи, ссылка, статус и дата завершения.",
+          "Диапазон задаётся вручную: «с какой по какую»."
+        ],
+        triggers: ["«Проверь задачи с 3800 по 3900»", "«Какие задачи выполнены по таблице»", "«Сверь план задач с Битриксом»"],
+        limits: ["Битрикс24 используется только на чтение."]
+      },
+      {
+        id: "autocad",
+        cat: "Файлы и PDF",
+        short: "Чертежи AutoCAD и DWG: данные, объекты, слои, блоки, обучение.",
+        purpose: "Чтение данных из открытого чертежа и из DWG-файлов, поиск и сверка объектов, текстов, блоков и их атрибутов. Есть режим обучения: пользователь выделяет объекты и объясняет их смысл, навык записывает правило и дальше применяет его сам.",
+        bullets: [
+          "Информация из чертежа для Excel: слои, блоки, атрибуты, количество объектов.",
+          "Фоновый разбор DWG без GUI и выгрузка в JSON.",
+          "Правила, заданные при обучении, применяются дальше автоматически."
+        ],
+        triggers: ["«Посмотри в автокаде»", "«Вытащи данные из DWG»", "«Сколько объектов на слое ТЕКСТ»", "«Обучи по чертежу»"]
+      },
+      {
+        id: "pdf-stamp-removal",
+        cat: "Файлы и PDF",
+        short: "Удаление синих печатей со скана и восстановление текста под ними.",
+        purpose: "Убирает синие печати и штампы с первой страницы сканированного PDF и восстанавливает читаемый текст и линии таблиц в зонах печатей. Остальная часть документа остаётся без изменений.",
+        bullets: [
+          "Восстанавливаются текст и линии таблиц в местах печатей.",
+          "Остальные страницы не затрагиваются.",
+          "На выходе PDF или DOCX без печати."
+        ],
+        triggers: ["«Убери печать с PDF»", "«Восстанови текст под печатью»"],
+        limits: ["Работает с первой страницей скана; документ не пересобирается."]
+      },
+      {
+        id: "pdf-to-markdown",
+        cat: "Файлы и PDF",
+        short: "PDF → Markdown с картинками и схемами, скан через OCR.",
+        purpose: "Конвертация PDF в Markdown с извлечением изображений и схем. Текстовые PDF разбираются напрямую, сканы проходят через OCR. Результат — ZIP с файлом .md и папкой images.",
+        bullets: [
+          "Текст, таблицы и изображения сохраняются отдельно.",
+          "Сканы распознаются через PaddleOCR-VL.",
+          "На выходе готовый архив для дальнейшей работы."
+        ],
+        triggers: ["«Получи md из pdf»", "«Вытащи текст и картинки из PDF»"]
+      },
+      {
+        id: "case-report",
+        cat: "Файлы и PDF",
+        short: "Фактический отчёт по кейсу из JSON-экспорта сессии.",
+        purpose: "Разбор экспорта сессии: что получилось, сколько заняло времени, сколько израсходовано ресурсов. Результат оформляется в Markdown и DOCX как фактический отчёт по кейсу.",
+        bullets: [
+          "Анализ результата, времени и расхода.",
+          "Два формата на выходе: Markdown и DOCX."
+        ],
+        triggers: ["«Сделай отчёт по кейсу»", "«Оформи экспорт чата отчётом»"]
+      },
+      {
+        id: "speech-transcription",
+        cat: "Речь и сервисы ИИ",
+        short: "Расшифровка аудио и видео через корпоративный сервис распознавания.",
+        purpose: "Загружает аудио или видео на корпоративный MCP-сервер и возвращает текст, субтитры, фрагменты и замеры. По умолчанию выдаёт исходную расшифровку без правок, пересказа и перевода.",
+        bullets: [
+          "Текст и субтитры с приблизительными границами фрагментов.",
+          "Замеры: длительность записи и скорость распознавания.",
+          "Сравнение с эталонным текстом по запросу."
+        ],
+        triggers: ["«Расшифруй аудио»", "«Извлечь речь из видео»", "«Получить субтитры»", "«Сделай расшифровку звонка»"],
+        limits: ["Определения говорящих нет — кто и когда говорил, не выдаётся.", "Анализ видеоизображения и надписей в кадре не выполняется.", "Возможны ошибки в именах, названиях и числах."]
+      },
+      {
+        id: "voice",
+        cat: "Речь и сервисы ИИ",
+        short: "Подключение и починка сервиса озвучки и распознавания Voice MCP.",
+        purpose: "Сервис синтеза речи Silero и распознавания faster-whisper, доступный как MCP-инструменты и по HTTP. Навык помогает подключить, проверить и починить его: нет инструментов в сессии, 401, обрыв соединения, таймауты.",
+        bullets: [
+          "Проверка порта, статуса сервиса и токена доступа.",
+          "Запуск и перезапуск, включая предварительную загрузку моделей.",
+          "Диагностика моста между сервисом и интерфейсом."
+        ],
+        triggers: ["«Озвучь текст»", "«Voice MCP не отвечает»", "«Проверь сервис на 8031»"],
+        limits: ["Нужен запущенный сервис и токен; токен не выводится в чат и не коммитится."]
+      },
+      {
+        id: "ol-json",
+        cat: "Речь и сервисы ИИ",
+        short: "Опросный лист → структурированный JSON установки.",
+        purpose: "Сервис AI-Transformer принимает опросный лист (PDF, XLSX или DOCX) и возвращает финальный структурированный JSON установки с составом оборудования.",
+        bullets: [
+          "Форматы на входе: PDF, XLSX, DOCX.",
+          "На выходе один JSON с разобранной установкой."
+        ],
+        triggers: ["«Получи JSON из опросного листа»"],
+        limits: ["Описание навыка хранится в теле инструкции, без машиночитаемой шапки."]
+      },
+      {
+        id: "ol-xml",
+        cat: "Речь и сервисы ИИ",
+        short: "Опросный лист → XML-кандидат для RuleStream с валидацией.",
+        purpose: "Опросный лист (PDF, XLSX или DOCX) превращается в XML-кандидат для RuleStream (VentTool, VentUst) и проходит валидацию.",
+        bullets: [
+          "Конвертация файла, уже лежащего на сервере, или загрузка с клиента.",
+          "Проверка результата валидатором."
+        ],
+        triggers: ["«Сделай XML из опросного листа»"],
+        limits: ["Описание навыка хранится в теле инструкции, без машиночитаемой шапки."]
+      }
+    ];
+
+    const CATS = ["Все"].concat(Array.from(new Set(SKILLS.map(s => s.cat))));
+
+    let activeCat = "Все";
+    let query = "";
+
+    const grid = document.getElementById("grid");
+    const counter = document.getElementById("counter");
+    const chips = document.getElementById("chips");
+    const qInput = document.getElementById("q");
+    const overlay = document.getElementById("overlay");
+    const modal = document.getElementById("modal");
+
+    function esc(str) {
+      return String(str).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    }
+
+    function buildChips() {
+      chips.innerHTML = CATS.map(c =>
+        '<button type="button" class="chip' + (c === activeCat ? " on" : "") + '" data-cat="' + esc(c) + '">' + esc(c) + "</button>"
+      ).join("");
+    }
+
+    function matches(skill) {
+      if (activeCat !== "Все" && skill.cat !== activeCat) return false;
+      if (!query) return true;
+      const hay = [skill.id, skill.cat, skill.short, skill.purpose]
+        .concat(skill.bullets, skill.triggers, skill.limits)
+        .join(" ")
+        .toLowerCase();
+      return query.split(/\s+/).every(word => hay.indexOf(word) !== -1);
+    }
+
+    function render() {
+      const list = SKILLS.filter(matches);
+      grid.innerHTML = list.length
+        ? list.map(s =>
+            '<button type="button" class="card" data-id="' + esc(s.id) + '">' +
+              '<div class="card-top">' +
+                '<span class="card-name">' + esc(s.id) + "</span>" +
+                '<span class="card-cat">' + esc(s.cat) + "</span>" +
+              "</div>" +
+              '<span class="card-text">' + esc(s.short) + "</span>" +
+              (s.triggers.length ? '<span class="card-trigger">' + esc(s.triggers[0]) + "</span>" : "") +
+            "</button>"
+          ).join("")
+        : '<div class="card-empty">Ничего не найдено. Попробуйте другое слово или снимите фильтр категории.</div>';
+
+      counter.textContent = "Показано " + list.length + " из " + SKILLS.length;
+    }
+
+    function openModal(id) {
+      const s = SKILLS.find(x => x.id === id);
+      if (!s) return;
+
+      let html = '<button type="button" class="close" aria-label="Закрыть">✕</button>' +
+        '<h2 id="mTitle">' + esc(s.id) + "</h2>" +
+        '<span class="m-cat">' + esc(s.cat) + "</span>" +
+        "<h3>Назначение</h3><p>" + esc(s.purpose) + "</p>";
+
+      if (s.bullets.length) {
+        html += "<h3>Что умеет</h3><ul>" + s.bullets.map(b => "<li>" + esc(b) + "</li>").join("") + "</ul>";
+      }
+      if (s.triggers.length) {
+        html += '<h3>Примеры запросов</h3><ul class="trig">' + s.triggers.map(t => "<li>" + esc(t) + "</li>").join("") + "</ul>";
+      }
+      if (s.limits.length) {
+        html += '<h3>Ограничения</h3><ul class="limits">' + s.limits.map(l => "<li>" + esc(l) + "</li>").join("") + "</ul>";
+      }
+
+      modal.innerHTML = html;
+      overlay.classList.add("on");
+      document.body.style.overflow = "hidden";
+      modal.scrollTop = 0;
+    }
+
+    function closeModal() {
+      overlay.classList.remove("on");
+      document.body.style.overflow = "";
+    }
+
+    chips.addEventListener("click", e => {
+      const btn = e.target.closest(".chip");
+      if (!btn) return;
+      activeCat = btn.dataset.cat;
+      buildChips();
+      render();
+    });
+
+    grid.addEventListener("click", e => {
+      const card = e.target.closest(".card");
+      if (card) openModal(card.dataset.id);
+    });
+
+    qInput.addEventListener("input", () => {
+      query = qInput.value.trim().toLowerCase();
+      render();
+    });
+
+    overlay.addEventListener("click", e => {
+      if (e.target === overlay || e.target.classList.contains("close")) closeModal();
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") closeModal();
+      if (e.key === "/" && document.activeElement !== qInput) {
+        e.preventDefault();
+        qInput.focus();
+      }
+    });
+
+    buildChips();
+    render();
+
+    /* --- Фон: частицы --- */
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d", { alpha: false });
+    const glow = document.getElementById("glow");
+
+    let W = 0, H = 0;
+    let DPR = Math.min(window.devicePixelRatio || 1, 2);
+    const mouse = { x: -1000, y: -1000, vx: 0, vy: 0, active: false };
+    let particles = [];
+
+    function resize() {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W * DPR;
+      canvas.height = H * DPR;
+      canvas.style.width = W + "px";
+      canvas.style.height = H + "px";
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      createParticles();
+    }
+
+    function createParticles() {
+      particles = [];
+      const count = Math.min(1100, Math.max(350, Math.floor((W * H) / 1600)));
+      for (let i = 0; i < count; i++) {
+        const depth = Math.random();
+        particles.push({
+          x: Math.random() * W, y: Math.random() * H,
+          vx: (Math.random() - .5) * .15, vy: (Math.random() - .5) * .15,
+          size: depth < .75 ? Math.random() * 1.2 + .25 : Math.random() * 2.6 + .7,
+          depth,
+          alpha: depth < .75 ? Math.random() * .4 + .12 : Math.random() * .7 + .2,
+          phase: Math.random() * Math.PI * 2,
+          twinkle: Math.random() * Math.PI * 2,
+          twinkleSpeed: Math.random() * .035 + .008,
+          hue: Math.random() * 25 - 12
+        });
+      }
+    }
+
+    window.addEventListener("resize", resize);
+
+    window.addEventListener("mousemove", e => {
+      mouse.vx = e.clientX - mouse.x;
+      mouse.vy = e.clientY - mouse.y;
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.active = true;
+      glow.style.left = mouse.x + "px";
+      glow.style.top = mouse.y + "px";
+      glow.style.opacity = "1";
+    });
+
+    window.addEventListener("mouseleave", () => {
+      mouse.active = false;
+      glow.style.opacity = "0";
+    });
+
+    function drawBackground() {
+      const gradient = ctx.createRadialGradient(W * .5, H * .35, 0, W * .5, H * .5, Math.max(W, H));
+      gradient.addColorStop(0, "#051329");
+      gradient.addColorStop(.35, "#020813");
+      gradient.addColorStop(1, "#010307");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    function updateParticles(time) {
+      for (const p of particles) {
+        p.twinkle += p.twinkleSpeed;
+        p.vx += Math.sin(time * .00025 + p.phase) * .015;
+        p.vy += Math.cos(time * .00021 + p.phase * 1.7) * .015;
+
+        if (mouse.active) {
+          const dx = p.x - mouse.x;
+          const dy = p.y - mouse.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const radius = 160;
+          if (distance < radius && distance > 0.1) {
+            const force = Math.pow((radius - distance) / radius, 2);
+            p.vx += (dx / distance) * force * 1.4;
+            p.vy += (dy / distance) * force * 1.4;
+          }
+        }
+
+        p.vx *= .965;
+        p.vy *= .965;
+        p.x += p.vx;
+        p.y += p.vy;
+
+        const margin = 30;
+        if (p.x < -margin) p.x = W + margin;
+        if (p.x > W + margin) p.x = -margin;
+        if (p.y < -margin) p.y = H + margin;
+        if (p.y > H + margin) p.y = -margin;
+
+        const shimmer = Math.sin(p.twinkle) * .5 + .5;
+        const alpha = p.alpha * (.55 + shimmer * .75);
+        const drawX = p.x - mouse.vx * p.depth * .06;
+        const drawY = p.y - mouse.vy * p.depth * .06;
+
+        if (p.size > 1.4 && alpha > .5) {
+          ctx.shadowBlur = 8 + p.size * 5;
+          ctx.shadowColor = "rgba(0,195,255," + alpha + ")";
+        } else {
+          ctx.shadowBlur = 0;
+        }
+
+        ctx.beginPath();
+        ctx.arc(drawX, drawY, p.size, 0, Math.PI * 2);
+        const brightness = 170 + shimmer * 85;
+        ctx.fillStyle = "hsla(" + (200 + p.hue) + "," + (85 + shimmer * 15) + "%," + (brightness / 2) + "%," + alpha + ")";
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+    }
+
+    function animate(time) {
+      drawBackground();
+      updateParticles(time);
+      mouse.vx *= .9;
+      mouse.vy *= .9;
+      requestAnimationFrame(animate);
+    }
+
+    resize();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
