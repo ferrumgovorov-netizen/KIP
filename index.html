@@ -80,6 +80,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      justify-content: safe center;
+      overflow-y: auto;
       padding: 24px;
       padding-top: env(safe-area-inset-top);
       padding-bottom: env(safe-area-inset-bottom);
@@ -217,6 +219,24 @@
       stroke-linejoin: round;
     }
 
+    /* Иконка кнопки без PNG */
+    .btn-icon-ai {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-icon-ai svg {
+      width: 52px;
+      height: 52px;
+      fill: none;
+      stroke: #70d6ff;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 10px rgba(0, 180, 255, 0.55));
+    }
+
     /* Подпись внизу */
     .footer {
       position: absolute;
@@ -249,10 +269,12 @@
     .btn:nth-child(4) { animation: fadeInUp 0.6s ease 0.4s both; }
     .btn:nth-child(5) { animation: fadeInUp 0.6s ease 0.5s both; }
     .btn:nth-child(6) { animation: fadeInUp 0.6s ease 0.6s both; }
+    .btn:nth-child(7) { animation: fadeInUp 0.6s ease 0.7s both; }
 
     /* Для экранов с малой высотой */
     @media (max-height: 700px) {
       .btn-icon { width: 60px; height: 60px; }
+      .btn-icon-ai svg { width: 36px; height: 36px; }
       .buttons { gap: 10px; }
       .btn { padding: 8px 16px 8px 8px; }
     }
@@ -262,6 +284,7 @@
       .title { margin-bottom: 16px; }
       .btn { padding: 8px 12px 8px 8px; }
       .btn-icon { width: 50px; height: 50px; }
+      .btn-icon-ai svg { width: 30px; height: 30px; }
     }
   </style>
 </head>
@@ -348,6 +371,24 @@
           <div class="btn-content">
             <span class="btn-title">Расшифровка оборудования</span>
             <span class="btn-subtitle">Маркировка и обозначения КИПиА</span>
+          </div>
+        </div>
+        <div class="btn-arrow">
+          <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+        </div>
+      </a>
+
+      <a href="Skill.html" class="btn">
+        <div class="btn-left">
+          <div class="btn-icon btn-icon-ai">
+            <svg viewBox="0 0 24 24">
+              <path d="M11 3.5l1.7 4.1 4.1 1.7-4.1 1.7L11 15.1 9.3 11 5.2 9.3l4.1-1.7L11 3.5z"></path>
+              <path d="M17.5 14.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9.9-2.1z"></path>
+            </svg>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Навыки ИИ</span>
+            <span class="btn-subtitle">Каталог навыков и готовых сценариев</span>
           </div>
         </div>
         <div class="btn-arrow">
